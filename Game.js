@@ -3,6 +3,7 @@ import * as CANNON from 'cannon-es';
 import Player from './Player.js';
 import Ball from './Ball.js';
 import * as constants from './constants.js';
+import HumanPlayer from './HumanPlayer.js';
 
 export default class Game {
 	constructor(scene, physicsWorld, camera) {
@@ -102,7 +103,7 @@ export default class Game {
 				var vertex2 = fieldVertices[i+1];
 			}
 			// console.log(vertex1, vertex2);
-			players.push(new Player(this.scene, this.physicsWorld, i, vertex1, vertex2, this.fieldEdgeDiameter));
+			players.push(new HumanPlayer(this.scene, this.physicsWorld, i, vertex1, vertex2, this.fieldEdgeDiameter));
 			// break;
 		}
 		return players;

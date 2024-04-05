@@ -12,16 +12,7 @@ export default class Player {
 
 		this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
 		// Define the keys to move the paddle
-		if (playerNb%2==0)
-		{
-			this.upKeyCode = 38; // 87, 83 for w, s
-			this.downKeyCode = 40;
-		}
-		else
-		{
-			this.upKeyCode = 87; // 87, 83 for w, s
-			this.downKeyCode = 83;
-		}
+
 
 		this.isBallInGoal = {a: false}; // ! TODO find a better way to do this
 		this.createGoal(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, this.isBallInGoal);
@@ -53,15 +44,6 @@ export default class Player {
 		});
 		physicsWorld.addBody(this.goalHiboxBody);
 
-
-	}
-
-	movePaddle(keysdown)
-	{
-		if (keysdown[this.upKeyCode])
-			this.paddle.moveUp();
-		if (keysdown[this.downKeyCode])
-			this.paddle.moveDown();
 
 	}
 
