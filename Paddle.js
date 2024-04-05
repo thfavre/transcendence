@@ -3,7 +3,14 @@ import * as CANNON from 'cannon-es';
 
 import * as constants from './constants.js';
 
-
+function getRandomColor() {
+	var letters = '0123456789ABCDEF';
+	var color = '#';
+	for (var i = 0; i < 6; i++) {
+	  color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
+  }
 
 export default class Paddle {
 	constructor(scene, physicsWorld, startPos, endPos, axeAngle, fieldEdgeDiameter) {
@@ -18,7 +25,7 @@ export default class Paddle {
 		this.maxMovingDistance = (startPos.distanceTo(endPos) - this.height - fieldEdgeDiameter)/2;
 
 		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-		const material = new THREE.MeshPhongMaterial({ color: "#686de0" });
+		const material = new THREE.MeshPhongMaterial({ color: getRandomColor() });
 		this.mesh = new THREE.Mesh(geometry, material);
 		scene.add(this.mesh);
 

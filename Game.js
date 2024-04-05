@@ -21,13 +21,13 @@ export default class Game {
 
 
 		// lights
-		var hemisphereLight = new THREE.HemisphereLight( 0xFFFFFF, 'darkslategrey', 2);
+		var hemisphereLight = new THREE.HemisphereLight( '0xFFFFFF', 'darkslategrey', 2);
 		scene.add(hemisphereLight);
 	}
 
 	createField() {
 		const geometry = new THREE.CircleGeometry( constants.FIELD_DIAMETER/2, constants.SEGMENTS );
-		const material = new THREE.MeshPhongMaterial( { color: 0x550000 } );
+		const material = new THREE.MeshPhongMaterial( { color: "#2c3e50" } );
 		const field = new THREE.Mesh( geometry, material );
 		field.receiveShadow = true;
 		this.scene.add(field);

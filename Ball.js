@@ -49,8 +49,8 @@ export default class Ball {
 		// update the mesh position and rotation
 		this.mesh.position.copy(this.body.position);
 		this.mesh.quaternion.copy(this.body.quaternion);
-		// icrease the move speed by 1 each second
-		this.moveSpeed += 1/70;
+		// increase the speed
+		this.moveSpeed += 1/100;
 
 	}
 
