@@ -12,9 +12,9 @@ export default class Paddle {
 		this.axeAngle = axeAngle;
 
 		this.width = 3;
-		this.height = 20;
+		this.height = 14; // length of the paddle...
 		this.depth = 3;
-		this.moveSpeed = 0.4;
+		this.moveSpeed = 0.3;
 		this.maxMovingDistance = (startPos.distanceTo(endPos) - this.height - fieldEdgeDiameter)/2;
 
 		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
