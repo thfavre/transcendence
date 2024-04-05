@@ -47,6 +47,11 @@ export default class Player {
 
 	}
 
+	movePaddle(keysdown) {
+		// to be implemented in the subclasses
+		throw new Error('You have to implement the method movePaddle in a Subclass!');
+	}
+
 	update(keysdown) {
 		this.movePaddle(keysdown)
 		this.paddle.update();
