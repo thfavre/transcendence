@@ -25,12 +25,14 @@ export default class Ball {
 			material: new CANNON.Material({ friction: 1, restitution: 1 }),
 		});
 		physicsWorld.addBody(this.body);
+		this.updateMeshPosAndRot();
+
 
 		// this.direction = new THREE.Vector3(1, 1);
 		// ---- Helpers ----
-		var axe = new THREE.AxesHelper(10);
-		axe.renderOrder = 2;
-		this.mesh.add(axe);
+		// var axe = new THREE.AxesHelper(10);
+		// axe.renderOrder = 2;
+		// this.mesh.add(axe);
 
 	}
 
@@ -41,14 +43,18 @@ export default class Ball {
 		var yComposant = Math.sin(this.movingAngle) * this.moveSpeed;
 		this.body.velocity.x = xComposant;
 		this.body.velocity.y = yComposant;
+		this.body.velocity.z = 0; // make sure the ball doesn't move up or down
 
+	}
+
+	updateMeshPosAndRot() {
+		this.mesh.position.copy(this.body.position);
+		this.mesh.quaternion.copy(this.body.quaternion);
 	}
 
 	update(dt) {
 		this.move(dt);
-		// update the mesh position and rotation
-		this.mesh.position.copy(this.body.position);
-		this.mesh.quaternion.copy(this.body.quaternion);
+		this.updateMeshPosAndRot();
 		// increase the speed
 		this.moveSpeed += 1/100;
 

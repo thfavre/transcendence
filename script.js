@@ -1,11 +1,15 @@
 import * as THREE from 'three';
-import { OBB } from 'three/addons/math/OBB.js';
+import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+
+
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
 // import {Ball} from './Ball.js';
 import Game from './Game.js';
+import Menu from './Menu.js';
 import * as constants from './constants.js';
 
 
@@ -79,14 +83,52 @@ const controls = new OrbitControls(camera, renderer.domElement);
 
 
 // ------- Creation
-const pongGame = new Game(scene, physicsWorld, camera);
+var menu;
+var pongGame;
+function init(font)
+{
+	pongGame = new Game(scene, physicsWorld, camera);
+	menu = new Menu(scene, physicsWorld, camera, pongGame, font);
+	animateMenu();
+
+}
 
 // ------- Update
-camera.position.z = 100;
+// camera.position.z = 100;
 var keysdown = [];
+var keysJustPressed = [];
+document.addEventListener("keydown", onDocumentKeyDown, false);
+function onDocumentKeyDown(event) {
+    var keyCode = event.which;
+	keysJustPressed.push(keyCode);
+	if (keysdown.includes(keyCode))
+		return;
+    keysdown.push(keyCode);
+};
+document.addEventListener("keyup", onDocumentKeyUp, false);
+function onDocumentKeyUp(event) {
+	var keyCode = event.which;
+	keysdown.splice(keysdown.indexOf(keyCode), 1);
+
+};
+
 let time = Date.now();
-function animate() {
-	window.requestAnimationFrame( animate );
+function animateMenu() {
+	const currentTime = Date.now();
+	const deltaTime = currentTime - time;
+	time = currentTime;
+	if (menu.update(deltaTime, keysdown, keysJustPressed) == true)
+		animateGame();
+	else
+		window.requestAnimationFrame( animateMenu );
+
+	renderer.render( scene, camera );
+	keysJustPressed = [];
+
+}
+
+function animateGame() {
+	window.requestAnimationFrame( animateGame );
 	// controls.update();
 	const currentTime = Date.now();
 	const deltaTime = currentTime - time;
@@ -99,17 +141,20 @@ function animate() {
 	cannonDebugger.update();
 
 	renderer.render( scene, camera );
+	keysJustPressed = [];
+
 }
 
-document.addEventListener("keydown", onDocumentKeyDown, false);
-function onDocumentKeyDown(event) {
-    var keyCode = event.which;
-    keysdown[keyCode] = true;
-};
-document.addEventListener("keyup", onDocumentKeyUp, false);
-function onDocumentKeyUp(event) {
-	var keyCode = event.which;
-	keysdown[keyCode] = false;
-};
 
-animate();
+
+// animateGame();
+function loadFont()
+{
+	const loader = new FontLoader();
+	loader.load( 'assets/fonts/BroncoPersonalUse.json', ( font ) => {
+		console.log("Font loaded", font);
+		init(font)
+	});
+}
+
+loadFont();

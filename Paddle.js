@@ -13,6 +13,13 @@ function getRandomColor() {
   }
 
 export default class Paddle {
+
+	static materials = [
+		new THREE.MeshPhongMaterial({ color: "#ff0000" }),
+		new THREE.MeshPhongMaterial({ color: "#00ff00", shininess: 200}),
+		new THREE.MeshStandardMaterial({ color: "#0000ff", roughness:0})]; // or should it be defined somewhere else?
+
+
 	constructor(scene, physicsWorld, startPos, endPos, axeAngle, fieldEdgeDiameter) {
 		this.startPos = startPos;
 		this.endPos = endPos;
@@ -21,11 +28,11 @@ export default class Paddle {
 		this.width = 3;
 		this.height = 14; // length of the paddle...
 		this.depth = 3;
-		this.moveSpeed = 0.3;
+		this.moveSpeed = 0.6;
 		this.maxMovingDistance = (startPos.distanceTo(endPos) - this.height - fieldEdgeDiameter)/2;
 
 		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-		const material = new THREE.MeshPhongMaterial({ color: getRandomColor() });
+		const material = Paddle.materials[0];//new THREE.MeshPhongMaterial({ color: getRandomColor() });
 		this.mesh = new THREE.Mesh(geometry, material);
 		scene.add(this.mesh);
 
@@ -44,9 +51,10 @@ export default class Paddle {
 
 		});
 		this.body.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), this.axeAngle);
-		// make the body static
-
 		physicsWorld.addBody(this.body);
+
+		//
+		this.updateMeshPosAndRot();
 
 		// ---- Helpers ----
 		var axe = new THREE.AxesHelper(10);
@@ -57,6 +65,19 @@ export default class Paddle {
 		// // grid.translateZ(3);
 		// grid.renderOrder = 1;
 		// this.mesh.add(grid);
+	}
+
+	changeMaterial(direction) {
+		var matIndex = Paddle.materials.indexOf(this.mesh.material);
+		if (matIndex == -1)
+			matIndex = 0;
+		else
+		{
+			matIndex = (matIndex + direction) % Paddle.materials.length;
+			if (matIndex < 0)
+				matIndex = Paddle.materials.length - 1;
+		}
+		this.mesh.material = Paddle.materials[matIndex];
 	}
 
 	move(speed) {
@@ -84,8 +105,12 @@ export default class Paddle {
 
 	}
 
-	update() {
+	updateMeshPosAndRot() {
 		this.mesh.position.copy(this.body.position);
 		this.mesh.quaternion.copy(this.body.quaternion);
+	}
+
+	update() {
+		this.updateMeshPosAndRot();
 	}
 }
