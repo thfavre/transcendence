@@ -6,9 +6,9 @@ export default class AiPlayer extends Player {
 	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter) {
 		super (scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter);
 
-		this.ball = scene.ball();
-		this.sceneSize = bbox.getSize(new THREE.Vector3()); // size.x, size.y, size.z
-
+		this.ball = physicsWorld.ball;
+		// this.sceneSize = bbox.getSize(new THREE.Vector3()); // size.x, size.y, size.z
+		// this.predictBall();
 	}
 
 	// predictWallBounce(ball) {
@@ -40,7 +40,8 @@ export default class AiPlayer extends Player {
 
 	predictBall()
 	{
-		this.launchRay(this.ball.mesh.position, this.ball.velocity.clone().normalize);
+		this.launchRay(this.ball.body.position, this.ball.velocity.clone().normalize);
+		console.log("Ray: ", this.launchRay);
 	}
 
 	// launch a ray and return the result
@@ -51,5 +52,14 @@ export default class AiPlayer extends Player {
 		return result;
 	}
 
-
+	movePaddle()
+	{
+		if (Math.random() < 0.5) {  // 50% chance to move
+			if (Math.random() < 0.5) {
+				this.paddle.moveUp();
+			} else {
+				this.paddle.moveDown();
+			}
+		}
+	}
 }

@@ -41,8 +41,6 @@ export default class Player {
 			isBallInGoal.a = true;
 		});
 		physicsWorld.addBody(this.goalHiboxBody);
-
-
 	}
 
 	movePaddle(keysdown) {

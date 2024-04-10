@@ -4,6 +4,7 @@ import Player from './Player.js';
 import Ball from './Ball.js';
 import * as constants from './constants.js';
 import HumanPlayer from './HumanPlayer.js';
+import AiPlayer from './AiPlayer.js';
 
 export default class Game {
 	constructor(scene, physicsWorld, camera) {
@@ -19,9 +20,10 @@ export default class Game {
 		this.fieldVertices =  this.createField();
 		this.players = [];
 		if (constants.SKIP_PLAYER_SELECTION) {
-			for (var i = 1; i < constants.SEGMENTS; i++) {
+			for (var i = 1; i < (constants.SEGMENTS - 1); i++) {
 				this.addPlayer(this.createHumanPlayer(i));
 			}
+			this.addPlayer(this.createAiPlayer(++i));
 		}
 		// this.players = this.createPlayers();
 		// this.finishRound()
@@ -149,6 +151,16 @@ export default class Game {
 			var vertex2 = this.fieldVertices[nb+1];
 		}
 		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, 87, 83);
+	}
+
+	createAiPlayer(nb) {
+		var vertex1 = this.fieldVertices[nb];
+		if (nb == this.fieldVertices.length-1) {
+			var vertex2 = this.fieldVertices[1];
+		} else {
+			var vertex2 = this.fieldVertices[nb+1];
+		}
+		return new AiPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter);
 	}
 
 	addPlayer(player) {
