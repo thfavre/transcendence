@@ -67,17 +67,35 @@ export default class Paddle {
 		// this.mesh.add(grid);
 	}
 
-	changeMaterial(direction) {
+	getNextMaterial() {
+		var matIndex = Paddle.materials.indexOf(this.mesh.material);
+		if (matIndex == -1)
+			matIndex = 0;
+		else
+			matIndex = (matIndex + 1) % Paddle.materials.length;
+		return Paddle.materials[matIndex];
+	}
+
+	getPreviousMaterial() {
 		var matIndex = Paddle.materials.indexOf(this.mesh.material);
 		if (matIndex == -1)
 			matIndex = 0;
 		else
 		{
-			matIndex = (matIndex + direction) % Paddle.materials.length;
+			matIndex = matIndex - 1;
 			if (matIndex < 0)
 				matIndex = Paddle.materials.length - 1;
 		}
-		this.mesh.material = Paddle.materials[matIndex];
+		return Paddle.materials[matIndex];
+
+	}
+
+
+	changeMaterial(direction) {
+		if (direction > 0)
+			this.mesh.material = this.getNextMaterial();
+		else
+			this.mesh.material = this.getPreviousMaterial();
 	}
 
 	move(speed) {

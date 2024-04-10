@@ -36,6 +36,24 @@ export default class Ball {
 
 	}
 
+	drawMovingVector() {
+		this.removeMovingVector();
+		var direction = new THREE.Vector3(this.body.velocity.x, this.body.velocity.y, 0);
+		direction.normalize();
+		var origin = new THREE.Vector3(0, 0, 0);
+		var length = 10;
+		var hex = 0xffff00;
+		this.arrowHelper = new THREE.ArrowHelper(direction, origin, length, hex);
+		this.mesh.add(this.arrowHelper);
+	}
+	removeMovingVector() {
+		if (this.arrowHelper)
+		{
+			this.mesh.remove(this.arrowHelper);
+			this.arrowHelper.dispose();
+		}
+	}
+
 	move(dt) {
 		// make sure the ball move at a constant speed
 		this.movingAngle = Math.atan2(this.body.velocity.y, this.body.velocity.x);
@@ -44,7 +62,6 @@ export default class Ball {
 		this.body.velocity.x = xComposant;
 		this.body.velocity.y = yComposant;
 		this.body.velocity.z = 0; // make sure the ball doesn't move up or down
-
 	}
 
 	updateMeshPosAndRot() {
