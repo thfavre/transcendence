@@ -6,13 +6,4 @@ export const SEGMENTS = 4; // number of players
 export const FIELD_DIAMETER = 130;
 
 
-// function loadFont()
-// {
-// 	const loader = new TTFLoader();
-// 	return loader.load( 'assets/fonts/BroncoPersonalUse.ttf', ( font ) => {
-// 		console.log("Font loaded");
-// 		return font;
-// 	});
-// }
-
-// export const font = loadFont(); // load the font at the beginning of the game
+export const SKIP_PLAYER_SELECTION = true; // HumanPlayers will move with w/s

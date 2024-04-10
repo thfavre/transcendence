@@ -13,14 +13,42 @@ export default class Game {
 
 		this.fieldEdgeDiameter = 10;
 
+		this.roundStartTime = 1; // in seconds
+		this.roundStartTimeStamp = Date.now();
+
 		this.fieldVertices =  this.createField();
 		this.players = [];
+		if (constants.SKIP_PLAYER_SELECTION) {
+			for (var i = 1; i < constants.SEGMENTS; i++) {
+				this.addPlayer(this.createHumanPlayer(i));
+			}
+		}
 		// this.players = this.createPlayers();
-		this.ball = this.createBall();
+		// this.finishRound()
 
 		// lights
 		var hemisphereLight = new THREE.HemisphereLight( '#ffffff', 'darkslategrey', 2);
 		scene.add(hemisphereLight);
+	}
+
+
+	startNewRound() {
+		if (Date.now() - this.roundStartTimeStamp < this.roundStartTime*1000) {
+			console.log("Waiting for the round to start");
+			this.ball.body.position.set(0, 0, 3);
+			return false;
+		}
+		this.ball.removeMovingVector();
+		return true;
+	}
+
+	finishRound() {
+		if (this.ball)
+			this.deleteBall();
+		this.ball = this.createBall();
+		this.ball.drawMovingVector();
+
+		this.roundStartTimeStamp = Date.now();
 	}
 
 	createField() {
@@ -120,7 +148,7 @@ export default class Game {
 		} else {
 			var vertex2 = this.fieldVertices[nb+1];
 		}
-		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter);
+		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, 87, 83);
 	}
 
 	addPlayer(player) {
@@ -160,17 +188,17 @@ export default class Game {
 	}
 
 	update(dt, keysdown) {
-		this.ball.update(dt);
-		// this.camera.rotation.z += 0.006;
+		if (this.startNewRound())
+			this.ball.update(dt);
 
+		// this.camera.rotation.z += 0.006;
 
 		this.players.forEach(player => {
 			player.update(keysdown);
 			if (player.isBallInGoal.a) {
 				console.log("Ball is in player", player.playerNb, "goal");
 				player.isBallInGoal.a = false;
-				this.deleteBall();
-				this.ball = this.createBall();
+				this.finishRound();
 			}
 		});
 	}

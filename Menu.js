@@ -80,12 +80,11 @@ class PlayerCreator {
 
 	askUpKey(keysJustPressed) {
 		this.setText({
-			text: "Player " + (this.playerNb+1) + ", choose your UP key",
+			text: "Player " + (this.playerNb+1) + ", press a key to go UP",
 			x: 0, y: 22, z: 270
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyDown && this.ifKeyValid(keysJustPressed[0]))
 		{
-			console.log("Key UP :", keysJustPressed[0]);
 			this.keyUp = keysJustPressed[0];
 			this.player.setUpKeyCode(this.keyUp);
 		}
@@ -93,23 +92,34 @@ class PlayerCreator {
 
 	askDownKey(keysJustPressed) {
 		this.setText({
-			text: "Player " + (this.playerNb+1) + ", choose your DOWN key",
+			text: "Player " + (this.playerNb+1) + ", press a key to go DOWN",
 			x: 0, y: 22, z: 270
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyUp && this.ifKeyValid(keysJustPressed[0]))
 		{
-			console.log("Key Down", keysJustPressed[0]);
 			this.keyDown = keysJustPressed[0];
 			this.player.setDownKeyCode(this.keyDown);
 
 		}
 	}
 
-	askPaddleColor(keysJustPressed) {
+	askPaddleMaterial(keysJustPressed) {
 		this.setText({
 			text: "Player " + (this.playerNb+1) +
 					", choose your paddle color (" + String.fromCharCode(this.keyDown) + "/"+String.fromCharCode(this.keyUp) + ")",
 				x: 0, y: 26, z: 263});
+		// draw the previous and next paddle
+		// if (!this.nextPaddleMesh || this.nextPaddleMesh.material != this.player.paddle.getNextMaterial())
+		// {
+		// 	if (this.nextPaddleMesh)
+		// 		this.scene.remove(this.nextPaddleMesh);
+		// 	this.nextPaddleMesh = this.player.paddle.mesh.clone();
+		// 	this.nextPaddleMesh.material = this.player.paddle.getNextMaterial();
+		// 	this.nextPaddleMesh.position.z += 10;
+		// 	// this.nextPaddleMesh.position.y -= 10;
+		// 	this.scene.add(this.nextPaddleMesh);
+		// }
+
 		if (keysJustPressed.length > 0)
 		{
 			if (keysJustPressed.includes(this.keyUp))
@@ -142,7 +152,7 @@ class PlayerCreator {
 		else if (this.keyDown == null)
 			this.askDownKey(keysJustPressed);
 		else if (!this.color)
-			this.askPaddleColor(keysJustPressed);
+			this.askPaddleMaterial(keysJustPressed);
 		else if (!this.makePaddleFall(dt))
 			return true;
 		return false;
@@ -174,13 +184,13 @@ export default class Menu {
 	// 	return this.game.players[this.currentPlayerCreation];
 	// }
 
-	askUpKey(keysJustPressed)
-	{
-		// get the key pressed
-		if (keysJustPressed.length > 0)
-			console.log("press on the key to go up", keysJustPressed[0]);
+	// askUpKey(keysJustPressed)
+	// {
+	// 	// get the key pressed
+	// 	if (keysJustPressed.length > 0)
+	// 		console.log("press on the key to go up", keysJustPressed[0]);
 
-	}
+	// }
 
 	// makePaddleFall()
 	// {
@@ -203,8 +213,14 @@ export default class Menu {
 
 	update(dt, keydown, keysJustPressed)
 	{
-		// this.askUpKey(keysJustPressed);
-		// this.makePaddleFall();
+		if (constants.SKIP_PLAYER_SELECTION)
+		{
+			this.game.finishRound();
+			this.game.startNewRound();
+			this.camera.position.z = 100;
+			return true;
+		}
+
 		if (this.currentPlayer < constants.SEGMENTS)
 		{
 			if (this.currentPlayerCreator.update(dt, keysJustPressed))
@@ -218,7 +234,11 @@ export default class Menu {
 		else
 		{
 			if (this.zoomTo(100))
+			{
+				this.game.finishRound();
+				this.game.startNewRound();
 				return true;
+			}
 		}
 		return false;
 	}
