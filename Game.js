@@ -13,15 +13,13 @@ export default class Game {
 
 		this.fieldEdgeDiameter = 10;
 
-		var fieldVertices =  this.createField();
-		this.players = this.createPlayers(fieldVertices);
+		this.fieldVertices =  this.createField();
+		this.players = [];
+		// this.players = this.createPlayers();
 		this.ball = this.createBall();
 
-		// create 10 balls
-
-
 		// lights
-		var hemisphereLight = new THREE.HemisphereLight( '0xFFFFFF', 'darkslategrey', 2);
+		var hemisphereLight = new THREE.HemisphereLight( '#ffffff', 'darkslategrey', 2);
 		scene.add(hemisphereLight);
 	}
 
@@ -93,20 +91,41 @@ export default class Game {
 
 	}
 
-	createPlayers(fieldVertices) {
-		var players = [];
-		for (var i = 1; i < fieldVertices.length; i++) {
-			var vertex1 = fieldVertices[i];
-			if (i == fieldVertices.length-1) {
-				var vertex2 = fieldVertices[1];
-			} else {
-				var vertex2 = fieldVertices[i+1];
-			}
-			// console.log(vertex1, vertex2);
-			players.push(new HumanPlayer(this.scene, this.physicsWorld, i, vertex1, vertex2, this.fieldEdgeDiameter));
-			// break;
+	// addHumanPlayer(nb)
+	// {
+	// 	nb += 1; // to start at 1
+	// 	var vertex1 = this.fieldVertices[nb];
+	// 	if (nb == this.fieldVertices.length-1) {
+	// 		var vertex2 = this.fieldVertices[1];
+	// 	} else {
+	// 		var vertex2 = this.fieldVertices[nb+1];
+	// 	}
+	// 	this.players.push(new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter));
+	// }
+
+	// createPlayers() {
+	// 	var players = [];
+	// 	for (var i = 1; i <= constants.SEGMENTS; i++) {
+	// 		// console.log(vertex1, vertex2);
+	// 		addPlayer(this.createHumanPlayer(i));
+	// 		// break;
+	// 	}
+	// }
+
+	createHumanPlayer(nb) {
+		nb += 1; // to start at 1
+		var vertex1 = this.fieldVertices[nb];
+		if (nb == this.fieldVertices.length-1) {
+			var vertex2 = this.fieldVertices[1];
+		} else {
+			var vertex2 = this.fieldVertices[nb+1];
 		}
-		return players;
+		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter);
+	}
+
+	addPlayer(player) {
+		this.players.push(player);
+		console.log("Player", player.playerNb, "added", this.players);
 	}
 
 	createBall() {
@@ -142,6 +161,8 @@ export default class Game {
 
 	update(dt, keysdown) {
 		this.ball.update(dt);
+		// this.camera.rotation.z += 0.006;
+
 
 		this.players.forEach(player => {
 			player.update(keysdown);
