@@ -11,8 +11,6 @@ export default class Player {
 		this.axeAngle = 2*Math.PI/(constants.SEGMENTS*2) +  2*Math.PI/constants.SEGMENTS*(playerNb-1);  // TODO simplify the formula
 
 		this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
-		// Define the keys to move the paddle
-
 
 		this.isBallInGoal = {a: false}; // ! TODO find a better way to do this
 		this.createGoal(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, this.isBallInGoal);

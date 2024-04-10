@@ -2,7 +2,7 @@
 
 export const FPS = 60;
 
-export const SEGMENTS = 3; // number of players
+export const SEGMENTS = 4; // number of players
 export const FIELD_DIAMETER = 130;
 
 
