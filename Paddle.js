@@ -30,7 +30,6 @@ export default class Paddle {
 		this.depth = 3;
 		this.moveSpeed = 0.6;
 		this.maxMovingDistance = (startPos.distanceTo(endPos) - this.height - fieldEdgeDiameter)/2;
-		this.height += this.maxMovingDistance * 2;
 		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
 		const material = Paddle.materials[0];//new THREE.MeshPhongMaterial({ color: getRandomColor() });
 		this.mesh = new THREE.Mesh(geometry, material);
