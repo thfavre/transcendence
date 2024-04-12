@@ -15,9 +15,45 @@ function getRandomColor() {
 export default class Paddle {
 
 	static materials = [
+		new THREE.MeshPhysicalMaterial(
+			{
+				// map: constants.textureLoader.load("assets/textures/crate.gif")
+				color: "#ffcfff",
+				transmission: 1,
+				roughness: 0.3,
+				ior: 1.7,
+				thickness: 0.5,
+				specularIntensity: 1,
+				clearcoat: 1,
+				sheen: 1,
+				sheenColor: new THREE.Color(0xff0000),
+
+			}
+		),
+
 		new THREE.MeshPhongMaterial({ color: "#ff0000" }),
 		new THREE.MeshPhongMaterial({ color: "#00ff00", shininess: 200}),
-		new THREE.MeshStandardMaterial({ color: "#0000ff", roughness:0})]; // or should it be defined somewhere else?
+		new THREE.MeshStandardMaterial({ color: "#0000ff", roughness:0}), // or should it be defined somewhere else?
+		new THREE.MeshStandardMaterial(
+			{
+				map: constants.textureCratesBaseColor,
+			}
+		),
+		new THREE.MeshStandardMaterial(
+			{
+				map: constants.textureMetalBaseColor,
+				normalMap: constants.textureMetalNormalMap,
+				displacementMap: constants.textureMetalHeightMap,
+				displacementScale: 0.07,
+				roughnessMap: constants.textureMetalRoughnessMap,
+				roughness: 0.5,
+				aoMap: constants.textureMetalAmbientOcclusionMap,
+				aoMapIntensity: 1,
+				// metalnessMap: constants.textureMetallic,
+				// metalness: 1,
+			}
+		),
+	];
 
 
 	constructor(scene, physicsWorld, startPos, endPos, axeAngle, fieldEdgeDiameter) {
@@ -30,7 +66,8 @@ export default class Paddle {
 		this.depth = 3;
 		this.moveSpeed = 0.6;
 		this.maxMovingDistance = (startPos.distanceTo(endPos) - this.height - fieldEdgeDiameter)/2;
-		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
+		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth, 512, 512);
+		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
 		const material = Paddle.materials[0];//new THREE.MeshPhongMaterial({ color: getRandomColor() });
 		this.mesh = new THREE.Mesh(geometry, material);
 		scene.add(this.mesh);

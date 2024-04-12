@@ -22,7 +22,7 @@ class PlayerCreator {
 
 		this.player = this.game.createHumanPlayer(playerNb);
 		this.game.addPlayer(this.player);
-		this.player.paddle.mesh.position.z = 230;
+		this.player.paddle.mesh.position.z = 230; // 230
 
 		this.fallSpeed = 0;
 		this.gravity = 9.8;

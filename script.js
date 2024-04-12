@@ -24,9 +24,12 @@ const sizes = {
 
 // Scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xAAAAAA);
+// scene.background = new THREE.Color(0xAAAAAA);
+scene.background = constants.textureLoader.load("assets/textures/space.jpg");
 const axesHelper = new THREE.AxesHelper(10);
 scene.add(axesHelper);
+// scence background
+
 
 // Camera
 const camera = new THREE.PerspectiveCamera( 90, sizes.width / sizes.height, 0.1, 10000);

@@ -4,6 +4,7 @@ import Player from './Player.js';
 import Ball from './Ball.js';
 import * as constants from './constants.js';
 import HumanPlayer from './HumanPlayer.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 
 export default class Game {
 	constructor(scene, physicsWorld, camera) {
@@ -29,6 +30,33 @@ export default class Game {
 		// lights
 		var hemisphereLight = new THREE.HemisphereLight( '#ffffff', 'darkslategrey', 2);
 		scene.add(hemisphereLight);
+
+
+		// arena
+		const fbxLoader = new FBXLoader();
+		const material = new THREE.MeshNormalMaterial()
+		fbxLoader.load(
+			'assets/models/untitled.fbx',
+			(object) => {
+				object.traverse(function (child) {
+				    // if (child.isMesh) {
+					// 	child.material = material
+					// 	if (child.material) {
+				    //         child.material.transparent = false
+				    //     }
+				    // }
+				})
+				object.scale.set(5, 5, 5)
+				object.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), Math.PI/2)
+				scene.add(object)
+			},
+			(xhr) => {
+				console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+			},
+			(error) => {
+				console.log(error)
+			}
+		);
 	}
 
 
