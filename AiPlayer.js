@@ -3,10 +3,13 @@ import * as CANNON from 'cannon-es';
 import Player from './Player';
 
 export default class AiPlayer extends Player {
-	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter) {
+	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, ball) {
 		super (scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter);
 
-		this.ball = physicsWorld.ball;
+		this.physicsWorld = physicsWorld;
+		this.ball = ball;
+		console.log("this:", this);
+		console.log("this.ball:", this.ball);
 		// this.sceneSize = bbox.getSize(new THREE.Vector3()); // size.x, size.y, size.z
 		// this.predictBall();
 	}
@@ -38,18 +41,38 @@ export default class AiPlayer extends Player {
 	// 	// move the AI paddle towards that position (add constraints for paddle's max speed)
 	// }
 
+	updateBall(ball)
+	{
+		this.ball = ball;
+		console.log("this.ball:", this.ball);
+		console.log("Ray: ", this.launchRay(this.ball.body.position, this.ball.body.velocity));
+	}
+
 	predictBall()
 	{
-		this.launchRay(this.ball.body.position, this.ball.velocity.clone().normalize);
+		this.launchRay(this.ball.body.position, this.ball.body.velocity.clone().normalize());
 		console.log("Ray: ", this.launchRay);
 	}
 
 	// launch a ray and return the result
-	launchRay(ballPosition, ballVelocity)
-	{
-		const	ray = new THREE.ray(ballPosition, ballVelocity);
-		const	result = physicsWorld.rayTest(ray.origin, ray.direction);
-		return result;
+	launchRay(ballPosition, ballVelocity) {
+		const ray = new CANNON.Ray(ballPosition, ballVelocity);
+
+		// Assuming 'physicsWorld' is in scope where you use the Ball class
+		console.log("Physics world: ", this.physicsWorld);
+		console.log("goalHiboxBody:", this.goalHiboxBody);
+		const result = this.physicsWorld.rayTest(ray.from, ray.to, {
+			collisionFilterMask: this.goalHiboxBody.collisionFilterMask,  // Check only for collisions with the wall
+			skipBackfaces: true // Optional, to only detect front-face collisions
+		});
+
+		// Process the result (example)
+		// if (result.hasHit) {
+		// 	console.log("Hit point:", result.hitPointWorld);
+		// }
+		console.log("result of ray: ", result);
+
+		return result; // Optional, if you need to use the result elsewhere
 	}
 
 	movePaddle()
@@ -62,4 +85,17 @@ export default class AiPlayer extends Player {
 			}
 		}
 	}
+
+	// movePaddle() {
+	// 	const result = this.predictBall(); // Get the latest prediction
+	// 	if (result.hasHit) {
+	// 		const targetY = result.hitPointWorld.y; // Target the predicted bounce point
+	// 		if (this.paddle.mesh.position.y < targetY) {
+	// 			this.paddle.moveUp();
+	// 		} else if (this.paddle.mesh.position.y > targetY) {
+	// 			this.paddle.moveDown();
+	// 		}
+	// 	}
+	// }
+
 }

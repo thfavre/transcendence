@@ -160,7 +160,7 @@ export default class Game {
 		} else {
 			var vertex2 = this.fieldVertices[nb+1];
 		}
-		return new AiPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter);
+		return new AiPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, this.ball);
 	}
 
 	addPlayer(player) {

@@ -10,6 +10,7 @@ import CannonDebugger from 'cannon-es-debugger';
 // import {Ball} from './Ball.js';
 import Game from './Game.js';
 import Menu from './Menu.js';
+import AiPlayer from './AiPlayer.js';
 import * as constants from './constants.js';
 
 
@@ -142,7 +143,11 @@ function animateGame() {
 
 	renderer.render( scene, camera );
 	keysJustPressed = [];
-
+	pongGame.players.forEach(player => {
+		if (player instanceof AiPlayer) { // Or other checks to identify AI
+			player.updateBall(pongGame.ball);
+		}
+	});
 }
 
 
@@ -154,6 +159,7 @@ function loadFont()
 	loader.load( 'assets/fonts/BroncoPersonalUse.json', ( font ) => {
 		console.log("Font loaded", font);
 		init(font)
+
 	});
 }
 
