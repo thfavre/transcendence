@@ -61,11 +61,14 @@ export default class AiPlayer extends Player {
 		// Assuming 'physicsWorld' is in scope where you use the Ball class
 		console.log("Physics world: ", this.physicsWorld);
 		console.log("goalHiboxBody:", this.goalHiboxBody);
-		const result = this.physicsWorld.rayTest(ray.from, ray.to, {
+		const result = this.physicsWorld.raycastClosest(ray.from, ray.to, {
 			collisionFilterMask: this.goalHiboxBody.collisionFilterMask,  // Check only for collisions with the wall
 			skipBackfaces: true // Optional, to only detect front-face collisions
 		});
-
+		if (hasHit) {
+			const intersectionPoint = result.hitPointWorld;
+			console.log(hsHist )
+		}
 		// Process the result (example)
 		// if (result.hasHit) {
 		// 	console.log("Hit point:", result.hitPointWorld);
