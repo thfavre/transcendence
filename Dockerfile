@@ -1,22 +1,16 @@
-# Base Image (includes Node.js and therefore npm)
+# Select Base Image with Node.js
 FROM node:lts-alpine
 
-# Working Directory
+# Create Working Directory
 WORKDIR /app
 
-# Install Dependencies (For Vite)
+# Install (Project-Specific) Dependencies
 COPY package.json package-lock.json ./
 RUN npm install
-RUN npm install three
 
-# Build for Production
-RUN npm run build
-
-# Install a simple HTTP server
-RUN npm install -g http-server
-
-# Copy the rest of the Project Files (including the built 'dist' folder)
+# Copy Your Application Code
 COPY . .
 
-# Start the Server
-CMD ["http-server", "dist", "-p", "8080"]
+# Specify the Start Command
+CMD ["npm", "run", "dev"]
+
