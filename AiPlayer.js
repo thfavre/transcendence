@@ -8,86 +8,141 @@ export default class AiPlayer extends Player {
 
 		this.physicsWorld = physicsWorld;
 		this.ball = ball;
-		console.log("this:", this);
-		console.log("this.ball:", this.ball);
-		// this.sceneSize = bbox.getSize(new THREE.Vector3()); // size.x, size.y, size.z
-		// this.predictBall();
+		this.targetPosition = this.goalHiboxBody.centerPos;
+		this.paddlePosition = this.paddle.body.position;
 	}
-
-	// predictWallBounce(ball) {
-	// 	const bbox = new THREE.Box3().setFromObject(scene); // Assuming the scene bounds match the playing field
-	// 	const wallHit = new THREE.Vector3();
-	// 	const reflectedVelocity = new THREE.Vector3();
-
-	// 	// Predict top/bottom wall bounce
-	// 	if (ball.velocity.y > 0 && ball.position.y + ball.velocity.y > bbox.max.y) {
-	// 		wallHit.y = bbox.max.y;
-	// 		reflectedVelocity.y = -ball.velocity.y;
-	// 	} else if (ball.velocity.y < 0 && ball.position.y + ball.velocity.y < bbox.min.y) {
-	// 		wallHit.y = bbox.min.y;
-	// 		reflectedVelocity.y = -ball.velocity.y;
-	// 	}
-
-	// 	// ... (Similarly handle X-axis bounces with bbox.min.x and bbox.max.x)
-
-	// 	return { wallHit, reflectedVelocity };
-	// }
-
-	// predictPaddleIntercept(ball, aiPaddle) {
-	// 	const timeToReachWall = (bbox.max.x - ball.position.x) / ball.velocity.x;
-	// 	const predictedY = ball.position.y + ball.velocity.y * timeToReachWall;
-
-	// 	// Naive strategy: If predictedY is within the paddle's range of motion,
-	// 	// move the AI paddle towards that position (add constraints for paddle's max speed)
-	// }
 
 	updateBall(ball)
 	{
-		this.ball = ball;
-		console.log("this.ball:", this.ball);
-		console.log("Ray: ", this.launchRay(this.ball.body.position, this.ball.body.velocity));
+		// this.ball = ball;
+		console.log("Ball: ", ball);
+		// this.launchRay(ball.body.position, ball.body.velocity);
+		this.targetPosition = ball.body.position.clone().vadd(ball.body.velocity.scale(1));
+		console.log("predictedBallPosition: ", this.targetPosition);
 	}
 
-	predictBall()
-	{
-		this.launchRay(this.ball.body.position, this.ball.body.velocity.clone().normalize());
-		console.log("Ray: ", this.launchRay);
-	}
+	// movePaddle() {
+	// 	// Ensure targetPosition is initialized before using it
+	// 	if (!this.targetPosition) {
+	// 		return; // Exit movePaddle if targetPosition is not yet initialized
+	// 	}
 
-	// launch a ray and return the result
-	launchRay(ballPosition, ballVelocity) {
-		const ray = new CANNON.Ray(ballPosition, ballVelocity);
+	// 	const paddlePosition = this.centerPos;
 
-		// Assuming 'physicsWorld' is in scope where you use the Ball class
-		console.log("Physics world: ", this.physicsWorld);
-		console.log("goalHiboxBody:", this.goalHiboxBody);
-		const result = this.physicsWorld.raycastClosest(ray.from, ray.to, {
-			collisionFilterMask: this.goalHiboxBody.collisionFilterMask,  // Check only for collisions with the wall
-			skipBackfaces: true // Optional, to only detect front-face collisions
-		});
-		if (hasHit) {
-			const intersectionPoint = result.hitPointWorld;
-			console.log(hsHist )
-		}
-		// Process the result (example)
-		// if (result.hasHit) {
-		// 	console.log("Hit point:", result.hitPointWorld);
-		// }
-		console.log("result of ray: ", result);
+	// 	// Calculate the direction in which the paddle needs to move
+	// 	const moveDirection = this.targetPosition.y > paddlePosition.y ? 1 : -1;
 
-		return result; // Optional, if you need to use the result elsewhere
-	}
+	// 	// Calculate the distance between the paddle and the target position
+	// 	const distanceToTarget = Math.abs(this.targetPosition.y - paddlePosition.y);
+
+	// 	// Define a threshold to determine when the paddle has reached the target position
+	// 	const threshold = 0.1; // Adjust as needed
+
+	// 	// Check if the paddle is within the threshold distance of the target position
+	// 	if (distanceToTarget <= threshold) {
+	// 		// If the paddle is within the threshold, stop moving
+	// 		return;
+	// 	}
+
+	// 	// Move the paddle in the appropriate direction
+	// 	if (moveDirection === 1) {
+	// 		// Move up
+	// 		this.paddle.moveUp();
+	// 	} else {
+	// 		// Move down
+	// 		this.paddle.moveDown();
+	// 	}
+	// }
+
 
 	movePaddle()
 	{
-		if (Math.random() < 0.5) {  // 50% chance to move
-			if (Math.random() < 0.5) {
-				this.paddle.moveUp();
-			} else {
-				this.paddle.moveDown();
-			}
+		if (!this.targetPosition)
+			return;
+
+		// Compare the current paddle position with the target position
+
+		if (this.paddlePosition.y < this.targetPosition.y) {
+			// If the paddle is below the target position, move it up
+			this.paddle.moveUp();
+		} else if (this.paddlePosition.y > this.targetPosition.y) {
+			// If the paddle is above the target position, move it down
+			this.paddle.moveDown();
 		}
 	}
+
+	// launchRay(ballPosition, ballVelocity) {
+	// 	const ray = new CANNON.Ray(ballPosition, ballVelocity);
+
+	// 	console.log("Ray origin:", ray.from);
+	// 	console.log("Ray direction:", ray.direction);
+	// 	console.log("goalHitboxBody position:", this.goalHitboxBody.position);
+
+	// 	const intersection = ray.intersectBody(this.goalHitboxBody);
+	// 	console.log("Intersection: ", intersection);
+
+	// 	if (intersection) {
+	// 		// Intersection occurred
+	// 		console.log("Intersection point:", intersection.hitPointWorld);
+	// 	} else {
+	// 		// No intersection
+	// 	}
+
+	// 	return intersection;
+	// }
+
+
+	launchRay(ballPosition, ballVelocity) {
+		console.log("ballPosition: ", ballPosition);
+		console.log("ballVelocity: ", ballVelocity);
+
+		const ray = new CANNON.Ray(ballPosition, ballVelocity);
+
+		console.log("Ray: ", ray);
+
+		const result = new CANNON.RaycastResult();
+		ray.intersectBody(this.goalHiboxBody, result);
+
+		console.log("result : ", result);
+
+
+		// this.physicsWorld.raycastClosest(ray.from, ray.to, result);
+
+
+		// while (result.hasHit) {
+		// 	// Handle collision with wall
+		// 	const wallNormal = result.hitNormalWorld;
+		// 	const incomingVelocity = ray.direction;
+		// 	const reflectedVelocity = incomingVelocity.reflect(wallNormal);
+
+		// 	// Update ray direction with reflected velocity
+		// 	ray.direction.copy(reflectedVelocity);
+
+		// 	// Move ray origin slightly along the new direction to avoid self-collision
+		// 	ray.from.vadd(ray.direction.scale(0.01), ray.from);
+
+		// 	// Perform another raycast with updated ray
+		// 	this.physicsWorld.raycastClosest(ray, null, result);
+		// }
+
+		// After iterating through all bounces, return the final intersection point
+		return result.hitPointWorld || null;
+	}
+
+
+
+
+
+	// movePaddle()
+	// {
+	// 	if (Math.random() < 0.5) {  // 50% chance to move
+	// 		if (Math.random() < 0.5) {
+	// 			this.paddle.moveUp();
+	// 		} else {
+	// 			this.paddle.moveDown();
+	// 		}
+	// 	}
+	// }
 
 	// movePaddle() {
 	// 	const result = this.predictBall(); // Get the latest prediction

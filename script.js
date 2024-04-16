@@ -114,6 +114,7 @@ function onDocumentKeyUp(event) {
 };
 
 let time = Date.now();
+let aiLastUpdate = 0;
 function animateMenu() {
 	const currentTime = Date.now();
 	const deltaTime = currentTime - time;
@@ -134,6 +135,7 @@ function animateGame() {
 	const currentTime = Date.now();
 	const deltaTime = currentTime - time;
 	time = currentTime;
+	// aiLastUpdate = currentTime;
 	pongGame.update(deltaTime, keysdown);
 
 
@@ -143,11 +145,14 @@ function animateGame() {
 
 	renderer.render( scene, camera );
 	keysJustPressed = [];
-	pongGame.players.forEach(player => {
-		if (player instanceof AiPlayer) { // Or other checks to identify AI
-			player.updateBall(pongGame.ball);
-		}
-	});
+	if (currentTime - aiLastUpdate >= 1000) {
+		pongGame.players.forEach(player => {
+			if (player instanceof AiPlayer) { // Or other checks to identify AI
+				player.updateBall(pongGame.ball);
+			}
+		});
+		aiLastUpdate = currentTime;
+	}
 }
 
 
