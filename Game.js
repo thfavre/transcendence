@@ -28,56 +28,73 @@ export default class Game {
 		// this.finishRound()
 
 		// lights
-		var hemisphereLight = new THREE.HemisphereLight( '#ffffff', 'darkslategrey', 2);
-		scene.add(hemisphereLight);
+		this.createLight();
 
 
 		// arena
-		const fbxLoader = new FBXLoader();
-		const material = new THREE.MeshNormalMaterial()
-		fbxLoader.load(
-			'assets/models/untitled.fbx',
-			(object) => {
-				object.traverse(function (child) {
-				    // if (child.isMesh) {
-					// 	child.material = material
-					// 	if (child.material) {
-				    //         child.material.transparent = false
-				    //     }
-				    // }
-				})
-				object.scale.set(5, 5, 5)
-				object.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), Math.PI/2)
-				scene.add(object)
-			},
-			(xhr) => {
-				console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-			},
-			(error) => {
-				console.log(error)
-			}
-		);
+		// const fbxLoader = new FBXLoader();
+		// const material = new THREE.MeshNormalMaterial()
+		// fbxLoader.load(
+		// 	'assets/models/untitled.fbx',
+		// 	(object) => {
+		// 		object.traverse(function (child) {
+		// 		    // if (child.isMesh) {
+		// 			// 	child.material = material
+		// 			// 	if (child.material) {
+		// 		    //         child.material.transparent = false
+		// 		    //     }
+		// 		    // }
+		// 		})
+		// 		object.scale.set(5, 5, 5)
+		// 		object.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), Math.PI/2)
+		// 		scene.add(object)
+		// 	},
+		// 	(xhr) => {
+		// 		console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+		// 	},
+		// 	(error) => {
+		// 		console.log(error)
+		// 	}
+		// );
+	}
+
+	createLight() {
+		var hemisphereLight = new THREE.HemisphereLight( '#ddddbb', '#080820', 1);
+		console.log(hemisphereLight)
+		hemisphereLight.position.set(0, 0, 200);
+		this.scene.add(hemisphereLight);
+		// helper
+		var helper = new THREE.HemisphereLightHelper( hemisphereLight, 5 );
+		this.scene.add( helper );
+
+		// sun light, cast shadow
+		var directionalLight = new THREE.DirectionalLight( '#ffffff', 2);
+		directionalLight.position.set(100, 100, 40);
+
+		directionalLight.target.position.set(0, 0, 0);
+		directionalLight.castShadow = true;
+		directionalLight.shadow.camera.top = 100;
+		directionalLight.shadow.camera.bottom = -100;
+		directionalLight.shadow.camera.left = -100;
+		directionalLight.shadow.camera.right = 100;
+		directionalLight.shadow.camera.near = 0.1;
+		directionalLight.shadow.camera.far = 500;
+		this.scene.add(directionalLight);
+		this.directionalLight = directionalLight;
+		// helper
+		var helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
+		this.scene.add( helper );
+
+
+		var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
+
+		this.scene.add( ambientLight );
+
+
 	}
 
 
-	startNewRound() {
-		if (Date.now() - this.roundStartTimeStamp < this.roundStartTime*1000) {
-			console.log("Waiting for the round to start");
-			this.ball.body.position.set(0, 0, 3);
-			return false;
-		}
-		this.ball.removeMovingVector();
-		return true;
-	}
 
-	finishRound() {
-		if (this.ball)
-			this.deleteBall();
-		this.ball = this.createBall();
-		this.ball.drawMovingVector();
-
-		this.roundStartTimeStamp = Date.now();
-	}
 
 	createField() {
 		const geometry = new THREE.CircleGeometry( constants.FIELD_DIAMETER/2, constants.SEGMENTS );
@@ -215,7 +232,29 @@ export default class Game {
 		// vecotr from the center of the field to the ball
 	}
 
+	startNewRound() {
+		if (Date.now() - this.roundStartTimeStamp < this.roundStartTime*1000) {
+			console.log("Waiting for the round to start");
+			this.ball.body.position.set(0, 0, 3);
+			return false;
+		}
+		this.ball.removeMovingVector();
+		return true;
+	}
+
+	finishRound() {
+		if (this.ball)
+			this.deleteBall();
+		this.ball = this.createBall();
+		this.ball.drawMovingVector();
+
+		this.roundStartTimeStamp = Date.now();
+	}
+
 	update(dt, keysdown) {
+		// this.directionalLight.position.x -= 0.1;
+		// this.directionalLight.target.position.set(0, 0, 0);
+
 		if (this.startNewRound())
 			this.ball.update(dt);
 

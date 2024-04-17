@@ -9,7 +9,7 @@ export const SEGMENTS = 5; // number of players
 export const FIELD_DIAMETER = 130;
 
 
-export const SKIP_PLAYER_SELECTION = false; // HumanPlayers will move with w/s
+export const SKIP_PLAYER_SELECTION = true; // HumanPlayers will move with w/s
 
 // textures // TODO ? put in a class? other file ..?
 export const textureLoader = new THREE.TextureLoader();

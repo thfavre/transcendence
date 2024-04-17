@@ -39,8 +39,9 @@ scene.add( camera );
 // Renderer
 const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
 renderer.setSize( sizes.width, sizes.height );
-renderer.shadowMap.enabled = true;
 document.body.appendChild( renderer.domElement );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.VSMShadowMap;
 
 // light
 
@@ -141,7 +142,7 @@ function animateGame() {
 
 	// phsyics
 	physicsWorld.fixedStep(1/constants.FPS);
-	cannonDebugger.update();
+	// cannonDebugger.update();
 
 	renderer.render( scene, camera );
 	keysJustPressed = [];

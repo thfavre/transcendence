@@ -8,9 +8,10 @@ export default class Ball {
 		const geometry = new THREE.SphereGeometry(this.radius, 16, 16);
 		const material = new THREE.MeshNormalMaterial();
 		this.mesh = new THREE.Mesh(geometry, material);
+		this.mesh.castShadow = true;
 		scene.add(this.mesh);
 
-		this.moveSpeed = 40;
+		this.moveSpeed = 20;
 		this.movingAngle = 0; // will be updated in the move function
 
 

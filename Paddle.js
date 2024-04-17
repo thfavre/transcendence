@@ -13,8 +13,26 @@ function getRandomColor() {
   }
 
 export default class Paddle {
+	// Mesh materials
+	// Basic : no shading
+	// Lambert : matte material (emissive color)
+	// Phong : shiny material (specular color, shininess)
+	// Standard : combination of Lambert and Phong (metalness, roughness)
+
+	// Line materials
+
+	// Points materials
 
 	static materials = [
+		new THREE.MeshLambertMaterial(
+			{
+				color: "#FF0000",
+				// emissive: "#ff0f00",
+				// emissiveIntensity: .7,
+
+			}
+		),
+		new THREE.MeshPhongMaterial({ color: "#ff0000" }),
 		new THREE.MeshPhysicalMaterial(
 			{
 				// map: constants.textureLoader.load("assets/textures/crate.gif")
@@ -31,7 +49,6 @@ export default class Paddle {
 			}
 		),
 
-		new THREE.MeshPhongMaterial({ color: "#ff0000" }),
 		new THREE.MeshPhongMaterial({ color: "#00ff00", shininess: 200}),
 		new THREE.MeshStandardMaterial({ color: "#0000ff", roughness:0}), // or should it be defined somewhere else?
 		new THREE.MeshStandardMaterial(
@@ -70,6 +87,7 @@ export default class Paddle {
 		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
 		const material = Paddle.materials[0];//new THREE.MeshPhongMaterial({ color: getRandomColor() });
 		this.mesh = new THREE.Mesh(geometry, material);
+		this.mesh.castShadow = true;
 		scene.add(this.mesh);
 
 		// this.angle = this.angle % (2*Math.PI);
