@@ -33,30 +33,30 @@ export default class Game {
 
 
 		// arena
-		const fbxLoader = new FBXLoader();
-		const material = new THREE.MeshNormalMaterial()
-		fbxLoader.load(
-			'assets/models/untitled.fbx',
-			(object) => {
-				object.traverse(function (child) {
-				    // if (child.isMesh) {
-					// 	child.material = material
-					// 	if (child.material) {
-				    //         child.material.transparent = false
-				    //     }
-				    // }
-				})
-				object.scale.set(5, 5, 5)
-				object.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), Math.PI/2)
-				scene.add(object)
-			},
-			(xhr) => {
-				console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-			},
-			(error) => {
-				console.log(error)
-			}
-		);
+		// const fbxLoader = new FBXLoader();
+		// const material = new THREE.MeshNormalMaterial()
+		// fbxLoader.load(
+		// 	'assets/models/untitled.fbx',
+		// 	(object) => {
+		// 		object.traverse(function (child) {
+		// 		    // if (child.isMesh) {
+		// 			// 	child.material = material
+		// 			// 	if (child.material) {
+		// 		    //         child.material.transparent = false
+		// 		    //     }
+		// 		    // }
+		// 		})
+		// 		object.scale.set(5, 5, 5)
+		// 		object.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), Math.PI/2)
+		// 		scene.add(object)
+		// 	},
+		// 	(xhr) => {
+		// 		console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+		// 	},
+		// 	(error) => {
+		// 		console.log(error)
+		// 	}
+		// );
 	}
 
 
@@ -224,7 +224,7 @@ export default class Game {
 		this.players.forEach(player => {
 			player.update(keysdown);
 			if (player.isBallInGoal.a) {
-				console.log("Ball is in player", player.playerNb, "goal");
+				// console.log("Ball is in player", player.playerNb, "goal");
 				player.isBallInGoal.a = false;
 				this.finishRound();
 			}

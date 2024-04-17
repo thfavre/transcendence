@@ -167,7 +167,7 @@ export default class Menu {
 		this.camera = camera;
 		this.game = game;
 		this.font = font;
-		this.camera.position.z = 300;
+		this.camera.position.z = 308;
 
 		// this.currentPlayerCreation = 0;
 
