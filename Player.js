@@ -12,8 +12,9 @@ export default class Player {
 
 		this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
 
-		this.isBallInGoal = {a: false}; // ! TODO find a better way to do this
+		this.isBallInGoal = {a: false}; // ! TODO find a better way to do this (pass by reference)
 		this.createGoal(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, this.isBallInGoal);
+		this.health = 3;
 	}
 
 	createGoal(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, isBallInGoal) {
@@ -26,23 +27,26 @@ export default class Player {
 		centerPos.y += fieldEdgeDiameter/2*Math.sin(this.axeAngle);
 
 
-		this.goalHiboxBody = new CANNON.Body({ // Todo rename to make it more explicit ?
+		this.goalHitboxBody = new CANNON.Body({ // Todo rename to make it more explicit ?
 			mass: 0,
 			shape: new CANNON.Box(new CANNON.Vec3(.2, goalLength/2, 5)),
 			position: centerPos,
 			material: new CANNON.Material({ friction: 0, restitution: 1 }),
 		});
-		this.goalHiboxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), this.axeAngle);
-		this.goalHiboxBody.collisionResponse = false;
-		this.goalHiboxBody.isTrigger = true;
+		this.goalHitboxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), this.axeAngle);
+		this.goalHitboxBody.collisionResponse = false;
+		this.goalHitboxBody.isTrigger = true;
 
-		this.goalHiboxBody.addEventListener("collide", function(event){
+		this.goalHitboxBody.addEventListener("collide", function(event){
 			// console.log(event.body);
 			isBallInGoal.a = true;
 		});
-		physicsWorld.addBody(this.goalHiboxBody);
+		physicsWorld.addBody(this.goalHitboxBody);
+	}
 
-
+	loseHealth() {
+		this.health--;
+		console.log("Ball is in player", this.playerNb, "goal", "Health:", this.health);
 	}
 
 	movePaddle(keysdown) {
@@ -51,10 +55,16 @@ export default class Player {
 	}
 
 	update(keysdown) {
+		if (this.health <= 0) {
+			// increase the size of the paddle
+			return;
+		}
 		this.movePaddle(keysdown)
 		this.paddle.update();
 		if (this.isBallInGoal.a)
 		{
+			this.loseHealth();
+
 			// console.log("Ball is in player", this.playerNb, "goal");
 			// this.isBallInGoal.a = false;
 			// reset the ball position

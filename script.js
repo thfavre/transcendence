@@ -155,7 +155,7 @@ function animateGame() {
 function loadFont()
 {
 	const loader = new FontLoader();
-	loader.load( 'assets/fonts/BroncoPersonalUse.json', ( font ) => {
+	loader.load( 'assets/fonts/Gugi_Regular.json', ( font ) => {
 		console.log("Font loaded", font);
 		init(font)
 	});

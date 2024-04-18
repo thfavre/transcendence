@@ -263,7 +263,7 @@ export default class Game {
 		this.players.forEach(player => {
 			player.update(keysdown);
 			if (player.isBallInGoal.a) {
-				console.log("Ball is in player", player.playerNb, "goal");
+				// console.log("Ball is in player", player.playerNb, "goal");
 				player.isBallInGoal.a = false;
 				this.finishRound();
 			}
