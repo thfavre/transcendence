@@ -74,7 +74,7 @@ export default class Ball {
 		this.move(dt);
 		this.updateMeshPosAndRot();
 		// increase the speed
-		this.moveSpeed += 1/100;
+		this.moveSpeed += 2/100;
 
 	}
 

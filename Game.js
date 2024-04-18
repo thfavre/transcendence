@@ -28,7 +28,7 @@ export default class Game {
 		// this.finishRound()
 
 		// lights
-		this.createLight();
+		this.createLights();
 
 
 		// arena
@@ -58,32 +58,66 @@ export default class Game {
 		// );
 	}
 
-	createLight() {
+	createDirectionalLightTargetedOnBall(x, y, z) {
+		var directionalLight = new THREE.DirectionalLight( '#ffffff', 0.5);
+		directionalLight.position.set(x, y, z);
+
+		// directionalLight.target.position.set(0, 0, 0);
+		directionalLight.target = this.ball.mesh;
+		directionalLight.castShadow = true;
+		directionalLight.shadow.camera.top = constants.FIELD_DIAMETER/2;
+		directionalLight.shadow.camera.bottom = -constants.FIELD_DIAMETER/2;
+		directionalLight.shadow.camera.left = -constants.FIELD_DIAMETER/2;
+		directionalLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
+		directionalLight.shadow.camera.near = 0.1;
+		directionalLight.shadow.camera.far = 500;
+		// directionalLight.shadow.mapSize.width = 1024;
+		if (constants.DEBUG) {
+			var helper = new THREE.DirectionalLightHelper( directionalLight, 3 );
+			this.scene.add( helper );
+		}
+		return directionalLight;
+	}
+
+	createDirectionalLightsTargetedOnBall() {
+		if (this.directionalLights) { // erease the previous lights
+			this.directionalLights.forEach((light) => {
+				this.scene.remove(light);
+			});
+		}
+		this.directionalLights = [];
+		for (var i = 1; i < this.fieldVertices.length; i++) {
+			var vertex = this.fieldVertices[i];
+			// draw a circle with three js
+			// vector going from the center of the field to the vertex
+
+			var centerToVertex = new THREE.Vector3(vertex.x, vertex.y, 0);
+			centerToVertex.multiplyScalar(1.1);
+			// centerToVertex
+			centerToVertex.z = 60;
+			var directionalLight = this.createDirectionalLightTargetedOnBall(centerToVertex.x, centerToVertex.y, centerToVertex.z);
+			this.directionalLights.push(directionalLight);
+			this.scene.add(directionalLight);
+
+		}
+
+	}
+
+	createLights() {
 		var hemisphereLight = new THREE.HemisphereLight( '#ddddbb', '#080820', 1);
 		console.log(hemisphereLight)
 		hemisphereLight.position.set(0, 0, 200);
-		this.scene.add(hemisphereLight);
+		// this.scene.add(hemisphereLight);
 		// helper
-		var helper = new THREE.HemisphereLightHelper( hemisphereLight, 5 );
-		this.scene.add( helper );
+		if (constants.DEBUG) {
+			var helper = new THREE.HemisphereLightHelper( hemisphereLight, 5 );
+			this.scene.add( helper );
+		}
 
 		// sun light, cast shadow
-		var directionalLight = new THREE.DirectionalLight( '#ffffff', 2);
-		directionalLight.position.set(100, 100, 40);
-
-		directionalLight.target.position.set(0, 0, 0);
-		directionalLight.castShadow = true;
-		directionalLight.shadow.camera.top = 100;
-		directionalLight.shadow.camera.bottom = -100;
-		directionalLight.shadow.camera.left = -100;
-		directionalLight.shadow.camera.right = 100;
-		directionalLight.shadow.camera.near = 0.1;
-		directionalLight.shadow.camera.far = 500;
-		this.scene.add(directionalLight);
-		this.directionalLight = directionalLight;
+		// this.createDirectionalLights();
 		// helper
-		var helper = new THREE.DirectionalLightHelper( directionalLight, 5 );
-		this.scene.add( helper );
+
 
 
 		var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
@@ -246,14 +280,13 @@ export default class Game {
 		if (this.ball)
 			this.deleteBall();
 		this.ball = this.createBall();
+		this.createDirectionalLightsTargetedOnBall();
 		this.ball.drawMovingVector();
 
 		this.roundStartTimeStamp = Date.now();
 	}
 
 	update(dt, keysdown) {
-		// this.directionalLight.position.x -= 0.1;
-		// this.directionalLight.target.position.set(0, 0, 0);
 
 		if (this.startNewRound())
 			this.ball.update(dt);

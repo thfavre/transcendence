@@ -142,7 +142,8 @@ function animateGame() {
 
 	// phsyics
 	physicsWorld.fixedStep(1/constants.FPS);
-	// cannonDebugger.update();
+	if (constants.DEBUG)
+		cannonDebugger.update();
 
 	renderer.render( scene, camera );
 	keysJustPressed = [];

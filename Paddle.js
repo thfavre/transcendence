@@ -74,31 +74,34 @@ export default class Paddle {
 
 
 	constructor(scene, physicsWorld, startPos, endPos, axeAngle, fieldEdgeDiameter) {
-		this.startPos = startPos;
-		this.endPos = endPos;
 		this.axeAngle = axeAngle;
 
-		this.width = 3;
-		this.height = 14; // length of the paddle...
-		this.depth = 3;
-		this.moveSpeed = 0.6;
-		this.maxMovingDistance = (startPos.distanceTo(endPos) - this.height - fieldEdgeDiameter)/2;
-		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth, 512, 512);
+		var goalSize = startPos.distanceTo(endPos) - fieldEdgeDiameter;
+
+		// ---- Sizes ----
+		var width = 3;
+		var percentLengthSize = 0.2; // 0.5 = 50% of the goal size
+		var height = goalSize * percentLengthSize ; // length of the paddle...
+		var depth = 3;
+
+		// ---- Moving ----
+		this.maxMovingDistance = goalSize/2 - height/2;
+		var goalDeplacementTime = 1.5; // time to go from one side to the other [s]
+		this.moveSpeed = this.maxMovingDistance / goalDeplacementTime / constants.FPS;
+
+		// ---- Mesh ----
+		const geometry = new THREE.BoxGeometry(width, height, depth, 1, 1);
 		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
-		const material = Paddle.materials[0];//new THREE.MeshPhongMaterial({ color: getRandomColor() });
+		const material = Paddle.materials[0];
 		this.mesh = new THREE.Mesh(geometry, material);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
 
-		// this.angle = this.angle % (2*Math.PI);
-		var dX = endPos.x - startPos.x;
-		var dY = endPos.y - startPos.y;
-		this.centerPos = new THREE.Vector3(startPos.x + dX/2, startPos.y + dY/2, this.depth/2);
-
 		// ---- Physics ----
+		this.centerPos = new THREE.Vector3(startPos.x + (endPos.x - startPos.x)/2, startPos.y + (endPos.y - startPos.y)/2, depth/2);
 		this.body = new CANNON.Body({
 			mass: 0,
-			shape: new CANNON.Box(new CANNON.Vec3(this.width/2, this.height/2, this.depth/2)),
+			shape: new CANNON.Box(new CANNON.Vec3(width/2, height/2, depth/2)),
 			position: this.centerPos,
 			// linearDamping: 0,
 			material: new CANNON.Material({ friction: 0, restitution: 1 }),
@@ -107,18 +110,7 @@ export default class Paddle {
 		this.body.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), this.axeAngle);
 		physicsWorld.addBody(this.body);
 
-		//
 		this.updateMeshPosAndRot();
-
-		// ---- Helpers ----
-		var axe = new THREE.AxesHelper(10);
-		axe.renderOrder = 2;
-		this.mesh.add(axe);
-		// // grid
-		// var grid = new THREE.GridHelper( FIELD_LENGTH, 20, 0x000000, 0x000000 );
-		// // grid.translateZ(3);
-		// grid.renderOrder = 1;
-		// this.mesh.add(grid);
 	}
 
 	getNextMaterial() {
