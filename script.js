@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -24,10 +28,12 @@ const sizes = {
 
 // Scene
 const scene = new THREE.Scene();
-// scene.background = new THREE.Color(0xAAAAAA);
-scene.background = constants.textureLoader.load("assets/textures/space.jpg");
-const axesHelper = new THREE.AxesHelper(10);
-scene.add(axesHelper);
+scene.background = new THREE.Color('#000000');
+// scene.background = constants.textureLoader.load("assets/textures/space.jpg");
+if (constants.DEBUG) {
+	const axesHelper = new THREE.AxesHelper(10);
+	scene.add(axesHelper);
+}
 // scence background
 
 
@@ -42,6 +48,22 @@ renderer.setSize( sizes.width, sizes.height );
 document.body.appendChild( renderer.domElement );
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.VSMShadowMap;
+renderer.toneMapping = THREE.CineonToneMapping; // ReinhardToneMapping
+renderer.toneMappingExposure = 1.5;
+
+// postprocessing
+const renderScene = new RenderPass(scene, camera);
+const composer = new EffectComposer(renderer);
+composer.addPass(renderScene);
+// bloom
+const bloomPass = new UnrealBloomPass(new THREE.Vector2(sizes.width, sizes.height), 0.3, 0.08, 0.5);
+composer.addPass(bloomPass);
+// ouputPass
+const outputPass = new OutputPass(scene, camera);
+composer.addPass(outputPass);
+
+
+
 
 // light
 
@@ -127,6 +149,7 @@ function animateMenu() {
 		window.requestAnimationFrame( animateMenu );
 
 	renderer.render( scene, camera );
+	composer.render();
 	keysJustPressed = [];
 
 }
@@ -146,6 +169,7 @@ function animateGame() {
 		cannonDebugger.update();
 
 	renderer.render( scene, camera );
+	composer.render();
 	keysJustPressed = [];
 
 }

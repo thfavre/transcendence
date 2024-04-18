@@ -1,7 +1,11 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import * as constants from './constants.js';
+
+import createLine from './createLine.js';
 
 function getRandomColor() {
 	var letters = '0123456789ABCDEF';
@@ -24,9 +28,9 @@ export default class Paddle {
 	// Points materials
 
 	static materials = [
-		new THREE.MeshLambertMaterial(
+		new THREE.MeshBasicMaterial(
 			{
-				color: "#FF0000",
+				color: "#666666",
 				// emissive: "#ff0f00",
 				// emissiveIntensity: .7,
 
@@ -90,12 +94,42 @@ export default class Paddle {
 		this.moveSpeed = this.maxMovingDistance / goalDeplacementTime / constants.FPS;
 
 		// ---- Mesh ----
-		const geometry = new THREE.BoxGeometry(width, height, depth, 1, 1);
+		const geometry = new THREE.BoxGeometry(width, height, depth);
 		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
 		const material = Paddle.materials[0];
 		this.mesh = new THREE.Mesh(geometry, material);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
+
+		// edge colors
+		var edgePoints = [];
+		// geometry.ed
+		const edgesGeometry = new THREE.EdgesGeometry(geometry);
+		for (var i = 0; i < edgesGeometry.attributes.position.array.length; i++) {
+			if (i >= 21 && i <30)
+				continue;
+			edgePoints.push(edgesGeometry.attributes.position.array[i]);
+			// if (i==2)
+			// 	break
+		}
+
+
+		this.mesh.add(createLine({points: edgePoints})); // edgesGeometry.attributes.position.array
+		// const lineGeometry = new LineGeometry();
+		// lineGeometry.setPositions(edgesGeometry.attributes.position.array);
+		// // const edgesGeometry = new LineGeometry();
+		// // edgesGeometry.setPositions(geometry.attributes.position.array);
+
+		// const edgesMaterial = new LineMaterial({
+		// 	color: '#3CD6EB',
+		// 	linewidth: 0.005, // in pixels
+		// });
+
+		// const edgeLine = new Line2(lineGeometry, edgesMaterial);
+		// this.mesh.add(edgeLine);
+
+
+
 
 		// ---- Physics ----
 		this.centerPos = new THREE.Vector3(startPos.x + (endPos.x - startPos.x)/2, startPos.y + (endPos.y - startPos.y)/2, depth/2);

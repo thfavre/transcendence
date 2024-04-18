@@ -5,6 +5,7 @@ import Ball from './Ball.js';
 import * as constants from './constants.js';
 import HumanPlayer from './HumanPlayer.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+import createLine from './createLine.js';
 
 export default class Game {
 	constructor(scene, physicsWorld, camera) {
@@ -104,10 +105,10 @@ export default class Game {
 	}
 
 	createLights() {
-		var hemisphereLight = new THREE.HemisphereLight( '#ddddbb', '#080820', 1);
+		var hemisphereLight = new THREE.HemisphereLight( '#ddddbb', '#111111', 1);
 		console.log(hemisphereLight)
 		hemisphereLight.position.set(0, 0, 200);
-		// this.scene.add(hemisphereLight);
+		this.scene.add(hemisphereLight);
 		// helper
 		if (constants.DEBUG) {
 			var helper = new THREE.HemisphereLightHelper( hemisphereLight, 5 );
@@ -122,9 +123,7 @@ export default class Game {
 
 		var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
 
-		this.scene.add( ambientLight );
-
-
+		// this.scene.add( ambientLight );
 	}
 
 
@@ -132,16 +131,17 @@ export default class Game {
 
 	createField() {
 		const geometry = new THREE.CircleGeometry( constants.FIELD_DIAMETER/2, constants.SEGMENTS );
-		const material = new THREE.MeshPhongMaterial( { color: "#2c3e50" } );
+		const material = new THREE.MeshPhongMaterial( { color: "#666666" } );
 		const field = new THREE.Mesh( geometry, material );
 		field.receiveShadow = true;
 		this.scene.add(field);
+		this.scene.add(createLine({points: geometry.attributes.position.array.slice(3)}));
 
 		var fieldVertices = this.getFieldVertices(field);
 
 		// draw the center of the field
 		const centerGeometry = new THREE.CircleGeometry( 2, constants.SEGMENTS );
-		const centerMaterial = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+		const centerMaterial = new THREE.MeshBasicMaterial( { color: '#C2F988' } );
 		const centerMesh = new THREE.Mesh( centerGeometry, centerMaterial );
 		this.scene.add(centerMesh);
 
@@ -189,7 +189,7 @@ export default class Game {
 		this.physicsWorld.addBody(edgeBody);
 		// visual
 		const edgeGeometry = new THREE.CylinderGeometry( cylinderRadius, cylinderRadius, cylinderHeight, 32 );
-		const edgeMaterial = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+		const edgeMaterial = new THREE.MeshBasicMaterial( {color: '#C2F988'} );
 		const edgeMesh = new THREE.Mesh( edgeGeometry, edgeMaterial );
 		edgeMesh.position.copy(edgeBody.position);
 		edgeMesh.quaternion.copy(edgeBody.quaternion);

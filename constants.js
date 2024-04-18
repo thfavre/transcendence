@@ -5,13 +5,13 @@ import * as THREE from 'three';
 
 export const FPS = 60;
 
-export const SEGMENTS = 3; // number of players
+export const SEGMENTS = 6; // number of players
 export const FIELD_DIAMETER = 130;
 
 
-export const SKIP_PLAYER_SELECTION = true; // HumanPlayers will move with w/s
+export const SKIP_PLAYER_SELECTION = false; // HumanPlayers will move with w/s
 
-export const DEBUG = true;
+export const DEBUG = false;
 
 // textures // TODO ? put in a class? other file ..?
 export const textureLoader = new THREE.TextureLoader();
@@ -25,3 +25,7 @@ export const textureMetalHeightMap = textureLoader.load("assets/textures/metal-0
 export const textureMetalRoughnessMap = textureLoader.load("assets/textures/metal-003/Metal_Tiles_003_roughness.jpg");
 export const textureMetalAmbientOcclusionMap = textureLoader.load("assets/textures/metal-003/Metal_Tiles_003_ambientOcclusion.jpg");
 export const textureMetallic = textureLoader.load("assets/textures/metal-003/Metal_Tiles_003_metallic.jpg");
+
+
+// COLORS!!
+// https://mycolor.space/?hex=%233CD6EB&sub=1
