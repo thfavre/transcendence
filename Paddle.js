@@ -90,7 +90,7 @@ export default class Paddle {
 
 		// ---- Moving ----
 		this.maxMovingDistance = goalSize/2 - height/2;
-		var goalDeplacementTime = 1.5; // time to go from one side to the other [s]
+		var goalDeplacementTime = 0.5; // time to go from one side to the other [s]
 		this.moveSpeed = this.maxMovingDistance / goalDeplacementTime / constants.FPS;
 
 		// ---- Mesh ----

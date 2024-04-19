@@ -11,7 +11,7 @@ export default class Ball {
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
 
-		this.moveSpeed = 20;
+		this.moveSpeed = 40;
 		this.movingAngle = 0; // will be updated in the move function
 
 

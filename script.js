@@ -50,6 +50,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.VSMShadowMap;
 renderer.toneMapping = THREE.CineonToneMapping; // ReinhardToneMapping
 renderer.toneMappingExposure = 1.5;
+renderer.setPixelRatio(window.devicePixelRatio);
 
 // postprocessing
 const renderScene = new RenderPass(scene, camera);

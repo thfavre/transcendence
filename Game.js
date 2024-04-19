@@ -6,6 +6,7 @@ import * as constants from './constants.js';
 import HumanPlayer from './HumanPlayer.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import createLine from './createLine.js';
+import Background from './Background.js';
 
 export default class Game {
 	constructor(scene, physicsWorld, camera) {
@@ -57,6 +58,8 @@ export default class Game {
 		// 		console.log(error)
 		// 	}
 		// );
+
+		this.background = new Background(scene);
 	}
 
 	createDirectionalLightTargetedOnBall(x, y, z) {
