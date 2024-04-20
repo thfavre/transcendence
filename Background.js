@@ -12,8 +12,7 @@ function getRandomPointAnnulus(radius1, radius2) {
 
 
 class OrbitMovement {
-	constructor(center, radius, speedX=THREE.MathUtils.randFloat(0.0005, 0.005), speedY=THREE.MathUtils.randFloat(0.0005, 0.005), speedZ=THREE.MathUtils.randFloat(0.0001, 0.001)) {
-		console.log(speedY)
+	constructor(center, radius, speedX=THREE.MathUtils.randFloat(0.001, 0.009), speedY=THREE.MathUtils.randFloat(0.001, 0.009), speedZ=THREE.MathUtils.randFloat(0.0001, 0.001)) {
 		this.center = center;
 		this.radius = radius;
 		this.speedX = speedX;
@@ -37,7 +36,7 @@ class OrbitMovement {
 	}
 }
 
-class movingSphere extends OrbitMovement {
+class MovingSphere extends OrbitMovement {
 	constructor(x, y, z) {
 		super(new THREE.Vector3(x, y, z), 10);
 		this.mesh = this.createSphereMesh(x, y, z);
@@ -47,7 +46,8 @@ class movingSphere extends OrbitMovement {
 	createSphereMesh(x, y, z) {
 		const sphereRadius = THREE.MathUtils.randFloat(0.1, 1.2)
 		const geometry = new THREE.SphereGeometry(sphereRadius, 12, 12);
-		const material = new THREE.MeshBasicMaterial({ color: '#faed3b' });
+		// const geometry = new THREE.TorusGeometry(sphereRadius, 1, 3);
+		const material = new THREE.MeshBasicMaterial({ color: '#FFFFFF' });
 		const mesh = new THREE.Mesh(geometry, material);
 		mesh.position.set(x, y, z);
 		return mesh;
@@ -55,11 +55,42 @@ class movingSphere extends OrbitMovement {
 
 	update() {
 		this.mesh.position.copy(this.getUpdatedPos());
-		// this.mesh.scale.x = Math.sin(this.growSpeed)*3 + 4;
-		// this.mesh.scale.y = Math.sin(this.growSpeed)*3 + 4;
-		// this.mesh.scale.z = Math.sin(this.growSpeed)*3 + 4;
+		// this.mesh.scale.x = Math.sin(this.growSpeed)*2 + 2.1;
+		// this.mesh.scale.y = Math.sin(this.growSpeed)*2 + 2.1;
+		// this.mesh.scale.z = Math.sin(this.growSpeed)*2 + 2.1;
 		// this.growSpeed += 0.01;
 	}
+}
+
+class MovingTorus extends OrbitMovement {
+	constructor(x, y, z) {
+		super(new THREE.Vector3(x, y, z), 10);
+		this.mesh = this.createTorusMesh(x, y, z);
+		this.rotateSpeed = [THREE.MathUtils.randFloat(0.001, 0.01), THREE.MathUtils.randFloat(0.001, 0.01), THREE.MathUtils.randFloat(0.001, 0.01)];
+	}
+
+	createTorusMesh(x, y, z) {
+		const torusRadius = THREE.MathUtils.randFloat(3, 6)
+		const torusTube = THREE.MathUtils.randFloat(torusRadius-2, torusRadius-1)
+		// const geometry = new THREE.TorusGeometry(torusRadius, torusTube, 12, 48);
+		const geometry = new THREE.IcosahedronGeometry(torusRadius);
+		const material = new THREE.MeshStandardMaterial({ color: '#80d0d9' });
+		const mesh = new THREE.Mesh(geometry, material);
+		mesh.position.set(x, y, z);
+		return mesh;
+	}
+
+	rotate() {
+		this.mesh.rotation.x += this.rotateSpeed[0];
+		this.mesh.rotation.y += this.rotateSpeed[1];
+		this.mesh.rotation.z += this.rotateSpeed[2];
+	}
+
+	update() {
+		// this.mesh.position.copy(this.getUpdatedPos());
+		this.rotate();
+	}
+
 }
 
 class MovingBox extends OrbitMovement {
@@ -132,8 +163,10 @@ export default class Background {
 	constructor(scene) {
 		this.scene = scene;
 		this.stars = []
-		// this.stars.push(...this.createMovingObject(movingSphere, {number: 100, maxSpawnDistance: 200, spawnUnderField: true}));
+		this.stars.push(...this.createMovingObject(MovingSphere, {number: 100, maxSpawnDistance: 200, spawnUnderField: true}));
+		// this.stars.push(...this.createMovingObject(MovingTorus, {number: 100, maxSpawnDistance: 200, spawnUnderField: true}));
 		// this.stars.push(...this.createMovingObject(MovingBox, {number: 150, maxSpawnDistance: 100, spawnUnderField: true}));
+		// this.stars.push(...this.createMovingObject(FallingBox, {number: 100, maxSpawnDistance: 200, spawnUnderField: false}));
 		this.stars.push(...this.createMovingObject(FallingBox, {number: 100, maxSpawnDistance: 200, spawnUnderField: false}));
 	}
 

@@ -138,7 +138,8 @@ export default class Game {
 		const field = new THREE.Mesh( geometry, material );
 		field.receiveShadow = true;
 		this.scene.add(field);
-		this.scene.add(createLine({points: geometry.attributes.position.array.slice(3)}));
+		// field border lines colors
+		this.scene.add(createLine({points: geometry.attributes.position.array.slice(3), color: '#3CD6EB', lineWidth: 0.004}));
 
 		var fieldVertices = this.getFieldVertices(field);
 
@@ -146,6 +147,7 @@ export default class Game {
 		const centerGeometry = new THREE.CircleGeometry( 2, constants.SEGMENTS );
 		const centerMaterial = new THREE.MeshBasicMaterial( { color: '#C2F988' } );
 		const centerMesh = new THREE.Mesh( centerGeometry, centerMaterial );
+		centerMesh.position.set(0, 0, 1);
 		this.scene.add(centerMesh);
 
 		this.createFieldEdges(fieldVertices);
@@ -164,7 +166,7 @@ export default class Game {
 		return fieldVertices;
 	}
 
-	createFieldEdges(fieldVertices) {
+	createFieldEdges(fieldVertices) { // ? TODO : rename Edge to pylons
 		for (var i = 1; i < fieldVertices.length; i++) {
 			var vertex = fieldVertices[i];
 			// if (i == fieldVertices.length-1) {
@@ -179,7 +181,7 @@ export default class Game {
 
 	createEdge(position) {
 		const cylinderRadius = this.fieldEdgeDiameter/2;
-		const cylinderHeight = 10;
+		const cylinderHeight = 3;
 		// physics
 		const edgeShape = new CANNON.Cylinder(cylinderRadius, cylinderRadius, cylinderHeight, 32);
 		const edgeBody = new CANNON.Body({
@@ -192,7 +194,7 @@ export default class Game {
 		this.physicsWorld.addBody(edgeBody);
 		// visual
 		const edgeGeometry = new THREE.CylinderGeometry( cylinderRadius, cylinderRadius, cylinderHeight, 32 );
-		const edgeMaterial = new THREE.MeshBasicMaterial( {color: '#C2F988'} );
+		const edgeMaterial = new THREE.MeshStandardMaterial( {color: '#3CD6EB'} );
 		const edgeMesh = new THREE.Mesh( edgeGeometry, edgeMaterial );
 		edgeMesh.position.copy(edgeBody.position);
 		edgeMesh.quaternion.copy(edgeBody.quaternion);
@@ -251,7 +253,7 @@ export default class Game {
 		var ballAngle = this.ball.movingAngle;
 
 		this.camera.position.copy(this.ball.mesh.position);
-		this.camera.position.z += 20;
+		this.camera.position.z += 5;
 		var xComposant = Math.cos(ballAngle) * 10;
 		var yComposant = Math.sin(ballAngle) * 10;
 		this.camera.position.x -= xComposant;
@@ -291,7 +293,7 @@ export default class Game {
 
 	update(dt, keysdown) {
 		this.background.update();
-
+		this.makeBallPOV()
 		if (this.startNewRound())
 			this.ball.update(dt);
 

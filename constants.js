@@ -1,5 +1,9 @@
 // import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
 import * as THREE from 'three';
+// import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+
 
 
 
@@ -25,6 +29,19 @@ export const textureMetalHeightMap = textureLoader.load("assets/textures/metal-0
 export const textureMetalRoughnessMap = textureLoader.load("assets/textures/metal-003/Metal_Tiles_003_roughness.jpg");
 export const textureMetalAmbientOcclusionMap = textureLoader.load("assets/textures/metal-003/Metal_Tiles_003_ambientOcclusion.jpg");
 export const textureMetallic = textureLoader.load("assets/textures/metal-003/Metal_Tiles_003_metallic.jpg");
+
+
+// model
+// Basket Ball by Zsky [CC-BY] via Poly Pizza
+// export const modelBasketBall = "assets/models/Basket Ball.glb";
+export const ballsModels = [
+	"assets/models/balls/Basket Ball.glb",
+	"assets/models/balls/8 Ball.glb",
+	"assets/models/balls/beach ball.glb",
+
+]
+// const loader = new GLTFLoader();
+
 
 
 // COLORS!!
