@@ -1,16 +1,23 @@
-# Select Base Image with Node.js
+# Base image (still using Node.js)
 FROM node:lts-alpine
 
-# Create Working Directory
+# Working directory
+RUN mkdir /app
 WORKDIR /app
 
-# Install (Project-Specific) Dependencies
+# Install dependencies
 COPY package.json package-lock.json ./
-RUN npm install
+COPY . /app
 
-# Copy Your Application Code
+RUN npm install
+RUN npm run build
+
+# Copy project source code
 COPY . .
 
-# Specify the Start Command
-CMD ["npm", "run", "dev"]
+# Expose Vite's default port
+EXPOSE 5173
+
+# Start the Vite development server
+CMD [ "npm", "run", "dev" ]
 

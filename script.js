@@ -135,21 +135,15 @@ function animateGame() {
 	const currentTime = Date.now();
 	const deltaTime = currentTime - time;
 	time = currentTime;
-	// if (currentTime - aiLastUpdate >= 1000) {
-	// 	pongGame.players.forEach(player => {
-	// 		if (player instanceof AiPlayer) {
-	// 			player.updateBall(pongGame.ball);
-	// 		}
-	// 	});
-	// 	aiLastUpdate = currentTime;
-	// }
-	pongGame.players.forEach(player => {
-		if (player instanceof AiPlayer) {
-			player.updateBall(pongGame.ball);
-		}
-	});
+	if (currentTime - aiLastUpdate >= 500) {
+		pongGame.players.forEach(player => {
+			if (player instanceof AiPlayer) {
+				player.updateBall(pongGame.ball);
+			}
+		});
+		aiLastUpdate = currentTime;
+	}
 	pongGame.update(deltaTime, keysdown);
-
 
 	// phsyics
 	physicsWorld.fixedStep(1/constants.FPS);

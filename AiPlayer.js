@@ -1,6 +1,9 @@
-// import * as THREE from 'three';
-// import * as CANNON from 'cannon-es';
+import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+import { Vec3 } from 'cannon-es';
 import Player from './Player';
+import { OBB } from 'three/addons/math/OBB.js';
+// import { PointLightShadow } from 'three';
 
 export default class AiPlayer extends Player {
 	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, ball) {
@@ -11,59 +14,55 @@ export default class AiPlayer extends Player {
 		// this.targetPosition = this.goalHiboxBody;
 		this.paddlePosition = this.paddle.body.position;
 
+		// Wall
+		this.goalLength = startPos.distanceTo(endPos);
+		var dX = endPos.x - startPos.x;
+		var dY = endPos.y - startPos.y;
+		this.centerPos = new THREE.Vector3(startPos.x + dX/2, startPos.y + dY/2, 0);
+		this.centerPos.x += fieldEdgeDiameter/2*Math.cos(this.axeAngle);
+		this.centerPos.y += fieldEdgeDiameter/2*Math.sin(this.axeAngle);
 	}
-
-	// updateBall(ball) {
-	// 	// Clone ball's position and add its velocity to get target position
-	// 	this.targetPosition = ball.body.position.clone().vadd(ball.body.velocity.scale(1));
-
-	// 	// Check if targetPosition is inside the goal's bounding box
-	// 	if (this.isInsideGoal(this.targetPosition)) {
-	// 		// Handle case when targetPosition is inside the goal
-	// 		console.log("Target position is inside the goal");
-	// 	} else {
-	// 		// Handle case when targetPosition is outside the goal
-	// 		console.log("Target position is outside the goal");
-	// 	}
-	// }
-
-	// isInsideGoal(position) {
-	// 	// Get the position of the goal's bounding box
-	// 	const goalPosition = this.goalHiboxBody.position;
-	// 	const goalHalfExtents = this.goalHiboxBody.shape.halfExtents;
-
-	// 	// Check if the target position is within the bounding box of the goal
-	// 	return (
-	// 		position.x >= goalPosition.x - goalHalfExtents.x &&
-	// 		position.x <= goalPosition.x + goalHalfExtents.x &&
-	// 		position.y >= goalPosition.y - goalHalfExtents.y &&
-	// 		position.y <= goalPosition.y + goalHalfExtents.y
-	// 	);
-	// }
-
 
 	updateBall(ball)
 	{
-		// this.ball = ball;
+		this.targetPosition = this.getInter(ball);
+
 		console.log("ball: ", ball);
-		// this.launchRay(ball.body.position, ball.body.velocity);
-		this.targetPosition = ball.body.position.clone().vadd(ball.body.velocity.scale(1));
-		// Create a sphere geometry for the target position marker
-		// const targetGeometry = new THREE.SphereGeometry(0.5); // Adjust the radius as needed
-		// const targetMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Choose a color
-		// const targetMarker = new THREE.Mesh(targetGeometry, targetMaterial);
-
-		// // Set the position of the target marker to the target position
-		// targetMarker.position.copy(this.targetPosition);
-
-		// // Add the target marker to your scene
-		// this.scene.add(targetMarker);
-
 		console.log("targetPosition: ", this.targetPosition);
-		console.log("paddle: ", this.paddle);
 	}
 
+	getInter(ball)
+	{
+		var dX = ball.moveSpeed * Math.cos(ball.movingAngle);
+		var dY = ball.moveSpeed * Math.sin(ball.movingAngle);
+		var ballSlope = dX / dY;
+		var ballIntercept = ball.mesh.position.y - ballSlope * ball.mesh.position.x;
 
+		var wallAngle = this.quatToRad();
+		var halfLen = this.goalLength / 2;
+		var end1_x = ball.mesh.position.x + halfLen * Math.cos(wallAngle);
+		var end1_y = ball.mesh.position.y + halfLen * Math.sin(wallAngle);
+		var end2_x = ball.mesh.position.x - halfLen * Math.cos(wallAngle);
+		var end2_y = ball.mesh.position.y - halfLen * Math.sin(wallAngle);
+
+		var wallSlope = (end2_y - end1_y) / (end2_x - end1_x);
+		var wallIntercept = end1_y - wallSlope * end1_x;
+
+		const inter = new CANNON.Vec3();
+		inter.x = (wallIntercept - ballIntercept) / (ballSlope - wallSlope);
+		inter.y = ballSlope * inter.x + ballIntercept;
+		inter.z = 0;
+
+		return inter;
+	}
+
+	quatToRad()
+	{
+		let eulerAngles = new CANNON.Vec3();
+		this.goalHiboxBody.quaternion.toEuler(eulerAngles);
+
+		return eulerAngles.x;
+	}
 
 	movePaddle()
 	{
@@ -71,13 +70,13 @@ export default class AiPlayer extends Player {
 			return;
 		}
 
-		const movementTolerance = 0.05;
+		const forwardDirection = new THREE.Vector3(0, 1, 0).applyQuaternion(this.paddle.mesh.quaternion);
+		const offsetToTarget = new THREE.Vector3().subVectors(this.targetPosition, this.paddlePosition);
+		const projectionDistance = offsetToTarget.dot(forwardDirection);
 
-		if (this.paddlePosition.distanceTo(this.targetPosition) < movementTolerance) {
-			// Paddle is close enough - don't move.
-		} else if (this.paddlePosition.y < this.targetPosition.y) {
+		if (projectionDistance > 0) {
 			this.paddle.moveUp();
-		} else if (this.paddlePosition.y > this.targetPosition.y) {
+		} else if (projectionDistance < 0) {
 			this.paddle.moveDown();
 		}
 	}
@@ -90,41 +89,4 @@ export default class AiPlayer extends Player {
 			// super.update(keysdown);  // Call the parent class's update()
 		// }
 	}
-
-	// launchRay(ballPosition, ballVelocity) {
-	// 	console.log("ballPosition: ", ballPosition);
-	// 	console.log("ballVelocity: ", ballVelocity);
-
-	// const ray = new CANNON.Ray(ballPosition, ballVelocity);
-
-	// 	console.log("Ray: ", ray);
-
-	// 	const result = new CANNON.RaycastResult();
-	// 	ray.intersectBody(this.goalHiboxBody, result);
-
-	// 	console.log("result : ", result);
-
-
-	// 	// this.physicsWorld.raycastClosest(ray.from, ray.to, result);
-
-
-	// 	// while (result.hasHit) {
-	// 	// 	// Handle collision with wall
-	// 	// 	const wallNormal = result.hitNormalWorld;
-	// 	// 	const incomingVelocity = ray.direction;
-	// 	// 	const reflectedVelocity = incomingVelocity.reflect(wallNormal);
-
-	// 	// 	// Update ray direction with reflected velocity
-	// 	// 	ray.direction.copy(reflectedVelocity);
-
-	// 	// 	// Move ray origin slightly along the new direction to avoid self-collision
-	// 	// 	ray.from.vadd(ray.direction.scale(0.01), ray.from);
-
-	// 	// 	// Perform another raycast with updated ray
-	// 	// 	this.physicsWorld.raycastClosest(ray, null, result);
-	// 	// }
-
-	// 	// After iterating through all bounces, return the final intersection point
-	// 	return result.hitPointWorld || null;
-	// }
 }
