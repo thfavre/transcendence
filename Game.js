@@ -290,6 +290,7 @@ export default class Game {
 	}
 
 	update(dt, keysdown) {
+		this.background.update();
 
 		if (this.startNewRound())
 			this.ball.update(dt);

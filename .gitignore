@@ -2,4 +2,4 @@
 fsevents
 rollup-darwin-arm64
 darwin-arm64
-node_module/
+node_modules/
