@@ -181,7 +181,7 @@ export default class Game {
 
 	createEdge(position) {
 		const cylinderRadius = this.fieldEdgeDiameter/2;
-		const cylinderHeight = 3;
+		const cylinderHeight = 3.2;
 		// physics
 		const edgeShape = new CANNON.Cylinder(cylinderRadius, cylinderRadius, cylinderHeight, 32);
 		const edgeBody = new CANNON.Body({
@@ -293,7 +293,7 @@ export default class Game {
 
 	update(dt, keysdown) {
 		this.background.update();
-		this.makeBallPOV()
+		// this.makeBallPOV()
 		if (this.startNewRound())
 			this.ball.update(dt);
 

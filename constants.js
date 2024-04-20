@@ -37,8 +37,10 @@ export const textureMetallic = textureLoader.load("assets/textures/metal-003/Met
 export const ballsModels = [
 	"assets/models/balls/Basket Ball.glb",
 	"assets/models/balls/8 Ball.glb",
+	"assets/models/balls/Raw ham.glb",
+	"assets/models/balls/Small Airplane.glb",
 	"assets/models/balls/beach ball.glb",
-
+	"assets/models/balls/Chicken.glb",
 ]
 // const loader = new GLTFLoader();
 

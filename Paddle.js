@@ -199,8 +199,8 @@ export default class Paddle {
 		this.move(-this.moveSpeed);
 	}
 
-	bounceBall(ball) {
-
+	scale(scale) {
+		this.mesh.scale.y += scale;
 	}
 
 	updateMeshPosAndRot() {
