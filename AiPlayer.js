@@ -11,7 +11,7 @@ export default class AiPlayer extends Player {
 
 		this.physicsWorld = physicsWorld;
 		this.ball = ball;
-		// this.targetPosition = this.goalHiboxBody;
+		this.targetPosition = this.goalHiboxBody.position;
 		this.paddlePosition = this.paddle.body.position;
 
 		// Wall
@@ -79,6 +79,16 @@ export default class AiPlayer extends Player {
 		} else if (projectionDistance < 0) {
 			this.paddle.moveDown();
 		}
+	}
+
+	drawSphere() {
+		if (this.targetPositionSphereMesh)
+			this.paddle.mesh.remove(this.targetPositionSphereMesh);
+		const geometry = new THREE.SphereGeometry(4, 5, 5);
+		const material = new THREE.MeshBasicMaterial({color: 0xff0022});
+		this.targetPositionSphereMesh = new THREE.Mesh(geometry, material);
+		this.targetPositionSphereMesh.position.copy(this.targetPosition);
+		this.paddle.mesh.add(this.targetPositionSphereMesh);
 	}
 
 	update()
