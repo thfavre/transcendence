@@ -1,7 +1,11 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import * as constants from './constants.js';
+
+import createLine from './createLine.js';
 
 function getRandomColor() {
 	var letters = '0123456789ABCDEF';
@@ -13,37 +17,125 @@ function getRandomColor() {
   }
 
 export default class Paddle {
+	// Mesh materials
+	// Basic : no shading
+	// Lambert : matte material (emissive color)
+	// Phong : shiny material (specular color, shininess)
+	// Standard : combination of Lambert and Phong (metalness, roughness)
+
+	// Line materials
+
+	// Points materials
 
 	static materials = [
+		new THREE.MeshBasicMaterial(
+			{
+				color: "#666666",
+				// emissive: "#ff0f00",
+				// emissiveIntensity: .7,
+
+			}
+		),
 		new THREE.MeshPhongMaterial({ color: "#ff0000" }),
+		new THREE.MeshPhysicalMaterial(
+			{
+				// map: constants.textureLoader.load("assets/textures/crate.gif")
+				color: "#ffcfff",
+				transmission: 1,
+				roughness: 0.3,
+				ior: 1.7,
+				thickness: 0.5,
+				specularIntensity: 1,
+				clearcoat: 1,
+				sheen: 1,
+				sheenColor: new THREE.Color(0xff0000),
+
+			}
+		),
+
 		new THREE.MeshPhongMaterial({ color: "#00ff00", shininess: 200}),
-		new THREE.MeshStandardMaterial({ color: "#0000ff", roughness:0})]; // or should it be defined somewhere else?
+		new THREE.MeshStandardMaterial({ color: "#0000ff", roughness:0}), // or should it be defined somewhere else?
+		new THREE.MeshStandardMaterial(
+			{
+				map: constants.textureCratesBaseColor,
+			}
+		),
+		new THREE.MeshStandardMaterial(
+			{
+				map: constants.textureMetalBaseColor,
+				normalMap: constants.textureMetalNormalMap,
+				displacementMap: constants.textureMetalHeightMap,
+				displacementScale: 0.07,
+				roughnessMap: constants.textureMetalRoughnessMap,
+				roughness: 0.5,
+				aoMap: constants.textureMetalAmbientOcclusionMap,
+				aoMapIntensity: 1,
+				// metalnessMap: constants.textureMetallic,
+				// metalness: 1,
+			}
+		),
+	];
 
 
 	constructor(scene, physicsWorld, startPos, endPos, axeAngle, fieldEdgeDiameter) {
-		this.startPos = startPos;
-		this.endPos = endPos;
 		this.axeAngle = axeAngle;
 
-		this.width = 3;
-		this.height = 14; // length of the paddle...
-		this.depth = 3;
-		this.moveSpeed = 0.6;
-		this.maxMovingDistance = (startPos.distanceTo(endPos) - this.height - fieldEdgeDiameter)/2;
-		const geometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-		const material = Paddle.materials[0];//new THREE.MeshPhongMaterial({ color: getRandomColor() });
+		var goalSize = startPos.distanceTo(endPos) - fieldEdgeDiameter;
+
+		// ---- Sizes ----
+		var width = 3;
+		var percentLengthSize = 0.2; // 0.5 = 50% of the goal size
+		var height = goalSize * percentLengthSize ; // length of the paddle...
+		var depth = 3;
+
+		// ---- Moving ----
+		this.maxMovingDistance = goalSize/2 - height/2;
+		var goalDeplacementTime = 0.5; // time to go from one side to the other [s]
+		this.moveSpeed = this.maxMovingDistance / goalDeplacementTime / constants.FPS;
+
+		// ---- Mesh ----
+		const geometry = new THREE.BoxGeometry(width, height, depth);
+		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
+		const material = Paddle.materials[0];
 		this.mesh = new THREE.Mesh(geometry, material);
+		this.mesh.castShadow = true;
 		scene.add(this.mesh);
 
-		// this.angle = this.angle % (2*Math.PI);
-		var dX = endPos.x - startPos.x;
-		var dY = endPos.y - startPos.y;
-		this.centerPos = new THREE.Vector3(startPos.x + dX/2, startPos.y + dY/2, this.depth/2);
+		// edge colors
+		var edgePoints = [];
+		// geometry.ed
+		const edgesGeometry = new THREE.EdgesGeometry(geometry);
+		for (var i = 0; i < edgesGeometry.attributes.position.array.length; i++) {
+			if (i >= 21 && i <30)
+				continue;
+			edgePoints.push(edgesGeometry.attributes.position.array[i]);
+			// if (i==2)
+			// 	break
+		}
+
+
+		this.mesh.add(createLine({points: edgePoints})); // edgesGeometry.attributes.position.array
+		// const lineGeometry = new LineGeometry();
+		// lineGeometry.setPositions(edgesGeometry.attributes.position.array);
+		// // const edgesGeometry = new LineGeometry();
+		// // edgesGeometry.setPositions(geometry.attributes.position.array);
+
+		// const edgesMaterial = new LineMaterial({
+		// 	color: '#3CD6EB',
+		// 	linewidth: 0.005, // in pixels
+		// });
+
+		// const edgeLine = new Line2(lineGeometry, edgesMaterial);
+		// this.mesh.add(edgeLine);
+
+
+
 
 		// ---- Physics ----
+		this.centerPos = new THREE.Vector3(startPos.x + (endPos.x - startPos.x)/2, startPos.y + (endPos.y - startPos.y)/2, depth/2);
 		this.body = new CANNON.Body({
 			mass: 0,
-			shape: new CANNON.Box(new CANNON.Vec3(this.width/2, this.height/2, this.depth/2)),
+			shape: new CANNON.Box(new CANNON.Vec3(width/2, height/2, depth/2)),
 			position: this.centerPos,
 			// linearDamping: 0,
 			material: new CANNON.Material({ friction: 0, restitution: 1 }),
@@ -52,18 +144,7 @@ export default class Paddle {
 		this.body.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), this.axeAngle);
 		physicsWorld.addBody(this.body);
 
-		//
 		this.updateMeshPosAndRot();
-
-		// ---- Helpers ----
-		var axe = new THREE.AxesHelper(10);
-		axe.renderOrder = 2;
-		this.mesh.add(axe);
-		// // grid
-		// var grid = new THREE.GridHelper( FIELD_LENGTH, 20, 0x000000, 0x000000 );
-		// // grid.translateZ(3);
-		// grid.renderOrder = 1;
-		// this.mesh.add(grid);
 	}
 
 	getNextMaterial() {

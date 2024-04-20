@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as constants from './constants.js';
 
 
 export default class Ball {
@@ -8,7 +10,18 @@ export default class Ball {
 		const geometry = new THREE.SphereGeometry(this.radius, 16, 16);
 		const material = new THREE.MeshNormalMaterial();
 		this.mesh = new THREE.Mesh(geometry, material);
+		this.mesh.castShadow = true;
 		scene.add(this.mesh);
+		// scene.add(constants.modelBall);
+		const loader = new GLTFLoader();
+		loader.load(constants.ballsModels[2], (gltf) => {
+			const model = gltf.scene;
+			model.scale.set(13, 13, 13);
+			this.mesh.add(model);
+			console.log('Ball model loaded');
+		}
+		);
+
 
 		this.moveSpeed = 40;
 		this.movingAngle = 0; // will be updated in the move function
@@ -62,18 +75,24 @@ export default class Ball {
 		this.body.velocity.x = xComposant;
 		this.body.velocity.y = yComposant;
 		this.body.velocity.z = 0; // make sure the ball doesn't move up or down
+		// Making a ball rotate in the direction it is moving
+		var xRot =  -this.body.velocity.y/4500; // control the rotation speed
+		var yRot =  this.body.velocity.x/500;
+		this.mesh.rotation.x += xRot;
+		this.mesh.rotation.y += yRot;
+		// this.body.angularVelocity.set(xRot, yRot, 0);
 	}
 
 	updateMeshPosAndRot() {
 		this.mesh.position.copy(this.body.position);
-		this.mesh.quaternion.copy(this.body.quaternion);
+		// this.mesh.quaternion.copy(this.body.quaternion);
 	}
 
 	update(dt) {
 		this.move(dt);
 		this.updateMeshPosAndRot();
 		// increase the speed
-		this.moveSpeed += 1/100;
+		this.moveSpeed += 2/100;
 
 	}
 

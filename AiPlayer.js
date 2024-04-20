@@ -11,7 +11,7 @@ export default class AiPlayer extends Player {
 
 		this.physicsWorld = physicsWorld;
 		this.ball = ball;
-		this.targetPosition = this.goalHiboxBody.position;
+		this.targetPosition = this.goalHitboxBody.position;
 		this.paddlePosition = this.paddle.body.position;
 
 		// Wall
@@ -59,7 +59,7 @@ export default class AiPlayer extends Player {
 	quatToRad()
 	{
 		let eulerAngles = new CANNON.Vec3();
-		this.goalHiboxBody.quaternion.toEuler(eulerAngles);
+		this.goalHitboxBody.quaternion.toEuler(eulerAngles);
 
 		return eulerAngles.x;
 	}
