@@ -102,12 +102,12 @@ class FallingBox {
 		this.respawnZ = constants.FIELD_DIAMETER;
 		const z = THREE.MathUtils.randFloat(this.minZ, this.respawnZ);
 		this.mesh = this.createBoxMesh(x, y, z);
-		this.speed = 0.5//THREE.MathUtils.randFloat(0.01, 0.1);
+		this.speed = THREE.MathUtils.randFloat(0.2, 0.6); // or better with all same speed?
 
 	}
 
 	createBoxMesh(x, y, z) {
-		const boxSize = THREE.MathUtils.randFloat(10, 22)
+		const boxSize = THREE.MathUtils.randFloat(14, 33); // 10, 22
 		const geometry = new THREE.BoxGeometry(1, boxSize, 1);
 		const blue = new THREE.Color('#80d0d9');
 		const yellow = new THREE.Color('#faed3b');
