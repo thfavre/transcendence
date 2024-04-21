@@ -13,6 +13,8 @@ const	backButtonNG = document.getElementById("backButtonNG");
 const	backButtonOptions = document.getElementById("backButtonOptions");
 const	backButtonHS = document.getElementById("backButtonHS");
 const	backButtonCredits = document.getElementById("backButtonCredits");
+const	notFoundMenu = document.getElementById("notFoundMenu");
+const	allMenus = [menuButtons, newGameMenu, optionsMenu, highScoreMenu, creditsMenu, notFoundMenu];
 
 // Hide the video and show the menu
 
@@ -45,24 +47,59 @@ backButtonNG.addEventListener("click", () => switchMenu(menuButtons, newGameMenu
 backButtonOptions.addEventListener("click", () => switchMenu(menuButtons, optionsMenu, "/"));
 backButtonHS.addEventListener("click", () => switchMenu(menuButtons, highScoreMenu, "/"));
 backButtonCredits.addEventListener("click", () => switchMenu(menuButtons, creditsMenu, "/"));
+notFoundMenu.addEventListener("click", () => switchMenu(menuButtons, notFoundMenu, "/"));
 
 // Navigation with the browser's button (back and forward) and the history API (pushState and popstate)
 
 window.addEventListener("popstate", function(event)
 {
 	console.log("Historique modifié :", event.state);
-	const allMenus = [menuButtons, newGameMenu, optionsMenu, highScoreMenu, creditsMenu];
-	allMenus.forEach(menu => menu.classList.add("d-none"));
+	hideAllMenus();
 	if (event.state !== null)
 	{
 		const activeMenu = document.getElementById(event.state.menu);
 		if (activeMenu)
-			activeMenu.classList.remove(
-		"d-none");
+			activeMenu.classList.remove("d-none");
 	}
 	else
 		menuButtons.classList.remove("d-none");
 });
+
+function	hideAllMenus()
+{
+	allMenus.forEach(menu => menu.classList.add("d-none"));
+}
+
+// Basic router for managing refresh and direct access to a page\
+
+document.addEventListener('DOMContentLoaded', route);
+
+function	route()
+{
+	const	path = window.location.pathname.toLowerCase();
+	hideAllMenus();
+	switch (path)
+	{
+		case '/newgame/':
+			newGameMenu.classList.remove('d-none');
+			break;
+		case '/options/':
+			optionsMenu.classList.remove('d-none');
+			break;
+		case '/highscore/':
+			highScoreMenu.classList.remove('d-none');
+			break;
+		case '/credits/':
+			creditsMenu.classList.remove('d-none');
+			break;
+		case '/':
+			menuButtons.classList.remove('d-none');
+			break;
+		default:
+			notFoundMenu.classList.remove('d-none');
+			break;
+	}
+}
 
 // Cursor's Animation
 
@@ -110,6 +147,7 @@ function createBackgroundSpots()
 {
 	const spotsCount = 100;
 	const animations = ['floatAnimation1', 'floatAnimation2', 'floatAnimation3']; // Les noms des animations
+	const fragment = document.createDocumentFragment();
 	for (let i = 0; i < spotsCount; i++)
 	{
 		const spot = document.createElement('div');
@@ -120,6 +158,7 @@ function createBackgroundSpots()
 		spot.style.animation = `${animation} ${5 + Math.random() * 5}s ${Math.random() * 2}s infinite cubic-bezier(.68,-0.55,.27,1.55)`;
 		spot.style.left = `${x}vw`;
 		spot.style.top = `${y}vh`;
-		document.body.appendChild(spot);
+		fragment.appendChild(spot);
 	}
+	document.body.appendChild(fragment);
 }
