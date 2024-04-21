@@ -111,6 +111,11 @@ body
 	pointer-events: none;
 }
 
+.btn
+{
+	cursor: none !important;
+}
+
 /* Button's Animation */
 
 .tracking-in-expand{animation:tracking-in-expand .7s cubic-bezier(.215,.61,.355,1.000) both}
