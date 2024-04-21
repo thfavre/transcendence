@@ -196,6 +196,10 @@ export default class Game {
 		const edgeGeometry = new THREE.CylinderGeometry( cylinderRadius, cylinderRadius, cylinderHeight, 32 );
 		const edgeMaterial = new THREE.MeshStandardMaterial( {color: '#3CD6EB'} );
 		const edgeMesh = new THREE.Mesh( edgeGeometry, edgeMaterial );
+		edgeMesh.castShadow = true;
+		edgeMesh.receiveShadow = true;
+		//wireframe
+		// edgeMesh.material.wireframe = true;
 		edgeMesh.position.copy(edgeBody.position);
 		edgeMesh.quaternion.copy(edgeBody.quaternion);
 		this.scene.add(edgeMesh);

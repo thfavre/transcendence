@@ -34,7 +34,7 @@ if (constants.DEBUG) {
 	const axesHelper = new THREE.AxesHelper(10);
 	scene.add(axesHelper);
 }
-// scence background
+// scene background
 
 
 // Camera
