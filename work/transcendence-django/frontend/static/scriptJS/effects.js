@@ -2,19 +2,25 @@ const	videoLaunch = document.getElementById("videoLaunch");
 const	menu = document.getElementById("menu");
 const	menuButtons = document.getElementById("menuButtons");
 const	newGameButton = document.getElementById("newGameButton");
-const	optionsButton = document.getElementById("optionsButton");
+const	profileButton = document.getElementById("profileButton");
 const	highScoreButton = document.getElementById("highScoreButton");
 const	creditsButton = document.getElementById("creditsButton");
+const	pongButton = document.getElementById("pongButton");
+const	findExitButton = document.getElementById("findExitButton");
 const	newGameMenu = document.getElementById("newGameMenu");
-const	optionsMenu = document.getElementById("optionsMenu");
+const	profileMenu = document.getElementById("profileMenu");
 const	highScoreMenu = document.getElementById("highScoreMenu");
 const	creditsMenu = document.getElementById("creditsMenu");
+const	pongMenu = document.getElementById("pongMenu");
+const	findExitMenu = document.getElementById("findExitMenu");
 const	backButtonNG = document.getElementById("backButtonNG");
-const	backButtonOptions = document.getElementById("backButtonOptions");
+const	backButtonProfile = document.getElementById("backButtonProfile");
 const	backButtonHS = document.getElementById("backButtonHS");
 const	backButtonCredits = document.getElementById("backButtonCredits");
+const	backButtonPong = document.getElementById("backButtonPong");
+const	backButtonFindExit = document.getElementById("backButtonFindExit");
 const	notFoundMenu = document.getElementById("notFoundMenu");
-const	allMenus = [menuButtons, newGameMenu, optionsMenu, highScoreMenu, creditsMenu, notFoundMenu];
+const	allMenus = [menuButtons, newGameMenu, profileMenu, highScoreMenu, creditsMenu, notFoundMenu, pongMenu];
 
 // Hide the video and show the menu
 
@@ -34,26 +40,31 @@ setTimeout(hideVideo, 1000);
 
 function	switchMenu(menuToShow, menuToRemove, url)
 {
+	console.log("Switching menu to", menuToShow.id);
 	menuToShow.classList.remove("d-none");
 	menuToRemove.classList.add("d-none");
 	history.pushState({menu: menuToShow.id}, "", url);
 }
 
 newGameButton.addEventListener("click", () => switchMenu(newGameMenu, menuButtons, "/newGame"));
-optionsButton.addEventListener("click", () => switchMenu(optionsMenu, menuButtons, "/options"));
+profileButton.addEventListener("click", () => switchMenu(profileMenu, menuButtons, "/profile"));
 highScoreButton.addEventListener("click", () => switchMenu(highScoreMenu, menuButtons, "/highScore"));
 creditsButton.addEventListener("click", () => switchMenu(creditsMenu, menuButtons, "/credits"));
+pongButton.addEventListener("click", () => switchMenu(pongMenu, newGameMenu, "/newGame/pong"));
+findExitButton.addEventListener("click", () => switchMenu(findExitMenu, newGameMenu, "/newGame/findExit"));
 backButtonNG.addEventListener("click", () => switchMenu(menuButtons, newGameMenu, "/"));
-backButtonOptions.addEventListener("click", () => switchMenu(menuButtons, optionsMenu, "/"));
+backButtonProfile.addEventListener("click", () => switchMenu(menuButtons, profileMenu, "/"));
 backButtonHS.addEventListener("click", () => switchMenu(menuButtons, highScoreMenu, "/"));
 backButtonCredits.addEventListener("click", () => switchMenu(menuButtons, creditsMenu, "/"));
+backButtonPong.addEventListener("click", () => switchMenu(newGameMenu, pongMenu, "/newGame"));
+backButtonFindExit.addEventListener("click", () => switchMenu(newGameMenu, findExitMenu, "/newGame"));
 notFoundMenu.addEventListener("click", () => switchMenu(menuButtons, notFoundMenu, "/"));
 
 // Navigation with the browser's button (back and forward) and the history API (pushState and popstate)
 
 window.addEventListener("popstate", function(event)
 {
-	console.log("Historique modifié :", event.state);
+	console.log("Historique modifié :")
 	hideAllMenus();
 	if (event.state !== null)
 	{
@@ -83,14 +94,20 @@ function	route()
 		case '/newgame/':
 			newGameMenu.classList.remove('d-none');
 			break;
-		case '/options/':
-			optionsMenu.classList.remove('d-none');
+		case '/profile/':
+			profileMenu.classList.remove('d-none');
 			break;
 		case '/highscore/':
 			highScoreMenu.classList.remove('d-none');
 			break;
 		case '/credits/':
 			creditsMenu.classList.remove('d-none');
+			break;
+		case '/newgame/pong/':
+			pongMenu.classList.remove('d-none');
+			break;
+		case '/newgame/findexit/':
+			findExitMenu.classList.remove('d-none');
 			break;
 		case '/':
 			menuButtons.classList.remove('d-none');

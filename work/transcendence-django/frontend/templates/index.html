@@ -24,7 +24,7 @@
 			<div class="d-flex justify-content-center" id="menuButtons">
 				<div class="d-grid gap-3 col-6 mx-auto">
 					<button id="newGameButton" class="custom-btn btn btn-link tracking-in-expand">New Game</button>
-					<button id="optionsButton" class="custom-btn btn btn-link tracking-in-expand">Options</button>
+					<button id="profileButton" class="custom-btn btn btn-link tracking-in-expand">Profile</button>
 					<button id="highScoreButton" class="custom-btn btn btn-link tracking-in-expand" >High Score</button>
 					<button id="creditsButton" class="custom-btn btn btn-link tracking-in-expand">Credits</button>
 				</div>
@@ -32,40 +32,22 @@
 
 			<!-- New Game block-->
 			<div id="newGameMenu" class="container d-none">
-				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
+				<div class="row row-cols-1 row-cols-md-2">
 					<div class="col mb-3">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
-								<h5 class="card-title">Player Vs Player</h5>
-								<p class="card-text">Some quick example to build on the card title and make up the bulk of the card's content.</p>
-								<button class="btn btn-outline-info">Play</button>
+								<h5 class="card-title">Pong</h5>
+								<p class="card-text"><em>Pong</em> is an iconic arcade game where players control paddles to volley a ball back and forth. The objective is to score points by maneuvering the ball past the opponent's paddle.</p>
+								<button id="pongButton" class="btn btn-outline-info">Select</button>
 							</div>
 						</div>
 					</div>
 					<div class="col mb-3">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
-								<h5 class="card-title">Player Vs IA</h5>
-								<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-								<button class="btn btn-outline-info">Play</button>
-							</div>
-						</div>
-					</div>
-					<div class="col mb-3">
-						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
-							<div class="card-body">
-								<h5 class="card-title">Tournament</h5>
-								<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-								<button class="btn btn-outline-info">Play</button>
-							</div>
-						</div>
-					</div>
-					<div class="col mb-3">
-						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
-							<div class="card-body">
-								<h5 class="card-title">Other game</h5>
-								<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-								<button class="btn btn-outline-info">Play</button>
+								<h5 class="card-title">Find the exit</h5>
+								<p class="card-text"><em>Find the Exit</em> is a puzzle game where players navigate through a maze using directional arrows. However, the player's character halts upon encountering a wall, intensifying the challenge.</p>
+								<button id="findExitButton" class="btn btn-outline-info">Select</button>
 							</div>
 						</div>
 					</div>
@@ -75,11 +57,65 @@
 				</div>
 			</div>
 
-			<!-- Options block -->
-			<div id="optionsMenu" class="container-fluid d-none">
+			<!-- Pong block -->
+			<div id="pongMenu" class="container d-none">
+				<div class="row row-cols-1 row-cols-md-2">
+					<div class="col mb-3">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Versus</h5>
+								<p class="card-text"><em>Pong</em> is an iconic arcade game where players control paddles to volley a ball back and forth. The objective is to score points by maneuvering the ball past the opponent's paddle.</p>
+								<button class="btn btn-outline-info">Play</button>
+							</div>
+						</div>
+					</div>
+					<div class="col mb-3">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Tournament</h5>
+								<p class="card-text"><em>Pong</em> is a puzzle game where players navigate through a maze using directional arrows. However, the player's character halts upon encountering a wall, intensifying the challenge.</p>
+								<button class="btn btn-outline-info">Play</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonPong" class="btn btn-link custom-btn-back tracking-in-expand">Back</button>
+				</div>
+			</div>
+
+			<!-- Find the exit block -->
+			<div id="findExitMenu" class="container d-none">
+				<div class="row row-cols-1 row-cols-md-2">
+					<div class="col mb-3">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Versus</h5>
+								<p class="card-text"><em>Find the Exit</em> is an iconic arcade game where players control paddles to volley a ball back and forth. The objective is to score points by maneuvering the ball past the opponent's paddle.</p>
+								<button class="btn btn-outline-info">Play</button>
+							</div>
+						</div>
+					</div>
+					<div class="col mb-3">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Tournament</h5>
+								<p class="card-text"><em>Find the Exit</em> is a puzzle game where players navigate through a maze using directional arrows. However, the player's character halts upon encountering a wall, intensifying the challenge.</p>
+								<button class="btn btn-outline-info">Play</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonFindExit" class="btn btn-link custom-btn-back tracking-in-expand">Back</button>
+				</div>
+			</div>
+
+			<!-- Profile block -->
+			<div id="profileMenu" class="container-fluid d-none">
 				<img src="{% static '/media/WorkInProgress.png' %}" class="img-fluid rounded mx-auto d-block" alt="...">
 				<div class="d-flex justify-content-end">
-					<button id="backButtonOptions" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
+					<button id="backButtonProfile" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
 				</div>
 			</div>
 
