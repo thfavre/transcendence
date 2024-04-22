@@ -3,24 +3,15 @@ import * as THREE from 'three';
 
 export default class Cube {
 	constructor({scene, x=0, y=0, z=0, width=1, depth=1, color='#ffffff'}) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.width = width;
-		this.depth = depth;
-		this.color = color;
-
-		this.mesh = this.createMesh();
+		this.mesh = this.createMesh(x, y, z, width, depth, color);
 		scene.add(this.mesh);
-
-
 	}
 
-	createMesh() {
-		const geometry = new THREE.BoxGeometry(this.width, this.width, this.depth);
-		const material = new THREE.MeshStandardMaterial({color: this.color});
+	createMesh(x, y, z, width, depth, color) {
+		const geometry = new THREE.BoxGeometry(width, width, depth);
+		const material = new THREE.MeshStandardMaterial({color: color});
 		const mesh = new THREE.Mesh(geometry, material);
-		mesh.position.set(this.x, this.y, this.z);
+		mesh.position.set(x, y, z);
 		return mesh;
 	}
 

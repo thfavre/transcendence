@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import * as constants from './constants.js';
-import Game from './Game.js';
+import Tournement from './Tournement.js';
+// import Game from './Game.js';
 
 
 
@@ -47,6 +48,19 @@ renderer.shadowMap.type = THREE.VSMShadowMap;
 renderer.setPixelRatio(window.devicePixelRatio);
 
 
+// Lights
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+var directionalLight = new THREE.DirectionalLight( '#ffffff', 1.5);
+directionalLight.shadow.camera.near = 0.1;
+directionalLight.shadow.camera.far = 500;
+directionalLight.position.set(-10, -5, 12);
+scene.add(directionalLight);
+if (constants.DEBUG) {
+	scene.add(new THREE.DirectionalLightHelper(directionalLight, 3));
+}
+
 // Controls
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -60,7 +74,7 @@ function onDocumentKeyDown(event) {
 };
 
 // Creation
-const game = new Game(scene);
+const game = new Tournement(scene);
 
 
 // Main loop

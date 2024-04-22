@@ -41,22 +41,43 @@ export default class Player extends Cube{
 
 	constructor({scene, x=0, y=0, depth=1, presetNb=0, preset=presets[presetNb]}) {
 		super({scene: scene, x: x, y: y, depth: depth, color: preset.color});
+		this.depth = depth;
+		// position and movement
 		this.keys = {
 			up: preset.upKey,
 			left: preset.leftKey,
 			down: preset.downKey,
 			right: preset.rightKey
 		};
-		this.canMove = true;
 		this.position = new THREE.Vector2(x, y);
 		this.movingDirection = new THREE.Vector2(0, 0);
-		this.hasWin = false;
-
+		this.canMove = true;
 		this.meshStartMovingVelocity = -12; // the mesh moving velocity will start at this amount
 		this.meshCurrentMovingVelocity = this.meshStartMovingVelocity;
 		this.meshMovingAcceleration = 2; // the mesh moving velocity will increase by this amount every frame
+
+
+		this.hasWin = false;
 		// this.loadSkin('assets/models/Cube Bricks.glb');
+		// this.smallCubesMeshes = this.createSmallerCubes();
 	}
+
+	// createSmallerCubes() {
+	// 	var smallCubesMeshes = [];
+	// 	var cubeMeshWidth = this.mesh.geometry.parameters.width;
+	// 	var cubeMeshClone = this.mesh.clone();
+	// 	for (let i = 0; i < 2; i++) {
+	// 		for (let j = 0; j < 2; j++) {
+	// 			var smallCubeMesh = cubeMeshClone.clone();
+	// 			smallCubeMesh.scale.set(.5, .5, 1);
+	// 			smallCubeMesh.position.set(-cubeMeshWidth/4 + (cubeMeshWidth/2) * i, -cubeMeshWidth/4 + (cubeMeshWidth/2) * j, 0);
+	// 			this.mesh.add(smallCubeMesh);
+	// 			smallCubesMeshes.push(smallCubeMesh);
+	// 		}
+	// 	}
+	// 	return smallCubesMeshes;
+
+	// }
 
 	// loadSkin(skinPath) {
 	// 	const loader = new GLTFLoader();
@@ -124,6 +145,10 @@ export default class Player extends Cube{
 	}
 
 	moveMeshToPosition(dt) {
+		// if (this.mesh.position.z > 0)
+		// 	this.mesh.position.z -= 2*dt;
+		// if (!this.canMove && this.mesh.position.z > 0)
+		// 	this.mesh.position.z -= 4*dt;
 		var movingDirection = new THREE.Vector2(this.position.x - this.mesh.position.x, this.position.y - this.mesh.position.y).normalize();
 		if (this.position.x != this.mesh.position.x || this.position.y != this.mesh.position.y) {
 			this.mesh.position.x += Math.sign(this.position.x - this.mesh.position.x) * this.meshCurrentMovingVelocity * dt;

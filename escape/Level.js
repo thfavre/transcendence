@@ -4,16 +4,14 @@ import Cube from './Cube.js';
 import Player from './Player.js';
 
 import MapData from './MapData.js';
+import Powerup from './Powerup.js';
 
 
 export default class Level {
-	constructor(scene, mapArray) {
+	constructor(scene, mapArray, playersNb) {
 		this.scene = scene;
 		this.mapData = new MapData(mapArray);
-		this.playersNb = 4;
-
-		[this.walls, this.players] = this.loadMap(this.mapData);
-		// spawn animation
+		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
 
 		this.activateSpawnAnimation();
 	}
@@ -22,7 +20,6 @@ export default class Level {
 		this.spawnAnimationFallHeight = 10;
 		for (let i = 0; i < this.walls.length; i++) {
 			let wall = this.walls[i];
-			wall.mesh.visible = false;
 			wall.mesh.position.z = this.spawnAnimationFallHeight;
 			wall.mesh.material.opacity = 0;
 
@@ -44,21 +41,21 @@ export default class Level {
 	}
 
 	spawnAnimation(dt) {
+		if (!this.showSpawnAnimation)
+			return;
 		var haveAllWallsFallen = true;
 		// make walls fall
-		if (this.showSpawnAnimation) {
-			for (let i = 0; i < this.walls.length; i++) {
-				if (this.currentSpawnAnimationTime < i/this.walls.length*this.spawnAnimationDuration)
-					continue;
-				let wall = this.walls[i];
-				wall.mesh.position.z -= 0.15;
-				if (wall.mesh.position.z < 0)
-					wall.mesh.position.z = 0;
-				wall.mesh.material.opacity = 1 - wall.mesh.position.z/this.spawnAnimationFallHeight;
+		for (let i = 0; i < this.walls.length; i++) {
+			if (this.currentSpawnAnimationTime < i/this.walls.length*this.spawnAnimationDuration)
+				continue;
+			let wall = this.walls[i];
+			wall.mesh.position.z -= 0.15;
+			if (wall.mesh.position.z < 0)
+				wall.mesh.position.z = 0;
+			wall.mesh.material.opacity = 1 - wall.mesh.position.z/this.spawnAnimationFallHeight;
 
-				if (wall.mesh.position.z > 0)
-					haveAllWallsFallen = false;
-			}
+			if (wall.mesh.position.z > 0)
+				haveAllWallsFallen = false;
 		}
 		// check if the spawn animation is over
 		if (this.currentSpawnAnimationTime > this.spawnAnimationDuration) {
@@ -75,9 +72,10 @@ export default class Level {
 		}
 	}
 
-	loadMap(mapData) {
+	loadMap(mapData, playersNb) {
 		const walls = [];
 		const players = [];
+		const powerups = [];
 		var mapHeight = mapData.getHeight();
 		var mapWidth = mapData.getWidth();
 		for (let y = 0; y < mapHeight; y++) {
@@ -108,10 +106,13 @@ export default class Level {
 					walls.push(wall);
 				}
 				else if (cell === maps.PLAYER) {
-					for (let i = 0; i < this.playersNb; i++) {
+					for (let i = 0; i < playersNb; i++) {
 						const player = new Player({scene: this.scene, x: x, y: y, presetNb: i});
 						players.push(player);
 					}
+				} else if (cell === maps.POWERUP) {
+					const powerup = new Powerup({scene: this.scene, x: x, y: y});
+					powerups.push(powerup);
 				}
 			}
 		}
@@ -127,7 +128,31 @@ export default class Level {
 		// 		}
 		// 	}
 		// }
-		return [walls, players];
+		return [walls, players, powerups];
+	}
+
+	/** Stack players on top of each other when they are on the same position */
+	stackPlayers(dt) {
+		for (let i=0; i<this.players.length; i++)
+		{
+			let player1 = this.players[i];
+			for (let j=i+1; j<this.players.length; j++) {
+				let player2 = this.players[j];
+				if (player1.mesh.position.x == player2.mesh.position.x && player1.mesh.position.y == player2.mesh.position.y) {
+					if (player2.mesh.position.z < player1.mesh.position.z+player1.depth) {
+						player2.mesh.position.z =  Math.min(player1.mesh.position.z+player1.depth, player2.mesh.position.z + 5 * dt);
+					}
+				}
+			}
+		}
+		// make the gravity
+		for (let player of this.players) {
+			if (player.mesh.position.z > 0) {
+				player.mesh.position.z -= 2 * dt;
+				if (player.mesh.position.z < 0)
+					player.mesh.position.z = 0;
+			}
+		}
 	}
 
 	update(dt, keysJustPressed) {
@@ -135,5 +160,10 @@ export default class Level {
 		for (let player of this.players) {
 			player.update(dt, keysJustPressed, this.mapData);
 		}
+		this.stackPlayers(dt);
+		for (let powerup of this.powerups) {
+			powerup.update(dt);
+		}
+
 	}
 }
