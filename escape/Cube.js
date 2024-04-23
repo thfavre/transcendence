@@ -12,6 +12,8 @@ export default class Cube {
 		const material = new THREE.MeshStandardMaterial({color: color});
 		const mesh = new THREE.Mesh(geometry, material);
 		mesh.position.set(x, y, z);
+		mesh.castShadow = true;
+		mesh.receiveShadow = true;
 		return mesh;
 	}
 

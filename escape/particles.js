@@ -1,42 +1,174 @@
-// import System, {
-// 	Emitter,
-// 	Rate,
-// 	Span,
-// 	Position,
-// 	Mass,
-// 	Radius,
-// 	Life,
-// 	Velocity,
-// 	PointZone,
-// 	Vector3D,
-// 	Alpha,
-// 	Scale,
-// 	Color,
-//   } from 'three-nebula';
-//   import * as THREE from 'three';
+import * as THREE from 'three';
+import * as constants from './constants.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-//   const system = new System();
-//   const emitter = new Emitter();
-//   const renderer = new SpriteRenderer(threeScene, THREE);
 
-//   // Set emitter rate (particles per second) as well as the particle initializers and behaviours
-//   emitter
-// 	.setRate(new Rate(new Span(4, 16), new Span(0.01)))
-// 	.setInitializers([
-// 	  new Position(new PointZone(0, 0)),
-// 	  new Mass(1),
-// 	  new Radius(6, 12),
-// 	  new Life(3),
-// 	  new RadialVelocity(45, new Vector3D(0, 1, 0), 180),
-// 	])
-// 	.setBehaviours([
-// 	  new Alpha(1, 0),
-// 	  new Scale(0.1, 1.3),
-// 	  new Color(new THREE.Color(), new THREE.Color()),
-// 	]);
 
-//   // add the emitter and a renderer to your particle system
-//   system
-// 	.addEmitter(emitter)
-// 	.addRenderer(renderer)
-// 	.emit({ onStart, onUpdate, onEnd });
+export default class ParticlesSystem {
+	constructor(scene) {
+		this.scene = scene;
+		this._particles = [];
+	}
+
+	/** Returns true frequency times per seconds in average*/
+	triggerPulse(dt, frequency) {
+		return Math.random() < frequency*dt;
+	}
+
+	/** Returns true frequency times per seconds in average*/
+	static triggerPulse(dt, frequency) {
+		return Math.random() < frequency*dt;
+	}
+
+	addParticle(x, y, z, type) {
+		// console.log('adding particle', type.name);
+		this._particles.push(new type({scene: this.scene, x: x, y: y, z: z}));
+	}
+
+	update(dt) {
+		// console.log('updating particles');
+		for (var particle of this._particles) {
+			if (particle.shouldRemove()) {
+				this.scene.remove(particle.mesh);
+				this._particles.splice(this._particles.indexOf(particle), 1);
+				continue;
+			}
+			particle.update(dt);
+		}
+	}
+}
+
+class Particle {
+	constructor({scene, x, y, z}) {
+		this.scene = scene;
+		this.position = new THREE.Vector3(x, y, z);
+	}
+	shouldRemove() {
+		throw new Error('Not implemented');
+	}
+
+	update(dt) {
+		throw new Error('Not implemented');
+	}
+}
+
+export class SnowParticle extends Particle {
+	static model = null;
+
+	// static async loadModel() {
+	// 	const loader = new GLTFLoader(); // Assuming you're using GLTFLoader
+	// 	loader.load('assets/models/Snowflake.glb', (gltf) => {
+	// 		SnowParticle.model = gltf.scene;
+	// 		SnowParticle.model.scale.set(0.4, 0.4, 0.4);
+	// 		// add some lights
+
+	// 	});
+	// 	// this.model.scene.scale.set(21, 21, 21);
+	// 	console.log('model loaded');
+	//   }
+
+	constructor({scene, x, y, z}) {
+		// if (!SnowParticle.model)
+		// 	SnowParticle.loadModel();
+		var randomOffsetX = Math.random() - 0.5;
+		var randomOffsetY = Math.random() - 0.5;
+		super({scene: scene, x: x+randomOffsetX, y: y+randomOffsetY, z: z});
+		this.velocity = new THREE.Vector3(0, 0, -0.3);
+		var min = 0.04,
+        	max = 0.1,
+        	radius = Math.random() * (max - min) + min;
+		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(radius), new THREE.MeshBasicMaterial({color: '#ffffff'}));
+		this.mesh.position.copy(this.position);
+		this.mesh.castShadow = true;
+		scene.add(this.mesh);
+		// var clone = SnowParticle.model.clone();
+		// // rotation
+		// clone.rotation.x = Math.random() * Math.PI;
+		// clone.rotation.y = Math.random() * Math.PI;
+		// clone.rotation.z = Math.random() * Math.PI;
+		// this.mesh.add(clone);
+
+	}
+	shouldRemove() {
+		return this.position.z <= -0.5;
+	}
+
+	move(dt) {
+		this.position.add(this.velocity.clone().multiplyScalar(dt));
+		var c = this.position.clone();
+		c.x += Math.sin(this.position.z*4) * 0.1;
+		c.y += Math.cos(this.position.z*5) * 0.1;
+		this.mesh.position.copy(c);
+
+	}
+
+	update(dt) {
+		this.move(dt);
+	}
+
+}
+// SnowParticle.loadModel();
+
+
+export class LightAbsorbedParticle extends Particle {
+	constructor({scene, x, y, z}) {
+		var min = -0.4,
+        	max = 0.4;
+        x += Math.random() * (max - min) + min;
+		y += Math.random() * (max - min) + min;
+		z += Math.random() * (max - min) + min;
+
+		super({scene: scene, x: x, y: y, z: z});
+		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 4), new THREE.MeshBasicMaterial({color: '#fff376'}));
+		this.mesh.position.copy(this.position);
+		scene.add(this.mesh);
+		this.maxBlackDots = 40;
+		this.currentBlackDots = 0;
+	}
+	shouldRemove() {
+		return this.mesh.scale.x <= 0.1;
+	}
+
+	decreaseLightIntensity(dt) {
+	// change progressivly the color to black
+	// console.log(this.mesh.material.color.getRGB())
+	// var currentColor = this.mesh.material.color.getRGB();
+	// this.mesh.material.color = newColor;
+	// this.mesh.material.color = this.mesh.material.color.getHex() - 0x010101;
+	}
+
+	decreaseRadius(dt) {
+		this.mesh.scale.x -= dt;
+		this.mesh.scale.y -= dt;
+		this.mesh.scale.z -= dt;
+	}
+
+	spawnBlackDots(dt){
+		if (this.currentBlackDots >= this.maxBlackDots)
+			return;
+		if (ParticlesSystem.triggerPulse(dt, 20)) {
+			this.currentBlackDots += 1;
+			const radius = Math.random() * 0.1 + 0.01;
+			var black = new THREE.Mesh(new THREE.SphereGeometry(radius, 8, 4), new THREE.MeshBasicMaterial({color: '#000000'}));
+			black.position.x += Math.random() - 0.5;
+			black.position.y += Math.random() - 0.5;
+			black.position.z += Math.random() - 0.5;
+			this.mesh.add(black);
+		}
+
+	}
+
+
+	move(dt) {
+		// this.position.add(this.velocity.clone().multiplyScalar(dt));
+		// this.mesh.position.copy(this.position);
+	}
+
+	update(dt) {
+		this.decreaseLightIntensity(dt);
+		this.decreaseRadius(dt);
+		this.move(dt);
+		this.spawnBlackDots(dt);
+
+	}
+}

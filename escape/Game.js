@@ -2,7 +2,7 @@
 import * as maps from './maps/maps.js';
 import * as THREE from 'three';
 
-
+import ParticlesSystem from './particles.js';
 import * as constants from './constants.js';
 import Level from './Level.js';
 // import muzzle1 from './particles.js';
@@ -13,7 +13,8 @@ export default class Game {
 	constructor(scene, mapArray, playersNb=4) {
 	// 	this.scene = scene;
 		this.clock = new THREE.Clock();
-		this.level = new Level(scene, mapArray, playersNb);
+		this.particlesSystem = new ParticlesSystem(scene);
+		this.level = new Level(scene, mapArray, playersNb, this.particlesSystem);
 
 	// 	this.initNewGame();
 	}
@@ -26,5 +27,6 @@ export default class Game {
 		var dt = this.clock.getDelta();
 		if (this.level)
 			this.level.update(dt, keysJustPressed);
+		this.particlesSystem.update(dt);
 	}
 }

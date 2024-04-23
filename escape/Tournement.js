@@ -2,7 +2,7 @@ import Game from './Game.js';
 import * as maps from './maps/maps.js';
 
 export default class Tournement {
-	constructor(scene, playersNb=4) {
+	constructor(scene, playersNb=3) {
 		this.scene = scene;
 		this.playersNb = playersNb;
 		// this.level = new Level(scene, mapArray, playersNb);
@@ -12,7 +12,8 @@ export default class Tournement {
 
 	initNewGame() {
 		var randomTournamentMapArray = maps.tournamentMapsArray[Math.floor(Math.random()*maps.tournamentMapsArray.length)];
-		this.game = new Game(this.scene, randomTournamentMapArray, this.playersNbs);
+		randomTournamentMapArray = maps.duck; // ! TODO remove
+		this.game = new Game(this.scene, randomTournamentMapArray, this.playersNb);
 	}
 
 	update(keysJustPressed) {

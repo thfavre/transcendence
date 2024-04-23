@@ -19,7 +19,7 @@ const sizes = {
 
 // Scene
 const scene = new THREE.Scene();
-scene.background = new THREE.Color('#FFFFFF');
+scene.background = new THREE.Color('#444444');
 // const textureLoader = new THREE.TextureLoader();
 // scene.background = textureLoader.load("assets/face.jpg");
 if (constants.DEBUG) {
@@ -49,15 +49,23 @@ renderer.setPixelRatio(window.devicePixelRatio);
 
 
 // Lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+const ambientLight = new THREE.AmbientLight(0xffffff, constants.ambientLightIntensity);
 scene.add(ambientLight);
 
-var directionalLight = new THREE.DirectionalLight( '#ffffff', 1.5);
-directionalLight.shadow.camera.near = 0.1;
-directionalLight.shadow.camera.far = 500;
-directionalLight.position.set(-10, -5, 12);
+var directionalLight = new THREE.DirectionalLight( '#ffffff', constants.directionalLightIntensity);
+directionalLight.position.set(-2, -2, 14);
+directionalLight.shadow.camera.near = 12;
+directionalLight.shadow.camera.far = 26;
+directionalLight.shadow.camera.top = 40;
+directionalLight.shadow.camera.bottom = -2;
+directionalLight.shadow.camera.left = -2;
+directionalLight.shadow.camera.right = 60;
+directionalLight.castShadow = true;
+directionalLight.shadow.mapSize.width = 1024*2;
+directionalLight.shadow.mapSize.height = 1024*2;
 scene.add(directionalLight);
 if (constants.DEBUG) {
+	scene.add(new THREE.CameraHelper(directionalLight.shadow.camera))
 	scene.add(new THREE.DirectionalLightHelper(directionalLight, 3));
 }
 

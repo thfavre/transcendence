@@ -4,16 +4,29 @@ import Cube from './Cube.js';
 import Player from './Player.js';
 
 import MapData from './MapData.js';
-import Powerup from './Powerup.js';
+import * as powerups from './powerups.js';
+
 
 
 export default class Level {
-	constructor(scene, mapArray, playersNb) {
+	constructor(scene, mapArray, playersNb, particlesSystem) {
 		this.scene = scene;
 		this.mapData = new MapData(mapArray);
+		this.particlesSystem = particlesSystem;
 		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
 
-		this.activateSpawnAnimation();
+		// this.activateSpawnAnimation();
+		this.createPlane()
+	}
+
+	createPlane(walls) {
+		const geometry = new THREE.PlaneGeometry(100, 100);
+		const material = new THREE.MeshStandardMaterial({color: 0xffffff, side: THREE.DoubleSide});
+		const plane = new THREE.Mesh(geometry, material);
+		plane.position.z = -0.5;
+		plane.receiveShadow = true;
+		this.scene.add(plane);
+
 	}
 
 	activateSpawnAnimation(duration=4) {
@@ -75,7 +88,7 @@ export default class Level {
 	loadMap(mapData, playersNb) {
 		const walls = [];
 		const players = [];
-		const powerups = [];
+		const _powerups = [];
 		var mapHeight = mapData.getHeight();
 		var mapWidth = mapData.getWidth();
 		for (let y = 0; y < mapHeight; y++) {
@@ -107,12 +120,13 @@ export default class Level {
 				}
 				else if (cell === maps.PLAYER) {
 					for (let i = 0; i < playersNb; i++) {
-						const player = new Player({scene: this.scene, x: x, y: y, presetNb: i});
+						const player = new Player({scene: this.scene, x: x, y: y, presetNb: i, particlesSystem: this.particlesSystem});
 						players.push(player);
 					}
-				} else if (cell === maps.POWERUP) {
-					const powerup = new Powerup({scene: this.scene, x: x, y: y});
-					powerups.push(powerup);
+				} else if (cell === maps.POWERUP_SLOW) {
+					_powerups.push(new powerups.SlowPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
+				} else if (cell === maps.POWERUP_LIGHTSDOWN) {
+					_powerups.push(new powerups.LightsDownPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
 				}
 			}
 		}
@@ -128,7 +142,7 @@ export default class Level {
 		// 		}
 		// 	}
 		// }
-		return [walls, players, powerups];
+		return [walls, players, _powerups];
 	}
 
 	/** Stack players on top of each other when they are on the same position */
@@ -140,7 +154,7 @@ export default class Level {
 				let player2 = this.players[j];
 				if (player1.mesh.position.x == player2.mesh.position.x && player1.mesh.position.y == player2.mesh.position.y) {
 					if (player2.mesh.position.z < player1.mesh.position.z+player1.depth) {
-						player2.mesh.position.z =  Math.min(player1.mesh.position.z+player1.depth, player2.mesh.position.z + 5 * dt);
+						player2.mesh.position.z =  Math.min(player1.mesh.position.z+player1.depth, player2.mesh.position.z + 18 * dt);
 					}
 				}
 			}
@@ -148,7 +162,7 @@ export default class Level {
 		// make the gravity
 		for (let player of this.players) {
 			if (player.mesh.position.z > 0) {
-				player.mesh.position.z -= 2 * dt;
+				player.mesh.position.z -= 6 * dt;
 				if (player.mesh.position.z < 0)
 					player.mesh.position.z = 0;
 			}
@@ -158,7 +172,7 @@ export default class Level {
 	update(dt, keysJustPressed) {
 		this.spawnAnimation(dt);
 		for (let player of this.players) {
-			player.update(dt, keysJustPressed, this.mapData);
+			player.update(dt, keysJustPressed, this.mapData, this.powerups);
 		}
 		this.stackPlayers(dt);
 		for (let powerup of this.powerups) {

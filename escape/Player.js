@@ -1,7 +1,11 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
 import Cube from './Cube.js';
 import * as maps from './maps/maps.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import * as particles from './particles.js';
+import * as constants from './constants.js';
+
 
 const presets = [
 	{
@@ -39,9 +43,11 @@ export default class Player extends Cube{
 
 
 
-	constructor({scene, x=0, y=0, depth=1, presetNb=0, preset=presets[presetNb]}) {
+	constructor({scene, x=0, y=0, depth=1, presetNb=0, preset=presets[presetNb], particlesSystem}) {
 		super({scene: scene, x: x, y: y, depth: depth, color: preset.color});
+		this.scene = scene;
 		this.depth = depth;
+		this.particlesSystem = particlesSystem;
 		// position and movement
 		this.keys = {
 			up: preset.upKey,
@@ -52,14 +58,36 @@ export default class Player extends Cube{
 		this.position = new THREE.Vector2(x, y);
 		this.movingDirection = new THREE.Vector2(0, 0);
 		this.canMove = true;
-		this.meshStartMovingVelocity = -12; // the mesh moving velocity will start at this amount
+		this.meshStartMovingVelocity = -8; // the mesh moving velocity will start at this amount
 		this.meshCurrentMovingVelocity = this.meshStartMovingVelocity;
-		this.meshMovingAcceleration = 2; // the mesh moving velocity will increase by this amount every frame
-
+		this.meshMovingAcceleration = 1; // the mesh moving velocity will increase by this amount every frame
+		// light
+		this.spotLightIntensity = 155;
+		this.spotLight = this.createSpotlight(this.spotLightIntensity);
 
 		this.hasWin = false;
 		// this.loadSkin('assets/models/Cube Bricks.glb');
 		// this.smallCubesMeshes = this.createSmallerCubes();
+
+		// powerups
+		// slow
+		this.slowDuration = 0;
+		this.slowedMeshMovingVelocity = 12;
+		// lights down
+		this.spotLightOffDuration = 0;
+	}
+
+	createSpotlight(intensity) {
+		const color = this.mesh.material.color;
+		var light = new THREE.SpotLight(color, intensity, 10, Math.PI/4, 0.5, 2);
+		light.position.set(0, 0, 8);
+		// light.target.position.set(0, 0, 0);
+		this.mesh.add(light);
+		this.mesh.add(light.target);
+		// helper
+		if (constants.DEBUG)
+			this.mesh.add(new THREE.SpotLightHelper(light));
+		return light;
 	}
 
 	// createSmallerCubes() {
@@ -123,7 +151,15 @@ export default class Player extends Cube{
 		}
 	}
 
-	updateMovement(dt, mapData, keysJustPressed) {
+	activatePowerup(powerups) {
+		for (let powerup of powerups) {
+			if (this.position.x == powerup.position.x && this.position.y == powerup.position.y) {
+				powerup.activateByPlayer(this);
+			}
+		}
+	}
+
+	updateMovement(dt, mapData, keysJustPressed, powerups) {
 		this.setMovement(keysJustPressed);
 
 		if (this.movingDirection.x != 0 || this.movingDirection.y != 0)
@@ -133,6 +169,7 @@ export default class Player extends Cube{
 					this.position.x += this.movingDirection.x;
 					this.position.y += this.movingDirection.y;
 					this.checkVictory(mapData);
+					this.activatePowerup(powerups)
 				}
 			// else {
 			// }
@@ -151,8 +188,8 @@ export default class Player extends Cube{
 		// 	this.mesh.position.z -= 4*dt;
 		var movingDirection = new THREE.Vector2(this.position.x - this.mesh.position.x, this.position.y - this.mesh.position.y).normalize();
 		if (this.position.x != this.mesh.position.x || this.position.y != this.mesh.position.y) {
+
 			this.mesh.position.x += Math.sign(this.position.x - this.mesh.position.x) * this.meshCurrentMovingVelocity * dt;
-			this.meshCurrentMovingVelocity += this.meshMovingAcceleration;
 			this.mesh.position.y += Math.sign(this.position.y - this.mesh.position.y) * this.meshCurrentMovingVelocity * dt;
 			this.meshCurrentMovingVelocity += this.meshMovingAcceleration;
 
@@ -173,9 +210,41 @@ export default class Player extends Cube{
 
 	}
 
+	updatePowerups(dt) {
+		// slow effect
+		if (this.slowDuration > 0)
+		{
+			// particles
+			if (this.particlesSystem.triggerPulse(dt, this.canMove ? 4 : 22 ))
+				this.particlesSystem.addParticle(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z+1.5, particles.SnowParticle);
+			if (this.meshCurrentMovingVelocity >= 0)
+				this.meshCurrentMovingVelocity = this.slowedMeshMovingVelocity;
+			this.slowDuration -= dt;
+		}
+		// lights down effect
+		if (this.spotLightOffDuration > 0)
+		{
+			this.spotLight.intensity = 5;
+			this.spotLightOffDuration = Math.max(0, this.spotLightOffDuration - dt);
+		}
+		else if (this.spotLightOffDuration == 0) { // get executed once
+			this.spotLight.intensity = this.spotLightIntensity;
+			// activate the big lights
+			for (let object of this.scene.children) {
+				if (object.type == 'DirectionalLight') {
+					object.intensity = constants.directionalLightIntensity;
+				} else if (object.type == 'AmbientLight') {
+					object.intensity = constants.ambientLightIntensity;
+				}
+			}
+			this.spotLightOffDuration = -1;
+		}
+	}
 
-	update(dt, keysJustPressed, mapData) {
-		this.updateMovement(dt, mapData, keysJustPressed);
+
+	update(dt, keysJustPressed, mapData, powerups) {
+		this.updateMovement(dt, mapData, keysJustPressed, powerups);
+		this.updatePowerups(dt);
 		if (this.hasWin) {
 			if (!this.c)
 				this.c = 0;
