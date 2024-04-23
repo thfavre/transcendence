@@ -27,8 +27,24 @@ export default class AiPlayer extends Player {
 	{
 		this.targetPosition = this.getInter(ball);
 
+		// if (this.isBehindWall(this.targetPosition))
+		// 	this.adjustTargetPosition();
+
 		console.log("ball: ", ball);
 		console.log("targetPosition: ", this.targetPosition);
+	}
+
+	isBehindWall(position) {
+		// Check if the position is behind the wall based on the wall's center position and length
+		const distanceToCenter = position.distanceTo(this.centerPos);
+		return distanceToCenter > this.goalLength / 2;
+	}
+
+	adjustTargetPosition() {
+		// Adjust the targetPosition to be on the wall
+		const directionToCenter = new THREE.Vector3().subVectors(this.centerPos, this.targetPosition).normalize();
+		const adjustedPosition = new THREE.Vector3().copy(this.centerPos).add(directionToCenter.multiplyScalar(this.goalLength / 2));
+		this.targetPosition.copy(adjustedPosition);
 	}
 
 	getInter(ball)
@@ -74,9 +90,11 @@ export default class AiPlayer extends Player {
 		const offsetToTarget = new THREE.Vector3().subVectors(this.targetPosition, this.paddlePosition);
 		const projectionDistance = offsetToTarget.dot(forwardDirection);
 
-		if (projectionDistance > 0) {
+		const threshold = 0;
+
+		if (projectionDistance > threshold) {
 			this.paddle.moveUp();
-		} else if (projectionDistance < 0) {
+		} else if (projectionDistance < -threshold) {
 			this.paddle.moveDown();
 		}
 	}
@@ -95,6 +113,7 @@ export default class AiPlayer extends Player {
 	{
 		this.movePaddle();
 		this.paddle.update();
+		this.drawSphere();
 		// if (/* some condition */) {
 			// super.update(keysdown);  // Call the parent class's update()
 		// }
