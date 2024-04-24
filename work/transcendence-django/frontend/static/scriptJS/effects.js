@@ -20,7 +20,7 @@ const	backButtonCredits = document.getElementById("backButtonCredits");
 const	backButtonPong = document.getElementById("backButtonPong");
 const	backButtonFindExit = document.getElementById("backButtonFindExit");
 const	notFoundMenu = document.getElementById("notFoundMenu");
-const	allMenus = [menuButtons, newGameMenu, profileMenu, highScoreMenu, creditsMenu, notFoundMenu, pongMenu];
+const	allMenus = [menuButtons, newGameMenu, profileMenu, highScoreMenu, creditsMenu, notFoundMenu, pongMenu,findExitMenu];
 
 // Hide the video and show the menu
 
@@ -79,6 +79,11 @@ window.addEventListener("popstate", function(event)
 function	hideAllMenus()
 {
 	allMenus.forEach(menu => menu.classList.add("d-none"));
+	document.querySelectorAll('.modal.show').forEach(modalElement => {
+		let	modalInstance = bootstrap.Modal.getInstance(modalElement);
+		if (modalInstance)
+			modalInstance.hide();
+	});
 }
 
 // Basic router for managing refresh and direct access to a page\
@@ -117,46 +122,6 @@ function	route()
 			break;
 	}
 }
-
-// Cursor's Animation
-
-const cursorDot = document.querySelector("[data-cursor-dot]");
-const cursorOutline = document.querySelector("[data-cursor-outline]");
-let cursorTimeout;
-
-window.addEventListener("mousemove", function (e)
-{
-	const	posX = e.clientX;
-	const	posY = e.clientY;
-
-	cursorDot.style.left = `${posX}px`;
-	cursorDot.style.top = `${posY}px`;
-
-	cursorOutline.animate({
-		left: `${posX}px`,
-		top: `${posY}px`
-	}, {duration: 200, fill: "forwards"});
-
-	showCursor();
-});
-
-function hideCursor()
-{
-	cursorDot.style.display = "none";
-	cursorOutline.style.display = "none";
-}
-
-function showCursor()
-{
-	cursorDot.style.display = "block";
-	cursorOutline.style.display = "block";
-
-	clearTimeout(cursorTimeout);
-
-	cursorTimeout = setTimeout(hideCursor, 1000);
-}
-
-cursorTimeout = setTimeout(hideCursor, 1000);
 
 // Background effect with floating dots
 
