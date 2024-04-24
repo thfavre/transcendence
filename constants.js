@@ -15,7 +15,7 @@ export const FIELD_DIAMETER = 130;
 
 export const SKIP_PLAYER_SELECTION = true; // HumanPlayers will move with w/s
 
-export const DEBUG = true;
+export const DEBUG = false;
 
 // textures // TODO ? put in a class? other file ..?
 export const textureLoader = new THREE.TextureLoader();

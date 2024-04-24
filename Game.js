@@ -86,7 +86,7 @@ export default class Game {
 	}
 
 	createDirectionalLightsTargetedOnBall() {
-		if (this.directionalLights) { // erease the previous lights
+		if (this.directionalLights) { // erase the previous lights
 			this.directionalLights.forEach((light) => {
 				this.scene.remove(light);
 			});

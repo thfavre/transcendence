@@ -49,35 +49,35 @@ export default class AiPlayer extends Player {
 
 	getInter(ball)
 	{
-		var dX = ball.moveSpeed * Math.cos(ball.movingAngle);
-		var dY = ball.moveSpeed * Math.sin(ball.movingAngle);
-		var ballSlope = dX / dY;
-		var ballIntercept = ball.mesh.position.y - ballSlope * ball.mesh.position.x;
+		const	dX = ball.moveSpeed * Math.cos(ball.movingAngle);
+		const	dY = ball.moveSpeed * Math.sin(ball.movingAngle);
+		const	ballSlope = dX / dY;
+		const	ballIntercept = ball.mesh.position.y - ballSlope * ball.mesh.position.x;
 
-		var wallAngle = this.quatToRad();
-		var halfLen = this.goalLength / 2;
-		var end1_x = ball.mesh.position.x + halfLen * Math.cos(wallAngle);
-		var end1_y = ball.mesh.position.y + halfLen * Math.sin(wallAngle);
-		var end2_x = ball.mesh.position.x - halfLen * Math.cos(wallAngle);
-		var end2_y = ball.mesh.position.y - halfLen * Math.sin(wallAngle);
+		const	wallAngle = this.quatToRad();
+		const	halfLen = this.goalLength / 2;
+		const	end1_x = ball.mesh.position.x + halfLen * Math.cos(wallAngle);
+		const	end1_y = ball.mesh.position.y + halfLen * Math.sin(wallAngle);
+		const	end2_x = ball.mesh.position.x - halfLen * Math.cos(wallAngle);
+		const	end2_y = ball.mesh.position.y - halfLen * Math.sin(wallAngle);
 
-		var wallSlope = (end2_y - end1_y) / (end2_x - end1_x);
-		var wallIntercept = end1_y - wallSlope * end1_x;
+		const	wallSlope = (end2_y - end1_y) / (end2_x - end1_x);
+		const	wallIntercept = end1_y - wallSlope * end1_x;
 
-		const inter = new CANNON.Vec3();
-		inter.x = (wallIntercept - ballIntercept) / (ballSlope - wallSlope);
-		inter.y = ballSlope * inter.x + ballIntercept;
-		inter.z = 0;
+		const	interX = (wallIntercept - ballIntercept) / (ballSlope - wallSlope);
+		const	interY = ballSlope * interX + ballIntercept;
+		const inter = new CANNON.Vec3(interX, interY, 0);
 
+		this.drawSphere(inter);
 		return inter;
 	}
 
 	quatToRad()
 	{
-		let eulerAngles = new CANNON.Vec3();
+		const eulerAngles = new CANNON.Vec3();
 		this.goalHitboxBody.quaternion.toEuler(eulerAngles);
 
-		return eulerAngles.x;
+		return eulerAngles.z;
 	}
 
 	movePaddle()
@@ -99,21 +99,28 @@ export default class AiPlayer extends Player {
 		}
 	}
 
-	drawSphere() {
-		if (this.targetPositionSphereMesh)
-			this.paddle.mesh.remove(this.targetPositionSphereMesh);
+	drawSphere(newPosition) {
+		// Remove existing sphere (if any)
+		if (this.currentSphereMesh) {
+			this.paddle.mesh.remove(this.currentSphereMesh);
+			this.currentSphereMesh = null; // Reset the reference
+		}
+
+		// Create a new sphere
 		const geometry = new THREE.SphereGeometry(4, 5, 5);
-		const material = new THREE.MeshBasicMaterial({color: 0xff0022});
-		this.targetPositionSphereMesh = new THREE.Mesh(geometry, material);
-		this.targetPositionSphereMesh.position.copy(this.targetPosition);
-		this.paddle.mesh.add(this.targetPositionSphereMesh);
+		const material = new THREE.MeshBasicMaterial({ color: 0xff0022 });
+		this.currentSphereMesh = new THREE.Mesh(geometry, material);
+		this.currentSphereMesh.position.copy(newPosition);
+
+		// Add to the paddle
+		this.paddle.mesh.add(this.currentSphereMesh);
 	}
 
 	update()
 	{
 		this.movePaddle();
 		this.paddle.update();
-		this.drawSphere();
+		// this.drawSphere();
 		// if (/* some condition */) {
 			// super.update(keysdown);  // Call the parent class's update()
 		// }
