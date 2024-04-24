@@ -1,5 +1,5 @@
 # Use the official NGINX image from Docker Hub
-FROM nginx:latest
+FROM nginx:1.21.6
 
 # Remove the default nginx.conf
 RUN rm /etc/nginx/conf.d/default.conf
