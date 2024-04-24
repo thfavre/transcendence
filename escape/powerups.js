@@ -7,16 +7,31 @@ import * as constants from './constants.js';
 class Powerup extends Cube {
 	constructor({scene, x, y, color}) {
 		super({scene: scene, x: x, y: y, z: 0, width: 0.5, depth: 0.5, color: color});
+		this.scene = scene;
 		this.position = new THREE.Vector2(x, y);
+		this.hasBeenActivated = false;
+		// to make them fall
+		this.mesh.position.z = 10;
+		this.fallSpeed = 31;
+	}
+	fall(dt) {
+		if (this.mesh.position.z > 0) {
+			this.mesh.position.z = Math.max(0, this.mesh.position.z - this.fallSpeed * dt);
+		}
 	}
 
 	update(dt) {
 		this.mesh.rotation.x += dt;
 		this.mesh.rotation.y += dt;
+		this.fall(dt);
+
 	}
 
 	activateByPlayer(player) {
 		throw new Error('Not implemented');
+	}
+	delete() {
+		this.scene.remove(this.mesh);
 	}
 }
 
@@ -30,11 +45,10 @@ export class SlowPowerup extends Powerup {
 	}
 
 	activateByPlayer(player) {
-		console.log('Freeze powerup activated by player', player);
+		this.hasBeenActivated = true;
 		for (let p of this.players) {
 			if (p == player)
 				continue;
-			console.log('Freezing all other players');
 			p.slowDuration = 10;
 
 		}
@@ -50,7 +64,6 @@ export class SlowPowerup extends Powerup {
 export class LightsDownPowerup extends Powerup {
 	constructor({scene, x, y, players, particlesSystem}) {
 		super({scene: scene, x: x, y: y, color: 0x000000});
-		this.scene = scene;
 		this.players = players;
 		this.particlesSystem = particlesSystem;
 		// particlesSystem.addParticle(x, y, 0, particles.SnowParticle);
@@ -77,7 +90,7 @@ export class LightsDownPowerup extends Powerup {
 	}
 
 	activateByPlayer(player) {
-		console.log('LightsDown powerup activated by player', player);
+		this.hasBeenActivated = true;
 		for (let p of this.players) {
 			if (p == player)
 				continue;
@@ -97,14 +110,14 @@ export class LightsDownPowerup extends Powerup {
 
 export class DazedPowerup extends Powerup {
 	constructor({scene, x, y, players, particlesSystem}) {
-		super({scene: scene, x: x, y: y, color: 0xff0000});
+		super({scene: scene, x: x, y: y, color: 0xffb000});
 		this.players = players;
 		this.particlesSystem = particlesSystem;
 	}
 
 
 	activateByPlayer(player) {
-		console.log('Dazed powerup activated by player', player);
+		this.hasBeenActivated = true;
 		for (let p of this.players) {
 			if (p == player)
 				continue;
@@ -113,8 +126,8 @@ export class DazedPowerup extends Powerup {
 	}
 
 	update(dt) {
-		if (this.particlesSystem.triggerPulse(dt, 3))
-			this.particlesSystem.addParticle(this.position.x, this.position.y, 0.5, particles.RotatingStarParticle);
+		if (this.particlesSystem.triggerPulse(dt, 4))
+			this.particlesSystem.addParticle(this.position.x, this.position.y, 1, particles.DazedParticle);
 		super.update(dt);
 	}
 }

@@ -19,6 +19,22 @@ export default class MapData {
 		return this._mapArray[this._height-y-1][x];
 	}
 
+	getRandomEmptyCell(maxTries=100) {
+		let x = Math.floor(Math.random() * this.getWidth());
+		let y = Math.floor(Math.random() * this.getHeight());
+
+		while (this.getCell(x, y) !== maps.EMPTY && maxTries > 0) {
+			x = Math.floor(Math.random() * this.getWidth());
+			y = Math.floor(Math.random() * this.getHeight());
+			maxTries--;
+		}
+		if (maxTries === 0) {
+			console.error('Could not find an empty cell for powerup');
+			return null;
+		}
+		return {x, y};
+	}
+
 	getHeight() {
 		return this._height;
 	}

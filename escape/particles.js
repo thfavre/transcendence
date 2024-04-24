@@ -53,7 +53,7 @@ class Particle {
 }
 
 export class SnowParticle extends Particle {
-	static model = null;
+	// static model = null;
 
 	// static async loadModel() {
 	// 	const loader = new GLTFLoader(); // Assuming you're using GLTFLoader
@@ -174,24 +174,56 @@ export class LightAbsorbedParticle extends Particle {
 }
 
 
-export class RotatingStarParticle extends Particle {
-	constructor({scene, x, y, z}) {
+export class DazedParticle extends Particle {
+
+	static spriteUrls = [
+		'assets/star.png',
+		'assets/star.png',
+		'assets/star.png',
+		'assets/planet.png',
+		'assets/exclamation.png',
+		'assets/interogation.png',
+	];
+
+	constructor({scene, x, y, z, orbitRadius=0.7, orbitSpeed=Math.PI*2/1.5, lifeTime=2, startScale=0.5}) {
 		super({scene: scene, x: x, y: y, z: z});
-		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 4), new THREE.MeshBasicMaterial({color: '#ff0000'}));
-		this.mesh.position.copy(this.position);
-		scene.add(this.mesh);
+		this.orbitRadius = orbitRadius;
+		this.orbitSpeed = orbitSpeed; // in radians per second
+		this.time = 0;
+		this.lifeTime = lifeTime; // in seconds
+		this.startScale = startScale;
+		this.angleOffset = Math.random() * Math.PI * 2;
+
+		const map = new THREE.TextureLoader().load( DazedParticle.spriteUrls[Math.floor(Math.random()*DazedParticle.spriteUrls.length)] );
+		const material = new THREE.SpriteMaterial( { map: map } );
+
+		this.sprite = new THREE.Sprite( material );
+		this.sprite.scale.set(this.startScale, this.startScale, 0);
+		this.sprite.position.copy(this.position);
+		scene.add( this.sprite );
+		this.mesh = this.sprite;
+
 	}
 	shouldRemove() {
-		return this.mesh.scale.x <= 0.1;
+		return this.time >= this.lifeTime;
 	}
 
-	decreaseRadius(dt) {
-		this.mesh.scale.x -= dt;
-		this.mesh.scale.y -= dt;
-		this.mesh.scale.z -= dt;
+	scaleDown() {
+		var completion = this.time/this.lifeTime;
+		this.sprite.scale.set(this.startScale*(1-completion)+0.1, this.startScale*(1-completion)+0.1, 0);
+	}
+
+	move(dt) {
+		this.time += dt;
+		this.sprite.position.x = Math.sin(this.time * this.orbitSpeed+this.angleOffset) * this.orbitRadius;
+		this.sprite.position.y = Math.cos(this.time * this.orbitSpeed+this.angleOffset) * this.orbitRadius;
+		this.sprite.position.x += this.position.x;
+		this.sprite.position.y += this.position.y;
+
 	}
 
 	update(dt) {
-		this.decreaseRadius(dt);
+		this.move(dt);
+		this.scaleDown()
 	}
 }

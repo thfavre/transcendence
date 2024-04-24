@@ -17,6 +17,14 @@ export default class Level {
 
 		// this.activateSpawnAnimation();
 		this.createPlane()
+		// powerups
+		this.spawnPowerupsFrequency = 10; // seconds
+		this.spawnPowerupsTimer = this.spawnPowerupsFrequency; // to spawn one at the beginning
+		this.allPowerups = [
+			powerups.SlowPowerup,
+			powerups.LightsDownPowerup,
+			powerups.DazedPowerup
+		];
 	}
 
 	createPlane(walls) {
@@ -123,13 +131,14 @@ export default class Level {
 						const player = new Player({scene: this.scene, x: x, y: y, presetNb: i, particlesSystem: this.particlesSystem});
 						players.push(player);
 					}
-				} else if (cell === maps.POWERUP_SLOW) {
-					_powerups.push(new powerups.SlowPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
-				} else if (cell === maps.POWERUP_LIGHTSDOWN) {
-					_powerups.push(new powerups.LightsDownPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
-				} else if (cell === maps.POWERUP_DAZED) {
-					_powerups.push(new powerups.DazedPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
 				}
+				// else if (cell === maps.POWERUP_SLOW) {
+				// 	_powerups.push(new powerups.SlowPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
+				// } else if (cell === maps.POWERUP_LIGHTSDOWN) {
+				// 	_powerups.push(new powerups.LightsDownPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
+				// } else if (cell === maps.POWERUP_DAZED) {
+				// 	_powerups.push(new powerups.DazedPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
+				// }
 			}
 		}
 		// for (let y = 0; y < mapArray.length; y++) {
@@ -149,6 +158,14 @@ export default class Level {
 
 	/** Stack players on top of each other when they are on the same position */
 	stackPlayers(dt) {
+		// make the gravity
+		for (let player of this.players) {
+			if (player.mesh.position.z > 0) {
+				player.mesh.position.z -= 6 * dt;
+				if (player.mesh.position.z < 0)
+					player.mesh.position.z = 0;
+			}
+		}
 		for (let i=0; i<this.players.length; i++)
 		{
 			let player1 = this.players[i];
@@ -161,14 +178,30 @@ export default class Level {
 				}
 			}
 		}
-		// make the gravity
-		for (let player of this.players) {
-			if (player.mesh.position.z > 0) {
-				player.mesh.position.z -= 6 * dt;
-				if (player.mesh.position.z < 0)
-					player.mesh.position.z = 0;
+	}
+
+	updatePowerups(dt) {
+		// update
+		for (let powerup of this.powerups) {
+			powerup.update(dt);
+			if (powerup.hasBeenActivated) {
+				powerup.delete();
+				this.powerups = this.powerups.filter(p => p != powerup);
 			}
 		}
+		// create
+		this.spawnPowerupsTimer += dt;
+		if (this.spawnPowerupsTimer > this.spawnPowerupsFrequency) {
+			this.spawnPowerupsTimer = 0;
+			const pos = this.mapData.getRandomEmptyCell();
+			console.log(pos);
+			if (pos !== null) {
+				const PowerupClass = this.allPowerups[Math.floor(Math.random() * this.allPowerups.length)];
+				this.powerups.push(new PowerupClass({scene: this.scene, x: pos.x, y: pos.y, players: this.players, particlesSystem: this.particlesSystem}));
+			}
+
+		}
+
 	}
 
 	update(dt, keysJustPressed) {
@@ -177,9 +210,9 @@ export default class Level {
 			player.update(dt, keysJustPressed, this.mapData, this.powerups);
 		}
 		this.stackPlayers(dt);
-		for (let powerup of this.powerups) {
-			powerup.update(dt);
-		}
+
+		this.updatePowerups(dt);
+
 
 	}
 }

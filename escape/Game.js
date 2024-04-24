@@ -25,8 +25,7 @@ export default class Game {
 
 	update(keysJustPressed) {
 		var dt = this.clock.getDelta();
-		if (this.level)
-			this.level.update(dt, keysJustPressed);
 		this.particlesSystem.update(dt);
+		this.level.update(dt, keysJustPressed);
 	}
 }

@@ -230,7 +230,7 @@ export default class Player extends Cube{
 		if (this.spotLightOffDuration > 0)
 		{
 			this.spotLight.intensity = 2;
-			this.spotLightOffDuration -= - dt;
+			this.spotLightOffDuration -= dt;
 			if (this.spotLightOffDuration <= 0) {
 				this.spotLight.intensity = this.spotLightIntensity;
 			// activate the big lights
@@ -242,6 +242,8 @@ export default class Player extends Cube{
 		// daze effect
 		if (this.dazedDuration > 0)
 		{
+			if (this.particlesSystem.triggerPulse(dt, 4))
+				this.particlesSystem.addParticle(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z+1, particles.DazedParticle);
 			this.keys = this.dazedKeys;
 			this.dazedDuration -= dt;
 			if (this.dazedDuration <= 0) {
@@ -255,12 +257,11 @@ export default class Player extends Cube{
 		this.updateMovement(dt, mapData, keysJustPressed, powerups);
 		this.updatePowerups(dt);
 		if (this.hasWin) {
-			if (!this.c)
-				this.c = 0;
-			this.c += 1;
-			this.mesh.material.color = new THREE.Color(this.c%255/255, this.c%122/210, this.c%33/255);
-			this.mesh.position.z = (this.c*4)%200*dt;
-
+			if (!this.winTimer)
+				this.winTimer = 0;
+			this.winTimer += dt;
+			this.mesh.position.z = Math.abs(Math.sin(this.winTimer*3))*1.5;
+			//(this.c*4)%200*dt;
 		}
 
 	}
