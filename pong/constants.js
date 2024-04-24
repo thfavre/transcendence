@@ -9,11 +9,11 @@ import * as THREE from 'three';
 
 export const FPS = 60;
 
-export const SEGMENTS = 4; // number of players
+export const SEGMENTS = 6; // number of players
 export const FIELD_DIAMETER = 130;
 
 
-export const SKIP_PLAYER_SELECTION = true; // HumanPlayers will move with w/s
+export const SKIP_PLAYER_SELECTION = false; // HumanPlayers will move with w/s
 
 export const DEBUG = false;
 

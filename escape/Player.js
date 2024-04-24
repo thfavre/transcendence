@@ -5,6 +5,7 @@ import Cube from './Cube.js';
 import * as maps from './maps/maps.js';
 import * as particles from './particles.js';
 import * as constants from './constants.js';
+import {LightsDownPowerup} from './powerups.js';
 
 
 const presets = [
@@ -75,11 +76,15 @@ export default class Player extends Cube{
 		this.slowedMeshMovingVelocity = 12;
 		// lights down
 		this.spotLightOffDuration = 0;
+		// dazed effect
+		this.dazedDuration = 0;
+		this.dazedKeys = {up: this.keys.down, down: this.keys.up, left: this.keys.right, right: this.keys.left};
+		this.defaultKeys = {up: this.keys.up, down: this.keys.down, left: this.keys.left, right: this.keys.right};
 	}
 
 	createSpotlight(intensity) {
 		const color = this.mesh.material.color;
-		var light = new THREE.SpotLight(color, intensity, 10, Math.PI/4, 0.5, 2);
+		var light = new THREE.SpotLight(color, intensity, 12, Math.PI/4, 0.5, 2);
 		light.position.set(0, 0, 8);
 		// light.target.position.set(0, 0, 0);
 		this.mesh.add(light);
@@ -224,20 +229,24 @@ export default class Player extends Cube{
 		// lights down effect
 		if (this.spotLightOffDuration > 0)
 		{
-			this.spotLight.intensity = 5;
-			this.spotLightOffDuration = Math.max(0, this.spotLightOffDuration - dt);
-		}
-		else if (this.spotLightOffDuration == 0) { // get executed once
-			this.spotLight.intensity = this.spotLightIntensity;
+			this.spotLight.intensity = 2;
+			this.spotLightOffDuration -= - dt;
+			if (this.spotLightOffDuration <= 0) {
+				this.spotLight.intensity = this.spotLightIntensity;
 			// activate the big lights
-			for (let object of this.scene.children) {
-				if (object.type == 'DirectionalLight') {
-					object.intensity = constants.directionalLightIntensity;
-				} else if (object.type == 'AmbientLight') {
-					object.intensity = constants.ambientLightIntensity;
-				}
-			}
+			console.log('LightsDown powerup deactivated');
+			LightsDownPowerup.activateSceneLights(this.scene);
 			this.spotLightOffDuration = -1;
+			}
+		}
+		// daze effect
+		if (this.dazedDuration > 0)
+		{
+			this.keys = this.dazedKeys;
+			this.dazedDuration -= dt;
+			if (this.dazedDuration <= 0) {
+				this.keys = this.defaultKeys;
+			}
 		}
 	}
 

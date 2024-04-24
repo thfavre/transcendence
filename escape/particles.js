@@ -172,3 +172,26 @@ export class LightAbsorbedParticle extends Particle {
 
 	}
 }
+
+
+export class RotatingStarParticle extends Particle {
+	constructor({scene, x, y, z}) {
+		super({scene: scene, x: x, y: y, z: z});
+		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 4), new THREE.MeshBasicMaterial({color: '#ff0000'}));
+		this.mesh.position.copy(this.position);
+		scene.add(this.mesh);
+	}
+	shouldRemove() {
+		return this.mesh.scale.x <= 0.1;
+	}
+
+	decreaseRadius(dt) {
+		this.mesh.scale.x -= dt;
+		this.mesh.scale.y -= dt;
+		this.mesh.scale.z -= dt;
+	}
+
+	update(dt) {
+		this.decreaseRadius(dt);
+	}
+}

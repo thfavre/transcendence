@@ -14,7 +14,7 @@ export default class Ball {
 		scene.add(this.mesh);
 		// scene.add(constants.modelBall);
 		const loader = new GLTFLoader();
-		loader.load(constants.ballsModels[4], (gltf) => {
+		loader.load(constants.ballsModels[2], (gltf) => {
 			const model = gltf.scene;
 			model.scale.set(13, 13, 13);
 			this.mesh.add(model);

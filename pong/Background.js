@@ -130,7 +130,7 @@ class MovingBox extends OrbitMovement {
 class FallingBox {
 	constructor(x, y) {
 		this.minZ = -constants.FIELD_DIAMETER * 3; // will be teleported to the top when it reaches this point
-		this.respawnZ = constants.FIELD_DIAMETER;
+		this.respawnZ = constants.FIELD_DIAMETER*2;
 		const z = THREE.MathUtils.randFloat(this.minZ, this.respawnZ);
 		this.mesh = this.createBoxMesh(x, y, z);
 		this.speed = THREE.MathUtils.randFloat(0.2, 0.6); // or better with all same speed?
@@ -167,7 +167,7 @@ export default class Background {
 		// this.stars.push(...this.createMovingObject(MovingTorus, {number: 100, maxSpawnDistance: 200, spawnUnderField: true}));
 		// this.stars.push(...this.createMovingObject(MovingBox, {number: 150, maxSpawnDistance: 100, spawnUnderField: true}));
 		// this.stars.push(...this.createMovingObject(FallingBox, {number: 100, maxSpawnDistance: 200, spawnUnderField: false}));
-		this.stars.push(...this.createMovingObject(FallingBox, {number: 100, maxSpawnDistance: 200, spawnUnderField: false}));
+		this.stars.push(...this.createMovingObject(FallingBox, {number: 150, maxSpawnDistance: 300, spawnUnderField: false}));
 	}
 
 

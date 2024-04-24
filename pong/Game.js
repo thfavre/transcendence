@@ -107,6 +107,23 @@ export default class Game {
 
 	}
 
+	// createDirectionalLightStartup() {
+	// 	this.roundStartTimeStamp < this.roundStartTime*1000
+	// 	if (this.directionalLights.length >= i)
+	// 		return;
+	// 	var vertex = this.fieldVertices[i];
+	// 		// draw a circle with three js
+	// 		// vector going from the center of the field to the vertex
+
+	// 		var centerToVertex = new THREE.Vector3(vertex.x, vertex.y, 0);
+	// 		centerToVertex.multiplyScalar(1.1);
+	// 		// centerToVertex
+	// 		centerToVertex.z = 60;
+	// 		var directionalLight = this.createDirectionalLightTargetedOnBall(centerToVertex.x, centerToVertex.y, centerToVertex.z);
+	// 		this.directionalLights.push(directionalLight);
+	// 		this.scene.add(directionalLight);
+	// }
+
 	createLights() {
 		var hemisphereLight = new THREE.HemisphereLight( '#ddddbb', '#111111', 1);
 		console.log(hemisphereLight)

@@ -35,7 +35,7 @@ export class SlowPowerup extends Powerup {
 			if (p == player)
 				continue;
 			console.log('Freezing all other players');
-			p.slowDuration = 5;
+			p.slowDuration = 10;
 
 		}
 	}
@@ -56,23 +56,36 @@ export class LightsDownPowerup extends Powerup {
 		// particlesSystem.addParticle(x, y, 0, particles.SnowParticle);
 	}
 
+	static desactivateSceneLights(scene, minDirectionalLightIntensity, minAmbientLightIntensity) {
+		for (let object of scene.children) {
+			if (object.type == 'DirectionalLight') {
+				object.intensity = minDirectionalLightIntensity;
+			} else if (object.type == 'AmbientLight') {
+				object.intensity = minAmbientLightIntensity;
+			}
+		}
+	}
+
+	static activateSceneLights(scene) {
+		for (let object of scene.children) {
+			if (object.type == 'DirectionalLight') {
+				object.intensity = constants.directionalLightIntensity;
+			} else if (object.type == 'AmbientLight') {
+				object.intensity = constants.ambientLightIntensity;
+			}
+		}
+	}
+
 	activateByPlayer(player) {
 		console.log('LightsDown powerup activated by player', player);
 		for (let p of this.players) {
 			if (p == player)
 				continue;
-			// p.spotLight.intensity = 10;
-			p.spotLightOffDuration = 5;
+			// p.spotLight.intensity = 2;
+			p.spotLightOffDuration = 10;
 
 		}
-		// iterate through the scene to set the intensity of the lights to 0
-		for (let object of this.scene.children) {
-			if (object.type == 'DirectionalLight') {
-				object.intensity = 0;
-			} else if (object.type == 'AmbientLight') {
-				object.intensity = 0.003;
-			}
-		}
+		LightsDownPowerup.desactivateSceneLights(this.scene, 0, 0.003);
 	}
 
 	update(dt) {
@@ -82,3 +95,26 @@ export class LightsDownPowerup extends Powerup {
 	}
 }
 
+export class DazedPowerup extends Powerup {
+	constructor({scene, x, y, players, particlesSystem}) {
+		super({scene: scene, x: x, y: y, color: 0xff0000});
+		this.players = players;
+		this.particlesSystem = particlesSystem;
+	}
+
+
+	activateByPlayer(player) {
+		console.log('Dazed powerup activated by player', player);
+		for (let p of this.players) {
+			if (p == player)
+				continue;
+			p.dazedDuration = 10;
+		}
+	}
+
+	update(dt) {
+		if (this.particlesSystem.triggerPulse(dt, 3))
+			this.particlesSystem.addParticle(this.position.x, this.position.y, 0.5, particles.RotatingStarParticle);
+		super.update(dt);
+	}
+}

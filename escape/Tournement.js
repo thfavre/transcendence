@@ -2,7 +2,7 @@ import Game from './Game.js';
 import * as maps from './maps/maps.js';
 
 export default class Tournement {
-	constructor(scene, playersNb=3) {
+	constructor(scene, playersNb=4) {
 		this.scene = scene;
 		this.playersNb = playersNb;
 		// this.level = new Level(scene, mapArray, playersNb);

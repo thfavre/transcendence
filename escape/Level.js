@@ -127,6 +127,8 @@ export default class Level {
 					_powerups.push(new powerups.SlowPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
 				} else if (cell === maps.POWERUP_LIGHTSDOWN) {
 					_powerups.push(new powerups.LightsDownPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
+				} else if (cell === maps.POWERUP_DAZED) {
+					_powerups.push(new powerups.DazedPowerup({scene: this.scene, x: x, y: y, players: players, particlesSystem: this.particlesSystem}));
 				}
 			}
 		}

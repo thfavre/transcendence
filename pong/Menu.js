@@ -213,6 +213,8 @@ export default class Menu {
 
 	update(dt, keydown, keysJustPressed)
 	{
+		this.game.background.update();
+
 		if (constants.SKIP_PLAYER_SELECTION)
 		{
 			this.game.finishRound();
