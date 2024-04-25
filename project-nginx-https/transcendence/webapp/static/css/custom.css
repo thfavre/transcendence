@@ -55,12 +55,14 @@ body
 	cursor: none !important;
 }
 
+/* Card's Design */
+
 .card
 {
 	width: 90%;
-	max-width: 400px;
+	max-width: 500px;
 	max-height: 400px;
-	padding: 5rem 2.5rem;
+	padding: 3rem 1rem;
 
 	border-radius: 3rem;
 	border: 1px solid transparent;
@@ -78,9 +80,21 @@ body
 .card-text
 {
 	max-height: 150px;
-	font-size: calc(0.5rem + 0.5vw);
+	font-size: calc(0.6rem + 0.6vw);
+	text-align: justify;
 	overflow: auto;
 	cursor: none;
+	margin-top: 2.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.card-title
+{
+	font-size: calc(1rem + 1vw); /* Taille de police responsive */
+	color: #3CD6EB;
+	white-space: nowrap;
+	overflow: hidden;
+	max-width: 100%;
 }
 
 /* Cursor's Design */
@@ -107,7 +121,7 @@ body
 	left: 0;
 	transform: translate(-50%, -50%);
 	border-radius: 50%;
-	z-index: 999;
+	z-index: 9999;
 	pointer-events: none;
 }
 
@@ -141,13 +155,13 @@ body
 
 .custom-background-spot
 {
-    position: absolute;
-    width: 5vw;
-    height: 5vw;
-    background-image: radial-gradient(closest-side, rgba(60, 214, 235, 0.5) 0%, rgba(60, 214, 235, 0.3) 50%, rgba(0, 0, 0, 0) 100%);
-    border-radius: 50%;
-    filter: blur(8px);
-    z-index: -1;
+	position: absolute;
+	width: 5vw;
+	height: 5vw;
+	background-image: radial-gradient(closest-side, rgba(60, 214, 235, 0.5) 0%, rgba(60, 214, 235, 0.3) 50%, rgba(0, 0, 0, 0) 100%);
+	border-radius: 50%;
+	filter: blur(8px);
+	z-index: -1;
 }
 
 @keyframes floatAnimation1
@@ -172,4 +186,49 @@ body
 	25% { transform: translate(5px, -20px) rotate(30deg); }
 	50% { transform: translate(15px, -30px) rotate(60deg); }
 	75% { transform: translate(5px, -40px) rotate(90deg); }
+}
+
+/* Modal options */
+
+.modal-title
+{
+	font-size: calc(1rem + 1vw);
+	color: #3CD6EB;
+}
+
+.modal-body
+{
+	font-size: calc(0.6rem + 0.6vw);
+	text-align: justify;
+}
+
+/* Footer */
+
+.text-muted
+{
+	color : rgb(60, 214, 235, 0.3) !important;
+	font-size : calc(0.5rem + 0.5vw);
+}
+
+.custom-select
+{
+	background: transparent;
+	border: none;
+	color : rgb(60, 214, 235, 0.3) !important;
+	font-size : calc(0.5rem + 0.5vw);
+	cursor: none;
+}
+
+.custom-btn-footer
+{
+	background: transparent;
+	border: none;
+	color : rgb(60, 214, 235, 0.3) !important;
+	font-size : calc(0.5rem + 0.5vw);
+	appearance: none;
+}
+
+.custom-btn-footer:hover
+{
+	background-color: transparent;
 }

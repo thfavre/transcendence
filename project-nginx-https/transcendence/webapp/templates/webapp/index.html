@@ -18,13 +18,13 @@
 		<div id="menu" class="container-fluid d-none vh-100">
 			<div class="cursor-dot" data-cursor-dot></div>
 			<div class="cursor-outline" data-cursor-outline></div>
-			<h1 class="col-12 container-fluid text-center custom-h1 text-decoration-underline mb-5"><span class="custom-underline">PONG </span><span class="text-light">TOURNAMENT</span></h1>
+			<h1 class="col-12 container-fluid text-center custom-h1 text-decoration-underline mb-5"><span class="custom-underline">TRANS</span><span class="text-light">CENDENCE</span></h1>
 
 			<!-- Buttons block -->
 			<div class="d-flex justify-content-center" id="menuButtons">
 				<div class="d-grid gap-3 col-6 mx-auto">
 					<button id="newGameButton" class="custom-btn btn btn-link tracking-in-expand">New Game</button>
-					<button id="optionsButton" class="custom-btn btn btn-link tracking-in-expand">Options</button>
+					<button id="profileButton" class="custom-btn btn btn-link tracking-in-expand">Profile</button>
 					<button id="highScoreButton" class="custom-btn btn btn-link tracking-in-expand" >High Score</button>
 					<button id="creditsButton" class="custom-btn btn btn-link tracking-in-expand">Credits</button>
 				</div>
@@ -32,40 +32,22 @@
 
 			<!-- New Game block-->
 			<div id="newGameMenu" class="container d-none">
-				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4">
-					<div class="col mb-3">
+				<div class="row justify-content-center">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
-								<h5 class="card-title">Player Vs Player</h5>
-								<p class="card-text">Some quick example to build on the card title and make up the bulk of the card's content.</p>
-								<button class="btn btn-outline-info">Play</button>
+								<h5 class="card-title">Pong</h5>
+								<p class="card-text"><em>Pong</em> is an iconic arcade game where players control paddles to volley a ball back and forth. The objective is to score points by maneuvering the ball past the opponent's paddle.</p>
+								<button id="pongButton" class="btn btn-outline-info">Select</button>
 							</div>
 						</div>
 					</div>
-					<div class="col mb-3">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
-								<h5 class="card-title">Player Vs IA</h5>
-								<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-								<button class="btn btn-outline-info">Play</button>
-							</div>
-						</div>
-					</div>
-					<div class="col mb-3">
-						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
-							<div class="card-body">
-								<h5 class="card-title">Tournament</h5>
-								<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-								<button class="btn btn-outline-info">Play</button>
-							</div>
-						</div>
-					</div>
-					<div class="col mb-3">
-						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
-							<div class="card-body">
-								<h5 class="card-title">Other game</h5>
-								<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-								<button class="btn btn-outline-info">Play</button>
+								<h5 class="card-title">Find the Exit</h5>
+								<p class="card-text"><em>Find the Exit</em> is a puzzle game where players navigate through a maze using directional arrows. However, the player's character halts upon encountering a wall, intensifying the challenge.</p>
+								<button id="findExitButton" class="btn btn-outline-info">Select</button>
 							</div>
 						</div>
 					</div>
@@ -75,11 +57,119 @@
 				</div>
 			</div>
 
-			<!-- Options block -->
-			<div id="optionsMenu" class="container-fluid d-none">
+			<!-- Pong block -->
+			<div id="pongMenu" class="container d-none">
+				<div class="row justify-content-center">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Versus</h5>
+								<p class="card-text">Up to 5 players, each with 3 lives.</p>
+								<div class="d-flex justify-content-around w-100 mb-3">
+									<select class="form-select form-select-sm me-2" id="pongVersusPlayer" onchange="updatePongPlayersVersus()">
+										<option selected>Players</option>
+										<option value="1">1 P</option>
+										<option value="2">2 P</option>
+										<option value="3">3 P</option>
+										<option value="4">4 P</option>
+										<option value="5">5 P</option>
+									</select>
+									<select class="form-select form-select-sm ms-2" id="pongVersusAI" onchange="updatePongPlayersVersus()">
+										<option selected>AI</option>
+										<option value="1">1 AI</option>
+										<option value="2">2 AI</option>
+										<option value="3">3 AI</option>
+										<option value="4">4 AI</option>
+									</select>
+								</div>
+								<button class="btn btn-outline-info" onclick="launchPongVersus()">Play</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Tournament</h5>
+								<p class="card-text">Tournament bracket for up to 8 players.</p>
+								<div class="d-flex justify-content-around w-100 mb-3">
+									<select class="form-select form-select-sm me-2" id="pongTournamentPlayer">
+										<option selected>Players</option>
+										<option value="3">3 P</option>
+										<option value="4">4 P</option>
+										<option value="5">5 P</option>
+										<option value="6">6 P</option>
+										<option value="7">7 P</option>
+										<option value="8">8 P</option>
+									</select>
+								</div>
+								<button class="btn btn-outline-info" onclick="launchPongTournament()">Play</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonPong" class="btn btn-link custom-btn-back tracking-in-expand">Back</button>
+				</div>
+			</div>
+
+			<!-- Find the exit block -->
+			<div id="findExitMenu" class="container d-none">
+				<div class="row justify-content-center">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Solo</h5>
+								<p class="card-text">Complete up to 20 levels as quickly as possible.</p>
+								<div class="d-flex justify-content-around w-100 mb-3">
+									<select class="form-select form-select-sm me-2" id="exitSoloLevel">
+										<option selected>Number of levels</option>
+										<option value="1">1 level</option>
+										<option value="5">5 levels</option>
+										<option value="10">10 levels</option>
+										<option value="15">15 levels</option>
+										<option value="20">20 levels</option>
+									</select>
+								</div>
+								<button class="btn btn-outline-info" onclick="launchExitSolo()">Play</button>
+							</div>
+						</div>
+					</div>
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
+							<div class="card-body">
+								<h5 class="card-title">Versus</h5>
+								<p class="card-text">Play with up to 4 players in "Best of X" mode.</p>
+								<div class="d-flex justify-content-around w-100 mb-3">
+									<select class="form-select form-select-sm me-2" id="exitVersusPlayers">
+										<option selected>Players</option>
+										<option value="2">2 P</option>
+										<option value="3">3 P</option>
+										<option value="4">4 P</option>
+									</select>
+									<select class="form-select form-select-sm ms-2" id="exitVersusLevel">
+										<option selected>Best of</option>
+										<option value="1">Bo1</option>
+										<option value="2">Bo2</option>
+										<option value="3">Bo3</option>
+										<option value="4">Bo4</option>
+										<option value="5">Bo5</option>
+									</select>
+								</div>
+								<button class="btn btn-outline-info" onclick="launchExitVersus()">Play</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="d-flex justify-content-end">
+					<button id="backButtonFindExit" class="btn btn-link custom-btn-back tracking-in-expand">Back</button>
+				</div>
+			</div>
+
+			<!-- Profile block -->
+			<div id="profileMenu" class="container-fluid d-none">
 				<img src="{% static '/media/WorkInProgress.png' %}" class="img-fluid rounded mx-auto d-block" alt="...">
 				<div class="d-flex justify-content-end">
-					<button id="backButtonOptions" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
+					<button id="backButtonProfile" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
 				</div>
 			</div>
 
@@ -120,14 +210,42 @@
 				</div>
 			</div>
 
+			<!-- Modal alerts  - Play Pong Versus -->
+			<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Warning!</h5>
+						</div>
+						<div class="modal-body" id="errorMessage">Default message.</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Get it</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- Footer block -->
 			<footer class="footer text-center py-3 mt-auto">
-				<div class="container">
+				<div class="container d-flex justify-content-between align-items-center">
+					<div class="dropdown">
+						<div>
+							<select class="form-select custom-select" aria-label="Choix de langue">
+								<option value="fr">ENG</option>
+								<option value="en">FR</option>
+								<option value="es">ESP</option>
+							</select>
+						</div>
+					</div>
 					<span class="text-muted">© 2024 Transcendence - v14.1</span>
+					<button class="btn btn-primary custom-btn-footer">Autre Bouton</button>
 				</div>
 			</footer>
 		</div>
 	</body>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	<script src="{% static '/scriptJS/effects.js' %}"></script>
+	<script src="{% static '/scriptJS/cursor.js' %}"></script>
+	<script src="{% static '/scriptJS/pongOptions.js' %}"></script>
+	<script src="{% static '/scriptJS/exitOptions.js' %}"></script>
 </html>
