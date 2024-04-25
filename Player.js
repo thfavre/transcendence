@@ -42,6 +42,10 @@ export default class Player {
 			isBallInGoal.a = true;
 		});
 		physicsWorld.addBody(this.goalHitboxBody);
+
+		console.log("Wall centerPos Player creation: ", centerPos);
+		console.log("Wall startPos Player creation: ", startPos);
+		console.log("Wall endPos Player creation: ", endPos);
 	}
 
 	loseHealth() {
