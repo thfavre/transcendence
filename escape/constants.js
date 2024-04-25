@@ -1,7 +1,7 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 
-export const DEBUG = true;
+export const DEBUG = false;
 export const gltflLoader = new GLTFLoader();
 
 // lights
