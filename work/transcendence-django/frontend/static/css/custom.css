@@ -201,3 +201,34 @@ body
 	font-size: calc(0.6rem + 0.6vw);
 	text-align: justify;
 }
+
+/* Footer */
+
+.text-muted
+{
+	color : rgb(60, 214, 235, 0.3) !important;
+	font-size : calc(0.5rem + 0.5vw);
+}
+
+.custom-select
+{
+	background: transparent;
+	border: none;
+	color : rgb(60, 214, 235, 0.3) !important;
+	font-size : calc(0.5rem + 0.5vw);
+	cursor: none;
+}
+
+.custom-btn-footer
+{
+	background: transparent;
+	border: none;
+	color : rgb(60, 214, 235, 0.3) !important;
+	font-size : calc(0.5rem + 0.5vw);
+	appearance: none;
+}
+
+.custom-btn-footer:hover
+{
+	background-color: transparent;
+}

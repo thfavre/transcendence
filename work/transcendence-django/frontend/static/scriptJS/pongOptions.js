@@ -35,7 +35,7 @@ function	updatePongPlayersVersus()
 
 document.addEventListener('DOMContentLoaded', updatePongPlayersVersus);
 
-// Start the game after checking that the conditions are OK
+// Start Pong Versus after checking that the conditions are OK
 
 function	launchPongVersus()
 {
@@ -48,10 +48,33 @@ function	launchPongVersus()
 		selectedPlayers = 0;
 	if (isNaN(selectedAI))
 		selectedAI = 0;
+
 	let	totalParticipants = selectedPlayers + selectedAI;
+
 	if (totalParticipants < 2 || selectedPlayers < 1)
 	{
-		let	alertModal = new bootstrap.Modal(document.getElementById('alertModalPongVersus'));
+		let	modalBody = document.getElementById('errorMessage');
+		modalBody.textContent = "You must select at least 1 player and a total of at least 2 contestants.";
+		let	alertModal = new bootstrap.Modal(document.getElementById('errorModal'));
 		alertModal.show();
+		return;
 	}
+}
+
+// Start Pong Tournament after checking that the conditions are OK
+
+function	launchPongTournament()
+{
+	let	playerSelect = document.getElementById("pongTournamentPlayer");
+	let	selectedPlayers = parseInt(playerSelect.value);
+
+	if (isNaN(selectedPlayers))
+	{
+		let	modalBody = document.getElementById('errorMessage');
+		modalBody.textContent = "Please select an option to start the game.";
+		let	alertModal = new bootstrap.Modal(document.getElementById('errorModal'));
+		alertModal.show();
+		return;
+	}
+
 }
