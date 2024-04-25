@@ -33,6 +33,9 @@ export default class Level {
 		const material = new THREE.MeshStandardMaterial({color: color, side: THREE.DoubleSide});
 		const plane = new THREE.Mesh(geometry, material);
 		plane.position.z = -0.5;
+		plane.position.x += 25;
+		plane.position.y += 25;
+
 		plane.receiveShadow = true;
 		this.scene.add(plane);
 
@@ -124,7 +127,7 @@ export default class Level {
 					color = new THREE.Color(0, 0, 0);
 
 				if (color) {
-					const wall = new Cube({scene: this.scene, x: x, y: y, color: color});
+					const wall = new Cube({scene: this.scene, x: x, y: y, depth:1.1, color: color});
 					walls.push(wall);
 				}
 				else if (cell === maps.PLAYER) {
