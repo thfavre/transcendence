@@ -23,10 +23,10 @@ export default class Game {
 		this.fieldVertices =  this.createField();
 		this.players = [];
 		if (constants.SKIP_PLAYER_SELECTION) {
-			for (var i = 1; i < (constants.SEGMENTS - 1); i++) {
-				this.addPlayer(this.createHumanPlayer(i));
+			for (var i = 1; i < (constants.SEGMENTS); i++) {
+				this.addPlayer(this.createAiPlayer(i));
 			};
-			this.addPlayer(this.createAiPlayer(++i));
+			// this.addPlayer(this.createAiPlayer(++i));
 		}
 		// this.players = this.createPlayers();
 		// this.finishRound()
@@ -238,7 +238,7 @@ export default class Game {
 	}
 
 	createAiPlayer(nb) {
-		// nb += 1; // to start at 1
+		nb += 1; // to start at 1
 		var vertex1 = this.fieldVertices[nb];
 		if (nb == this.fieldVertices.length-1) {
 			var vertex2 = this.fieldVertices[1];

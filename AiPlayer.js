@@ -188,10 +188,11 @@ export default class AiPlayer extends Player {
 		// 	this.paddle.mesh.remove(this.currentSphereMesh);
 		// 	this.currentSphereMesh = null; // Reset the reference
 		// }
-
+		var colors = ['#ff0000', '#00ff00', '#0000ff', '#ffffff','#f000f0', '#00bff']
+		var color=colors[this.playerNb];
 		// Create a new sphere
 		const geometry = new THREE.SphereGeometry(4, 5, 5);
-		const material = new THREE.MeshBasicMaterial({ color: 0xff0022 });
+		const material = new THREE.MeshBasicMaterial({ color: color});
 		this.currentSphereMesh = new THREE.Mesh(geometry, material);
 		this.currentSphereMesh.position.copy(newPosition);
 
@@ -240,9 +241,34 @@ export default class AiPlayer extends Player {
 			this.tIntersection = (t1 >= 0 && t1 < t2) ? t1 : t2;
 
 			// Calculate intersection point
-			const xIntersection = x0 + vx * this.tIntersection;
+			const moveAngle = this.axeAngle * Math.PI;
+			const xIntersection = (x0 + vx * this.tIntersection);
 			const yIntersection = goalY;
-			const intersectionPoint = new THREE.Vector3(xIntersection, yIntersection, 0);
+
+
+			const ox = this.centerPos.x;
+			const oy = this.centerPos.y;
+
+			// Translate the point so that the origin becomes (0, 0)
+			const translatedX = xIntersection - ox;
+			const translatedY = yIntersection - oy;
+
+			// Rotation matrix
+			const cosTheta = Math.cos(Math.PI / 4);
+			const sinTheta = Math.sin(Math.PI / 4);
+
+			// Perform the rotation
+			const rotatedX = translatedX * cosTheta - translatedY * sinTheta;
+			const rotatedY = translatedX * sinTheta + translatedY * cosTheta;
+
+			// Translate the rotated point back
+			const finalX = rotatedX + ox;
+			const finalY = rotatedY + oy;
+
+
+			// const rotatedX = xIntersection * Math.cos(moveAngle) - yIntersection * Math.sin(moveAngle);
+			// const rotatedY = xIntersection * Math.sin(moveAngle) + yIntersection * Math.cos(moveAngle);
+			const intersectionPoint = new THREE.Vector3(finalX, finalY, 0);
 			this.drawSphere(intersectionPoint);
 
 

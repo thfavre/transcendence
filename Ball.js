@@ -23,7 +23,7 @@ export default class Ball {
 		);
 
 
-		this.moveSpeed = 3;
+		this.moveSpeed = 40;
 		this.movingAngle = 0; // will be updated in the move function
 
 
