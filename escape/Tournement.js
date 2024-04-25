@@ -17,7 +17,7 @@ export default class Tournement {
 
 	initNewGame() {
 		var randomTournamentMap = maps.randomTournamentMap[Math.floor(Math.random()*maps.randomTournamentMap.length)];
-		// randomTournamentMap = maps.rainbow; // ! TODO remove
+		randomTournamentMap = maps.ghost; // ! TODO remove
 		this.game = new Game(this.scene, randomTournamentMap, this.playersNb);
 	}
 

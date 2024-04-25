@@ -9,7 +9,7 @@ if len(sys.argv) == 2:
 else:
     blockSize = 40 #size of the grid block
 
-WIDTH, HEIGHT = 1200, 680 #the window size
+WIDTH, HEIGHT = 720, 680 #the window size
 
 
 # if no level to import : import_level = None if a level to import # -> l.31
@@ -32,7 +32,7 @@ import_level =[
 [7, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 7, 0, 0, 0, 0, 7],
 [7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
 ]
-# import_level = None
+import_level = None
 
 
 #this level is draw if the user press the specific key ( = i). It will not delete the other block when 0.
