@@ -9,27 +9,28 @@ import * as powerups from './powerups.js';
 
 
 export default class Level {
-	constructor(scene, mapArray, playersNb, particlesSystem) {
+	constructor(scene, map, playersNb, particlesSystem) {
 		this.scene = scene;
-		this.mapData = new MapData(mapArray);
+		this.mapData = new MapData(map.array);
 		this.particlesSystem = particlesSystem;
 		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
 
 		// this.activateSpawnAnimation();
-		this.createPlane()
+		this.createPlane(map.backgroundColor)
 		// powerups
 		this.spawnPowerupsFrequency = 10; // seconds
-		this.spawnPowerupsTimer = this.spawnPowerupsFrequency; // to spawn one at the beginning
+		this.spawnPowerupsTimer = this.spawnPowerupsFrequency-1; // to spawn one at the beginning
 		this.allPowerups = [
 			powerups.SlowPowerup,
 			powerups.LightsDownPowerup,
 			powerups.DazedPowerup
 		];
+
 	}
 
-	createPlane(walls) {
+	createPlane(color=0xffffff) {
 		const geometry = new THREE.PlaneGeometry(100, 100);
-		const material = new THREE.MeshStandardMaterial({color: 0xffffff, side: THREE.DoubleSide});
+		const material = new THREE.MeshStandardMaterial({color: color, side: THREE.DoubleSide});
 		const plane = new THREE.Mesh(geometry, material);
 		plane.position.z = -0.5;
 		plane.receiveShadow = true;
@@ -104,21 +105,21 @@ export default class Level {
 				var cell = mapData.getCell(x, y);
 				var color = null;
 				if (cell === maps.RED)
-					color = new THREE.Color(1, 0, 0);
+					color = new THREE.Color('#c0392b');
 				else if (cell === maps.ORANGE)
-					color = new THREE.Color(1, 0.5, 0);
+					color = new THREE.Color('#e67e22');
 				else if (cell === maps.YELLOW)
-					color = new THREE.Color(1, 1, 0);
+					color = new THREE.Color('#f1c40f');
 				else if (cell === maps.GREEN)
-					color = new THREE.Color(0, 1, 0);
-				else if (cell === maps.UNKNOWN)
-					color = new THREE.Color(0.6, 0.2, 0.6);
-				else if (cell === maps.UNKNOWN2)
-					color = new THREE.Color(0, 0.2, 1);
+					color = new THREE.Color('#2ecc71');
 				else if (cell === maps.LIGHTBLUE)
-					color = new THREE.Color(0, 1, 1);
+					color = new THREE.Color('#3ca4ff');
+				else if (cell === maps.DARKBLUE)
+					color = new THREE.Color('#2980b9');
+				else if (cell === maps.WHITE)
+					color = new THREE.Color('#ffffff');
 				else if (cell === maps.GRAY)
-					color = new THREE.Color(0.5, 0.5, 0.5);
+					color = new THREE.Color('#7f8c8d');
 				else if (cell === maps.BLACK)
 					color = new THREE.Color(0, 0, 0);
 
@@ -180,6 +181,14 @@ export default class Level {
 		}
 	}
 
+	spawnPowerup() {
+		const pos = this.mapData.getRandomEmptyCell();
+		if (pos !== null) {
+			const PowerupClass = this.allPowerups[Math.floor(Math.random() * this.allPowerups.length)];
+			this.powerups.push(new PowerupClass({scene: this.scene, x: pos.x, y: pos.y, players: this.players, particlesSystem: this.particlesSystem}));
+		}
+	}
+
 	updatePowerups(dt) {
 		// update
 		for (let powerup of this.powerups) {
@@ -193,13 +202,7 @@ export default class Level {
 		this.spawnPowerupsTimer += dt;
 		if (this.spawnPowerupsTimer > this.spawnPowerupsFrequency) {
 			this.spawnPowerupsTimer = 0;
-			const pos = this.mapData.getRandomEmptyCell();
-			console.log(pos);
-			if (pos !== null) {
-				const PowerupClass = this.allPowerups[Math.floor(Math.random() * this.allPowerups.length)];
-				this.powerups.push(new PowerupClass({scene: this.scene, x: pos.x, y: pos.y, players: this.players, particlesSystem: this.particlesSystem}));
-			}
-
+			this.spawnPowerup();
 		}
 
 	}

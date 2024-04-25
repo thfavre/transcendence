@@ -242,7 +242,7 @@ export default class Player extends Cube{
 		// daze effect
 		if (this.dazedDuration > 0)
 		{
-			if (this.particlesSystem.triggerPulse(dt, 4))
+			if (this.particlesSystem.triggerPulse(dt, this.canMove ? 4 : 10))
 				this.particlesSystem.addParticle(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z+1, particles.DazedParticle);
 			this.keys = this.dazedKeys;
 			this.dazedDuration -= dt;

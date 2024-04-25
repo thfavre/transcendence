@@ -16,9 +16,9 @@ export default class Tournement {
 	}
 
 	initNewGame() {
-		var randomTournamentMapArray = maps.tournamentMapsArray[Math.floor(Math.random()*maps.tournamentMapsArray.length)];
-		randomTournamentMapArray = maps.duck; // ! TODO remove
-		this.game = new Game(this.scene, randomTournamentMapArray, this.playersNb);
+		var randomTournamentMap = maps.randomTournamentMap[Math.floor(Math.random()*maps.randomTournamentMap.length)];
+		// randomTournamentMap = maps.rainbow; // ! TODO remove
+		this.game = new Game(this.scene, randomTournamentMap, this.playersNb);
 	}
 
 	update(keysJustPressed) {

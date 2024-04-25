@@ -50,7 +50,6 @@ export class SlowPowerup extends Powerup {
 			if (p == player)
 				continue;
 			p.slowDuration = 10;
-
 		}
 	}
 

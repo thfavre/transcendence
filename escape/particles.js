@@ -111,6 +111,8 @@ export class SnowParticle extends Particle {
 
 
 export class LightAbsorbedParticle extends Particle {
+
+	static mesh = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 4), new THREE.MeshBasicMaterial({color: '#fff376'}));
 	constructor({scene, x, y, z}) {
 		var min = -0.4,
         	max = 0.4;
@@ -119,7 +121,7 @@ export class LightAbsorbedParticle extends Particle {
 		z += Math.random() * (max - min) + min;
 
 		super({scene: scene, x: x, y: y, z: z});
-		this.mesh = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 4), new THREE.MeshBasicMaterial({color: '#fff376'}));
+		this.mesh = LightAbsorbedParticle.mesh.clone();
 		this.mesh.position.copy(this.position);
 		scene.add(this.mesh);
 		this.maxBlackDots = 40;
@@ -176,13 +178,17 @@ export class LightAbsorbedParticle extends Particle {
 
 export class DazedParticle extends Particle {
 
-	static spriteUrls = [
-		'assets/star.png',
-		'assets/star.png',
-		'assets/star.png',
-		'assets/planet.png',
-		'assets/exclamation.png',
-		'assets/interogation.png',
+
+	static textureLoader = new THREE.TextureLoader();
+	static starMap = DazedParticle.textureLoader.load('assets/star.png');
+	static planetMap = DazedParticle.textureLoader.load('assets/planet.png');
+	static exclamationMap = DazedParticle.textureLoader.load('assets/exclamation.png');
+	static interogationMap = DazedParticle.textureLoader.load('assets/interogation.png');
+	static spriteMaps = [
+		DazedParticle.starMap, DazedParticle.starMap, DazedParticle.starMap, DazedParticle.starMap,
+		DazedParticle.planetMap,
+		DazedParticle.exclamationMap,
+		DazedParticle.interogationMap
 	];
 
 	constructor({scene, x, y, z, orbitRadius=0.7, orbitSpeed=Math.PI*2/1.5, lifeTime=2, startScale=0.5}) {
@@ -194,12 +200,13 @@ export class DazedParticle extends Particle {
 		this.startScale = startScale;
 		this.angleOffset = Math.random() * Math.PI * 2;
 
-		const map = new THREE.TextureLoader().load( DazedParticle.spriteUrls[Math.floor(Math.random()*DazedParticle.spriteUrls.length)] );
+		const map = DazedParticle.spriteMaps[Math.floor(Math.random()*DazedParticle.spriteMaps.length)];
 		const material = new THREE.SpriteMaterial( { map: map } );
 
 		this.sprite = new THREE.Sprite( material );
 		this.sprite.scale.set(this.startScale, this.startScale, 0);
-		this.sprite.position.copy(this.position);
+		this.sprite.position.z = this.position.z;
+		this.move(0); // to set the position of the sprite
 		scene.add( this.sprite );
 		this.mesh = this.sprite;
 
