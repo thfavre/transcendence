@@ -9,7 +9,7 @@ import * as THREE from 'three';
 
 export const FPS = 60;
 
-export const SEGMENTS = 5; // number of players
+export const SEGMENTS = 4; // number of players
 export const FIELD_DIAMETER = 130;
 
 

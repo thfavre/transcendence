@@ -54,17 +54,55 @@ export default class AiPlayer extends Player {
 	createWall(startPos, endPos)
 	{
 		return {
-			startPos: startPos,
-			endPos: endPos,
+			startPos: new THREE.Vector3(startPos.x, startPos.y, startPos.z),
+			endPos: new THREE.Vector3(endPos.x, endPos.y, endPos.z),
 			slope: this.calculateSlope(startPos, endPos),
-			angle: this.getAngle()
+			angle: this.getAngle(),
+			normal: this.calculateNormal(startPos, endPos)
 		};
+	}
+
+	calculateNormal(startPos, endPos)
+	{
+		// Calculate the direction vector of the wall
+		const directionVector = [endPos.x - startPos.x, endPos.y - startPos.y];
+
+		// Calculate the perpendicular vector (normal vector) by rotating the direction vector by 90 degrees counterclockwise
+		const normalVector = [-directionVector[1], directionVector[0]];
+
+		// Normalize the normal vector
+		const normalLength = Math.sqrt(normalVector[0] * normalVector[0] + normalVector[1] * normalVector[1]);
+		const normalizedNormal = new THREE.Vector3(0, 0, 0);
+		normalizedNormal.x = normalVector[0] / normalLength;
+		normalizedNormal.y = normalVector[1] / normalLength;
+
+		return normalizedNormal;
 	}
 
 	calculateSlope(startPos, endPos)
 	{
 		return ((endPos.y - startPos.y) / (endPos.x - startPos.x));
 	}
+
+	// calculates the velocity after it reflects on a wall
+	calculateReflectedVelocity(ballVelocity, wallNormal) {
+		// Convert velocity and normal vectors into Three.js Vector3 objects
+		// const velocityVector = new THREE.Vector3(ballVelocity.x, ballVelocity.y, 0);
+		// const normalVector = new THREE.Vector3(wallNormal.x, wallNormal.y, 0);
+
+		// Normalize the normal vector
+		wallNormal.normalize();
+
+		// Compute the dot product of velocity and normal
+		const dotProduct = ballVelocity.dot(wallNormal);
+
+		// Compute the reflected velocity
+		const reflectedVelocity = ballVelocity.clone().sub(wallNormal.multiplyScalar(2 * dotProduct));
+
+		// Return the reflected velocity as an array [vx, vy]
+		return reflectedVelocity;
+	}
+
 
 	// true if ball is behind the wall
 	isBehindGoal(ballPosition, slope)
@@ -84,7 +122,7 @@ export default class AiPlayer extends Player {
 	// return true if the ball is behind the wall
 	isBehindWall(startPos, endPos, ballPos)
 	{
-		const threshold = 0.01;
+		const threshold = 0;
 		const wallLen = this.pointsDistance(startPos, endPos) + threshold;
 		const startToBall = this.pointsDistance(startPos, ballPos);
 		const endToBall = this.pointsDistance(endPos, ballPos);
@@ -124,8 +162,16 @@ export default class AiPlayer extends Player {
 			predictedBallPos = this.getBallPositionTime(ballPosition, ballVelocity, t);
 			if (this.isBehindWall(this.goal.startPos, this.goal.endPos, predictedBallPos))
 				break;
+			for (var i = 0; i < this.wallArray.length; i++)
+			{
+				if (this.isBehindWall(this.wallArray[i].startPos, this.wallArray[i].endPos, predictedBallPos))
+				{
+					ballVelocity = this.calculateReflectedVelocity(ballVelocity, this.wallArray[i].normal);
+					break ;
+				}
+			}
+			// this.drawSphere(predictedBallPos);
 		}
-		// this.drawSphere(predictedBallPos);
 		console.log("predictedBallPos: ", predictedBallPos);
 		return predictedBallPos;
 	}
@@ -149,21 +195,6 @@ export default class AiPlayer extends Player {
 
 	updateBall(ball)
 	{
-		// this.targetPosition = this.getInter(ball);
-		// this.targetPosition = this.predictIntersection(ball.body.position.x, ball.body.position.y, ball.body.velocity.x, ball.body.velocity.y, (this.startPos.y + this.endPos.y) / 2);
-		// if (this.targetPosition) {
-		// 	console.log("Intersection point:", this.targetPosition);
-		// } else {
-		// 	console.log("The ball does not intersect the goal line.");
-		// }
-
-		// console.log("Wall centerPos AI: ", this.centerPos);
-		// console.log("Wall startPos AI: ", this.startPos);
-		// console.log("Wall endPos AI: ", this.endPos);
-
-		// if (this.isBehindWall(this.targetPosition))
-		// 	this.adjustTargetPosition();
-
 		this.targetPosition = this.predictBallPosition(ball.body.position, ball.body.velocity);
 		// this.drawSphere(this.targetPosition);
 
