@@ -70,7 +70,7 @@ if (constants.DEBUG) {
 }
 
 // Controls
-const controls = new OrbitControls(camera, renderer.domElement);
+// const controls = new OrbitControls(camera, renderer.domElement);
 
 
 // Keys
@@ -82,7 +82,7 @@ function onDocumentKeyDown(event) {
 };
 
 // Creation
-const game = new Tournement(scene);
+const game = new Tournement(scene, camera);
 
 
 // Main loop
@@ -91,7 +91,6 @@ function gameLoop() {
 	game.update(keysJustPressed);
 	renderer.render(scene, camera);
 	keysJustPressed = [];
-	controls.update();
 
 }
 

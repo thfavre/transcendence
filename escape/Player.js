@@ -73,7 +73,7 @@ export default class Player extends Cube{
 		// powerups
 		// slow
 		this.slowDuration = 0;
-		this.slowedMeshMovingVelocity = 12;
+		this.slowedMeshMovingVelocity = 8;
 		// lights down
 		this.spotLightOffDuration = 0;
 		// dazed effect
@@ -252,16 +252,23 @@ export default class Player extends Cube{
 		}
 	}
 
+	winAnimation(dt) {
+		// jumps
+		if (!this.winTimer)
+				this.winTimer = 0;
+			this.winTimer += dt;
+		this.mesh.position.z = Math.abs(Math.sin(this.winTimer*3))*1.5;
+		// conffetti
+		if (this.particlesSystem.triggerPulse(dt, this.canMove ? 20 : 200))
+			this.particlesSystem.addParticle(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z, particles.ConfettiParticle);
+	}
+
 
 	update(dt, keysJustPressed, mapData, powerups) {
 		this.updateMovement(dt, mapData, keysJustPressed, powerups);
 		this.updatePowerups(dt);
 		if (this.hasWin) {
-			if (!this.winTimer)
-				this.winTimer = 0;
-			this.winTimer += dt;
-			this.mesh.position.z = Math.abs(Math.sin(this.winTimer*3))*1.5;
-			//(this.c*4)%200*dt;
+			this.winAnimation(dt)
 		}
 
 	}

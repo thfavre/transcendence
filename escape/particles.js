@@ -12,6 +12,7 @@ export default class ParticlesSystem {
 
 	/** Returns true frequency times per seconds in average*/
 	triggerPulse(dt, frequency) {
+		// can not return true more than once per frame
 		return Math.random() < frequency*dt;
 	}
 
@@ -232,5 +233,47 @@ export class DazedParticle extends Particle {
 	update(dt) {
 		this.move(dt);
 		this.scaleDown()
+	}
+}
+
+
+export class ConfettiParticle extends Particle {
+	constructor({scene, x, y, z}) {
+		const geometry = new THREE.SphereGeometry(THREE.MathUtils.randFloat(0.07, 0.11), 6, 3)
+		super({scene: scene, x: x, y: y, z: z});
+		this.velocity = new THREE.Vector3(THREE.MathUtils.randFloat(-.7, .7), THREE.MathUtils.randFloat(-.7, .7), THREE.MathUtils.randFloat(3, 8));
+		this.gravity = new THREE.Vector3(0, 0, -3);
+		const color = THREE.MathUtils.randInt(0, 0xffffff)
+		this.mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: color}));
+		this.mesh.position.copy(this.position);
+		scene.add(this.mesh);
+
+	}
+	shouldRemove() {
+		return this.mesh.scale.z <= 0.1;
+	}
+
+	scaleDown(dt) {
+		const speed = 0.3;
+		this.mesh.scale.x -= dt * speed;
+		this.mesh.scale.y -= dt * speed;
+		this.mesh.scale.z -= dt * speed;
+	}
+
+	move(dt) {
+		this.position.add(this.velocity.clone().multiplyScalar(dt));
+		this.mesh.position.copy(this.position);
+		this.velocity.add(this.gravity.clone().multiplyScalar(dt));
+		if (this.position.z < 0) {
+			this.position.z = 0;
+			this.velocity = new THREE.Vector3(0, 0, 0);
+			return false;
+		}
+		return true;
+	}
+
+	update(dt) {
+		if (!this.move(dt))
+			this.scaleDown(dt)
 	}
 }
