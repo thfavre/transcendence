@@ -7,6 +7,8 @@ import * as constants from './constants.js';
 export default class Player {
 	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter) {
 		this.playerNb = playerNb;
+		console.log("Player ", playerNb, " startPos: ", startPos);
+		console.log("Player ", playerNb, " endPos: ", endPos);
 
 		this.axeAngle = 2*Math.PI/(constants.SEGMENTS*2) +  2*Math.PI/constants.SEGMENTS*(playerNb-1);  // TODO simplify the formula
 
@@ -43,9 +45,9 @@ export default class Player {
 		});
 		physicsWorld.addBody(this.goalHitboxBody);
 
-		console.log("Wall centerPos Player creation: ", centerPos);
-		console.log("Wall startPos Player creation: ", startPos);
-		console.log("Wall endPos Player creation: ", endPos);
+		// console.log("Wall centerPos Player creation: ", centerPos);
+		// console.log("Wall startPos Player creation: ", startPos);
+		// console.log("Wall endPos Player creation: ", endPos);
 	}
 
 	loseHealth() {

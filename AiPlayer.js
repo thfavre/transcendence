@@ -3,12 +3,14 @@ import * as CANNON from 'cannon-es';
 import { Vec3 } from 'cannon-es';
 import Player from './Player';
 import { OBB } from 'three/addons/math/OBB.js';
+import * as constants from './constants.js';
 // import { PointLightShadow } from 'three';
 
 export default class AiPlayer extends Player {
-	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, ball) {
+	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, ball, fieldVertices) {
 		super (scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter);
 
+		this.totalPlayers = constants.SEGMENTS;
 		this.physicsWorld = physicsWorld;
 		this.ball = ball;
 		this.targetPosition = this.goalHitboxBody.position;
@@ -16,6 +18,8 @@ export default class AiPlayer extends Player {
 		this.startPos = startPos;
 		this.endPos = endPos;
 		this.scene = scene
+
+		console.log("vertices: ", fieldVertices);
 
 		// Wall
 		this.goalLength = startPos.distanceTo(endPos);
@@ -27,160 +31,159 @@ export default class AiPlayer extends Player {
 		this.drawSphere(this.centerPos);
 		this.drawSphere(this.startPos);
 		this.drawSphere(this.endPos);
+
+		console.log("nb of player: ", this.totalPlayers);
+		console.log("startPos: ", this.startPos);
+		console.log("endPos: ", this.endPos);
+
+		this.goal = this.createWall(this.startPos, this.endPos);
+		this.wallArray = [];
+		// create arrayWall of all walls except goal
+		for (var nbWalls = 1; nbWalls < this.totalPlayers; nbWalls++)
+		{
+			if (fieldVertices[nbWalls] == this.startPos)
+				continue;
+			else
+				this.wallArray.push(this.createWall(fieldVertices[nbWalls], fieldVertices[nbWalls+1]));
+		}
+		console.log("goal: ", this.goal);
+		console.log("wallArray: ", this.wallArray);
+	}
+
+	// create the wall object based on the startPos, and endPos
+	createWall(startPos, endPos)
+	{
+		return {
+			startPos: startPos,
+			endPos: endPos,
+			slope: this.calculateSlope(startPos, endPos),
+			angle: this.getAngle()
+		};
+	}
+
+	calculateSlope(startPos, endPos)
+	{
+		return ((endPos.y - startPos.y) / (endPos.x - startPos.x));
+	}
+
+	// true if ball is behind the wall
+	isBehindGoal(ballPosition, slope)
+	{
+		const b = -(slope * ballPosition.x) + ballPosition.y;
+		if (b < 0)
+			return true;
+		else
+			return false;
+	}
+
+	pointsDistance(startPos, endPos)
+	{
+		return Math.sqrt(Math.pow((endPos.x - startPos.x), 2) + Math.pow((endPos.y - startPos.y), 2));
+	}
+
+	// return true if the ball is behind the wall
+	isBehindWall(startPos, endPos, ballPos)
+	{
+		const threshold = 0.01;
+		const wallLen = this.pointsDistance(startPos, endPos) + threshold;
+		const startToBall = this.pointsDistance(startPos, ballPos);
+		const endToBall = this.pointsDistance(endPos, ballPos);
+
+		const sumDistances = startToBall + endToBall;
+
+		if ((sumDistances < wallLen) || (sumDistances > wallLen))
+			return false;
+		else
+			return true;
+	}
+
+	// predicts the position of the ball after time in ms
+	getBallPositionTime(ballPosition, ballVelocity, time) {
+		// Convert time from milliseconds to seconds
+		let t = time / 1000;
+
+		// Calculate the new position using constant velocity
+		let predictedPosition = new THREE.Vector3();
+		predictedPosition.x = ballPosition.x + ballVelocity.x * t;
+		predictedPosition.y = ballPosition.y + ballVelocity.y * t;
+
+		return predictedPosition;
+	}
+
+
+	// get the new position where the ball intersects with the goal
+	predictBallPosition(ballPosition, ballVelocity)
+	{
+		const simTime = 1500;
+		const incrTime = 50;
+		let predictedBallPos;
+
+		// predictedBallPos = getBallPositionTime(ballPosition, ballVelocity, currTime);
+		for (let t = 0; t < simTime; t += incrTime)
+		{
+			predictedBallPos = this.getBallPositionTime(ballPosition, ballVelocity, t);
+			if (this.isBehindWall(this.goal.startPos, this.goal.endPos, predictedBallPos))
+				break;
+		}
+		// this.drawSphere(predictedBallPos);
+		console.log("predictedBallPos: ", predictedBallPos);
+		return predictedBallPos;
+	}
+
+	// returns the angle between walls based on nb of players
+	getAngle()
+	{
+		switch (this.totalPlayers) {
+			case 2:
+				return 90;
+			case 3:
+				return 60;
+			case 4:
+				return 90;
+			case 5:
+				return 72;
+			default:
+				return null;
+		}
 	}
 
 	updateBall(ball)
 	{
 		// this.targetPosition = this.getInter(ball);
-		this.targetPosition = this.predictIntersection(ball.body.position.x, ball.body.position.y, ball.body.velocity.x, ball.body.velocity.y, (this.startPos.y + this.endPos.y) / 2);
-		if (this.targetPosition) {
-			console.log("Intersection point:", this.targetPosition);
-		} else {
-			console.log("The ball does not intersect the goal line.");
-		}
+		// this.targetPosition = this.predictIntersection(ball.body.position.x, ball.body.position.y, ball.body.velocity.x, ball.body.velocity.y, (this.startPos.y + this.endPos.y) / 2);
+		// if (this.targetPosition) {
+		// 	console.log("Intersection point:", this.targetPosition);
+		// } else {
+		// 	console.log("The ball does not intersect the goal line.");
+		// }
 
-		console.log("Wall centerPos AI: ", this.centerPos);
-		console.log("Wall startPos AI: ", this.startPos);
-		console.log("Wall endPos AI: ", this.endPos);
+		// console.log("Wall centerPos AI: ", this.centerPos);
+		// console.log("Wall startPos AI: ", this.startPos);
+		// console.log("Wall endPos AI: ", this.endPos);
 
 		// if (this.isBehindWall(this.targetPosition))
 		// 	this.adjustTargetPosition();
 
+		this.targetPosition = this.predictBallPosition(ball.body.position, ball.body.velocity);
+		// this.drawSphere(this.targetPosition);
+
 		// console.log("ball: ", ball);
-	}
-
-	isBehindWall(position) {
-		// Check if the position is behind the wall based on the wall's center position and length
-		const distanceToCenter = position.distanceTo(this.centerPos);
-		return distanceToCenter > this.goalLength / 2;
-	}
-
-	adjustTargetPosition() {
-		// Adjust the targetPosition to be on the wall
-		const directionToCenter = new THREE.Vector3().subVectors(this.centerPos, this.targetPosition).normalize();
-		const adjustedPosition = new THREE.Vector3().copy(this.centerPos).add(directionToCenter.multiplyScalar(this.goalLength / 2));
-		this.targetPosition.copy(adjustedPosition);
-	}
-
-	getInter(ball)
-	{
-		const	dX = ball.moveSpeed * Math.cos(ball.movingAngle);
-		const	dY = ball.moveSpeed * Math.sin(ball.movingAngle);
-		const	ballSlope = dX / dY;
-		const	ballIntercept = ball.mesh.position.y - ballSlope * ball.mesh.position.x;
-
-		// const	wallAngle = this.quatToRad();
-		const wallAngle = this.paddle.axeAngle + Math.PI/2;
-		const	halfLen = this.goalLength / 2;
-
-		const goalLineStart = new THREE.Vector2(ball.mesh.position.x + halfLen * Math.cos(wallAngle), ball.mesh.position.y + halfLen * Math.sin(wallAngle));
-		const goalLineEnd = new THREE.Vector2(ball.mesh.position.x - halfLen * Math.cos(wallAngle), ball.mesh.position.y - halfLen * Math.sin(wallAngle));
-
-		const	end1_x = ball.mesh.position.x + halfLen * Math.cos(wallAngle);
-		const	end1_y = ball.mesh.position.y + halfLen * Math.sin(wallAngle);
-		const	end2_x = ball.mesh.position.x - halfLen * Math.cos(wallAngle);
-		const	end2_y = ball.mesh.position.y - halfLen * Math.sin(wallAngle);
-
-		const	wallSlope = (end2_y - end1_y) / (end2_x - end1_x);
-		const	wallIntercept = end1_y - wallSlope * end1_x;
-
-		const	interX = (wallIntercept - ballIntercept) / (ballSlope - wallSlope);
-		const	interY = ballSlope * interX + ballIntercept;
-		const	inter = new THREE.Vector3(interX, interY, 0);
-
-		// const	clampedIntersectionPoint = this.clampToLineSegment(inter, this.targetPosition, goalLineStart, goalLineEnd);
-		// console.log("clampedInter: ", clampedIntersectionPoint);
-		// this.drawSphere(inter);
-
-		return inter;
-	}
-
-	clampToLineSegment(point, start, end) {
-		// Vector from start point to end point
-		const line = end.clone().sub(start);
-
-		// Vector from start point to the given point
-		const pointToStart = point.clone().sub(start);
-
-		// Calculate the scalar projection of pointToStart onto the line
-		const t = pointToStart.dot(line) / line.lengthSq();
-
-		// Clamp t to the range [0, 1] to ensure it lies on the line segment
-		const clampedT = Math.max(0, Math.min(t, 1));
-
-		// Calculate the closest point on the line segment to the given point
-		const closestPoint = new THREE.Vector2(start.x + line.x * clampedT, start.y + line.y * clampedT);
-
-		return closestPoint;
-	}
-
-
-
-	quatToRad()
-	{
-		const eulerAngles = new CANNON.Vec3();
-		this.goalHitboxBody.quaternion.toEuler(eulerAngles);
-
-		return eulerAngles.z;
 	}
 
 	movePaddle() {
 		if (!this.targetPosition) {
 			return; // Do nothing if there's no target position
 		}
+		const	startToTarget = this.startPos.distanceTo(this.targetPosition);
+		const	startToPaddle = this.startPos.distanceTo(this.paddlePosition);
+		const	endToTarget = this.endPos.distanceTo(this.targetPosition);
+		const	endToPaddle = this.endPos.distanceTo(this.paddlePosition);
 
-		// const initialDistance = this.paddlePosition.distanceTo(this.targetPosition);
-
-		// // Move the paddle up
-		// this.paddle.moveUp();
-		// const distanceUp = this.paddlePosition.distanceTo(this.targetPosition);
-
-		// // Move the paddle down
-		// this.paddle.moveDown();
-		// const distanceDown = this.paddlePosition.distanceTo(this.targetPosition);
-
-		// // Choose the direction that brings the paddle closer to the target
-		// if (distanceUp < distanceDown) {
-		// 	// If moving up brings the paddle closer, move it up
-		// 	this.paddle.moveUp();
-		// } else {
-		// 	// If moving down brings the paddle closer or the distances are equal, move it down
-		// 	this.paddle.moveDown();
-
-
-			const	paddleY = this.paddlePosition.y;
-			const	interY = this.targetPosition.y;
-			console.log("paddleY: ", paddleY);
-			console.log("interY: ", interY);
-			if (paddleY < interY)
-				this.paddle.moveDown();
-			else if (paddleY > interY)
-				this.paddle.moveUp();
+		if (startToTarget < startToPaddle)
+			this.paddle.moveDown();
+		else if (endToTarget < endToPaddle)
+			this.paddle.moveUp();
 	}
-
-	// movePaddle()
-	// {
-	// 	if (!this.targetPosition) {
-	// 		return;
-	// 	}
-
-	// 	const forwardDirection = new THREE.Vector3(0, 1, 0).applyQuaternion(this.paddle.mesh.quaternion);
-	// 	const offsetToTarget = new THREE.Vector3().subVectors(this.targetPosition, this.paddlePosition);
-	// 	const projectionDistance = offsetToTarget.dot(forwardDirection);
-
-	// 	const threshold = 0;
-
-	// 	if (projectionDistance > threshold) {
-	// 		this.paddle.moveUp();
-	// 	} else if (projectionDistance < -threshold) {
-	// 		this.paddle.moveDown();
-	// 	}
-	// }
-
-	// movePaddle()
-	// {
-
-	// }
 
 	drawSphere(newPosition) {
 		// Remove existing sphere (if any)
@@ -196,82 +199,7 @@ export default class AiPlayer extends Player {
 		this.currentSphereMesh = new THREE.Mesh(geometry, material);
 		this.currentSphereMesh.position.copy(newPosition);
 
-		// Add to the paddle
+		// Add to the scene
 		this.scene.add(this.currentSphereMesh);
 	}
-
-	update()
-	{
-		this.movePaddle();
-		this.paddle.update();
-		// this.drawSphere();
-		// if (/* some condition */) {
-			// super.update(keysdown);  // Call the parent class's update()
-		// }
-	}
-
-	// Function to predict intersection of ball with goal line
-		predictIntersection(x0, y0, vx, vy, goalY) {
-			// Constants
-			const g = 9.81; // Acceleration due to gravity (m/s^2)
-
-			// Quadratic equation coefficients
-			const a = 0.5 * g;
-			const b = vy;
-			const c = y0 - goalY;
-
-			// Solve quadratic equation
-			const discriminant = b * b - 4 * a * c;
-			if (discriminant < 0) {
-				// No real roots, ball doesn't intersect goal line
-				return null;
-			}
-
-			// Calculate valid time(s)
-			const t1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-			const t2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-
-			// Check validity of solutions
-			if (t1 < 0 && t2 < 0) {
-				// Both solutions are negative, ball doesn't intersect goal line in the future
-				return null;
-			}
-
-			// Get the valid intersection time
-			this.tIntersection = (t1 >= 0 && t1 < t2) ? t1 : t2;
-
-			// Calculate intersection point
-			const moveAngle = this.axeAngle * Math.PI;
-			const xIntersection = (x0 + vx * this.tIntersection);
-			const yIntersection = goalY;
-
-
-			const ox = this.centerPos.x;
-			const oy = this.centerPos.y;
-
-			// Translate the point so that the origin becomes (0, 0)
-			const translatedX = xIntersection - ox;
-			const translatedY = yIntersection - oy;
-
-			// Rotation matrix
-			const cosTheta = Math.cos(Math.PI / 4);
-			const sinTheta = Math.sin(Math.PI / 4);
-
-			// Perform the rotation
-			const rotatedX = translatedX * cosTheta - translatedY * sinTheta;
-			const rotatedY = translatedX * sinTheta + translatedY * cosTheta;
-
-			// Translate the rotated point back
-			const finalX = rotatedX + ox;
-			const finalY = rotatedY + oy;
-
-
-			// const rotatedX = xIntersection * Math.cos(moveAngle) - yIntersection * Math.sin(moveAngle);
-			// const rotatedY = xIntersection * Math.sin(moveAngle) + yIntersection * Math.cos(moveAngle);
-			const intersectionPoint = new THREE.Vector3(finalX, finalY, 0);
-			this.drawSphere(intersectionPoint);
-
-
-			return intersectionPoint;
-		}
 }
