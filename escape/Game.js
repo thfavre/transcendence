@@ -10,11 +10,11 @@ import Level from './Level.js';
 
 
 export default class Game {
-	constructor(scene, map, playersNb=4) {
+	constructor(scene, camera, map, playersNb=4) {
 	// 	this.scene = scene;
 		this.clock = new THREE.Clock();
 		this.particlesSystem = new ParticlesSystem(scene);
-		this.level = new Level(scene, map, playersNb, this.particlesSystem);
+		this.level = new Level(scene, camera, map, playersNb, this.particlesSystem);
 
 	// 	this.initNewGame();
 	}

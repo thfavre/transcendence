@@ -5,12 +5,15 @@ import Player from './Player.js';
 
 import MapData from './MapData.js';
 import * as powerups from './powerups.js';
+import { max } from 'three/examples/jsm/nodes/Nodes.js';
+import * as constants from './constants.js';
 
 
 
 export default class Level {
-	constructor(scene, map, playersNb, particlesSystem) {
+	constructor(scene, camera, map, playersNb, particlesSystem) {
 		this.scene = scene;
+		this.camera = camera;
 		this.mapData = new MapData(map.array);
 		this.particlesSystem = particlesSystem;
 		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
@@ -22,10 +25,23 @@ export default class Level {
 		this.spawnPowerupsTimer = this.spawnPowerupsFrequency-1; // to spawn one at the beginning
 		this.allPowerups = [
 			powerups.SlowPowerup,
+			powerups.SlowPowerup,
+			powerups.SlowPowerup, // to have more chance to spawn it
 			powerups.LightsDownPowerup,
+			powerups.DazedPowerup,
 			powerups.DazedPowerup
 		];
 
+		this.defineCameraStartPos();
+	}
+
+	defineCameraStartPos() {
+		var mapHeight = this.mapData.getHeight();
+		var mapWidth = this.mapData.getWidth();
+		this.camera.position.x = mapWidth/2;
+		this.camera.position.y = mapHeight/2;
+		var maxMapSize = Math.max(mapHeight, mapWidth);
+		this.camera.position.z = Math.tan(constants.fov * Math.PI / 180/2) * maxMapSize/2;
 	}
 
 	createPlane(color=0xffffff) {
@@ -92,7 +108,6 @@ export default class Level {
 				let wall = this.walls[i];
 				wall.mesh.visible = this.currentSpawnAnimationTime > i/this.walls.length*this.spawnAnimationDuration;
 				wall.mesh.material.transparent = true;
-				// console.log(wall.mesh.position.z);
 			}
 		}
 	}
@@ -210,14 +225,41 @@ export default class Level {
 
 	}
 
+	updateCamera(dt, {x=null, y=null, moveSpeed=.5, maxDistFromCenter=2}) {
+		var mapCenterX = this.mapData.getWidth()/2;
+		var mapCenterY = this.mapData.getHeight()/2;
+		if (!x || !y) {
+			// average position of the players
+			var x = 0;
+			var y = 0;
+			for (let player of this.players) {
+				x += player.position.x;
+				y += player.position.y;
+			}
+			x /= this.players.length;
+			y /= this.players.length;
+		}
+		// limit the camera to the map
+		x = Math.min(Math.max(x, mapCenterX - maxDistFromCenter), mapCenterX + maxDistFromCenter);
+		y = Math.min(Math.max(y, mapCenterY - maxDistFromCenter), mapCenterY + maxDistFromCenter);
+
+		// slowly move the camera to the x, y
+		this.camera.position.x += (x - this.camera.position.x) * dt * moveSpeed;
+		this.camera.position.y += (y - this.camera.position.y) * dt * moveSpeed;
+	}
+
 	update(dt, keysJustPressed) {
 		this.spawnAnimation(dt);
 		for (let player of this.players) {
 			player.update(dt, keysJustPressed, this.mapData, this.powerups);
+			if (player.hasWin) {
+				this.updateCamera(dt, {x: player.position.x, y: player.position.y, maxDistFromCenter: 8, moveSpeed: 3});
+			}
 		}
 		this.stackPlayers(dt);
 
 		this.updatePowerups(dt);
+		this.updateCamera(dt, {maxDistFromCenter: 2, moveSpeed: .3});
 
 
 	}
