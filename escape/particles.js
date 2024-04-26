@@ -29,6 +29,8 @@ export default class ParticlesSystem {
 		// console.log('updating particles');
 		for (var particle of this._particles) {
 			if (particle.shouldRemove()) {
+				particle.mesh.geometry.dispose();
+				particle.mesh.material.dispose();
 				this.scene.remove(particle.mesh);
 				this._particles.splice(this._particles.indexOf(particle), 1);
 				continue;
