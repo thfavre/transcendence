@@ -18,7 +18,7 @@ export default class Level {
 		this.particlesSystem = particlesSystem;
 		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
 
-		// this.activateSpawnAnimation();
+		this.activateSpawnAnimation();
 		this.createPlane(map.backgroundColor)
 		// powerups
 		this.spawnPowerupsFrequency = 10; // seconds
@@ -39,7 +39,7 @@ export default class Level {
 		var mapHeight = this.mapData.getHeight();
 		var mapWidth = this.mapData.getWidth();
 		this.camera.position.x = mapWidth/2;
-		this.camera.position.y = mapHeight/2;
+		this.camera.position.y = 0;//mapHeight/2;
 		var maxMapSize = Math.max(mapHeight, mapWidth);
 		this.camera.position.z = Math.tan(constants.fov * Math.PI / 180/2) * maxMapSize/2;
 	}
