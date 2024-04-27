@@ -16,6 +16,7 @@
 	"exit_solo": "Absolvieren Sie bis zu 20 Level so schnell wie möglich.",
 	"exit_versus": "Spielen Sie mit bis zu 4 Spielern im Best of X Modus.",
 	"players_choice": "Spieler",
+	"ai_choice": "KI",
 	"number_level": "Anzahl der Level",
 	"level": "Level",
 	"levels": "Level",
@@ -25,6 +26,22 @@
 	"exit_solo_modal": "Bitte wählen Sie die Anzahl der Level, um das Spiel zu starten.",
 	"exit_versus_modal": "Bitte wählen Sie die Anzahl der Spieler und den Modus Best of X, um das Spiel zu starten.",
 	"modal_btn": "Verstanden!",
-	"script_java": "Sie müssen JavaScript aktivieren, um diese App auszuführen."
-
+	"script_java": "Sie müssen JavaScript aktivieren, um diese App auszuführen.",
+	"1_player": "1 Spieler",
+	"2_players": "2 Spieler",
+	"3_players": "3 Spieler",
+	"4_players": "4 Spieler",
+	"5_players": "5 Spieler",
+	"6_players": "6 Spieler",
+	"7_players": "7 Spieler",
+	"8_players": "8 Spieler",
+	"1_level": "1 Stufe",
+	"5_levels": "5 Stufen",
+	"10_levels": "10 Stufen",
+	"15_levels": "15 Stufen",
+	"20_levels": "20 Stufen",
+	"1_ai": "1 KI",
+	"2_ai": "2 KI",
+	"3_ai": "3 KI",
+	"4_ai": "4 KI"
 }

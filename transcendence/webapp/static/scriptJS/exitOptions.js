@@ -7,10 +7,7 @@ function	launchExitSolo()
 
 	if (isNaN(NumberLevels))
 	{
-		let	modalBody = document.getElementById('errorMessage');
-		modalBody.textContent = "Please select an option to start the game.";
-		let	alertModal = new bootstrap.Modal(document.getElementById('errorModal'));
-		alertModal.show();
+		updateModalMessage('exit_solo_modal');
 		return;
 	}
 }
@@ -27,10 +24,7 @@ function launchExitVersus()
 
 	if (isNaN(NumberLevels) || isNaN(selectedPlayers))
 	{
-		let	modalBody = document.getElementById('errorMessage');
-		modalBody.textContent = "Please select the number of players and the Best of X to start the game";
-		let	alertModal = new bootstrap.Modal(document.getElementById('errorModal'));
-		alertModal.show();
+		updateModalMessage('exit_versus_modal');
 		return;
 	}
 }

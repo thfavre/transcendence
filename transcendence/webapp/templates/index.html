@@ -1,5 +1,5 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -32,8 +32,8 @@
 
 			<!-- New Game block-->
 			<div id="newGameMenu" class="container d-none">
-				<div class="row justify-content-center">
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Pong</h5>
@@ -42,7 +42,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Find the Exit</h5>
@@ -59,8 +59,8 @@
 
 			<!-- Pong block -->
 			<div id="pongMenu" class="container d-none">
-				<div class="row justify-content-center">
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Versus</h5>
@@ -68,25 +68,25 @@
 								<div class="d-flex justify-content-around w-100 mb-3">
 									<select class="form-select form-select-sm me-2" id="pongVersusPlayer" onchange="updatePongPlayersVersus()">
 										<option selected data-i18n="players_choice"></option>
-										<option value="1">1 P</option>
-										<option value="2">2 P</option>
-										<option value="3">3 P</option>
-										<option value="4">4 P</option>
-										<option value="5">5 P</option>
+										<option value="1" data-i18n="1_player"></option>
+										<option value="2" data-i18n="2_players"></option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
+										<option value="5" data-i18n="5_players"></option>
 									</select>
 									<select class="form-select form-select-sm ms-2" id="pongVersusAI" onchange="updatePongPlayersVersus()">
-										<option selected>AI</option>
-										<option value="1">1 AI</option>
-										<option value="2">2 AI</option>
-										<option value="3">3 AI</option>
-										<option value="4">4 AI</option>
+										<option selected data-i18n="ai_choice"></option>
+										<option value="1" data-i18n="1_ai"></option>
+										<option value="2" data-i18n="2_ai"></option>
+										<option value="3" data-i18n="3_ai"></option>
+										<option value="4" data-i18n="4_ai"></option>
 									</select>
 								</div>
 								<button class="btn btn-outline-info" onclick="launchPongVersus()" data-i18n="play_btn"></button>
 							</div>
 						</div>
 					</div>
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title" data-i18n="pong_tournament_title"></h5>
@@ -94,12 +94,12 @@
 								<div class="d-flex justify-content-around w-100 mb-3">
 									<select class="form-select form-select-sm me-2" id="pongTournamentPlayer">
 										<option selected data-i18n="players_choice"></option>
-										<option value="3">3 P</option>
-										<option value="4">4 P</option>
-										<option value="5">5 P</option>
-										<option value="6">6 P</option>
-										<option value="7">7 P</option>
-										<option value="8">8 P</option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
+										<option value="5" data-i18n="5_players"></option>
+										<option value="6" data-i18n="6_players"></option>
+										<option value="7" data-i18n="7_players"></option>
+										<option value="8" data-i18n="8_players"></option>
 									</select>
 								</div>
 								<button class="btn btn-outline-info" onclick="launchPongTournament()" data-i18n="play_btn"></button>
@@ -114,8 +114,8 @@
 
 			<!-- Find the exit block -->
 			<div id="findExitMenu" class="container d-none">
-				<div class="row justify-content-center">
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Solo</h5>
@@ -123,18 +123,18 @@
 								<div class="d-flex justify-content-around w-100 mb-3">
 									<select class="form-select form-select-sm me-2" id="exitSoloLevel">
 										<option selected data-i18n="number_level"></option>
-										<option value="1">1 level</option>
-										<option value="5">5 levels</option>
-										<option value="10">10 levels</option>
-										<option value="15">15 levels</option>
-										<option value="20">20 levels</option>
+										<option value="1" data-i18n="1_level"></option>
+										<option value="5" data-i18n="5_levels"></option>
+										<option value="10" data-i18n="10_levels"></option>
+										<option value="15" data-i18n="15_levels"></option>
+										<option value="20" data-i18n="20_levels"></option>
 									</select>
 								</div>
 								<button class="btn btn-outline-info" onclick="launchExitSolo()" data-i18n="play_btn"></button>
 							</div>
 						</div>
 					</div>
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Versus</h5>
@@ -142,9 +142,9 @@
 								<div class="d-flex justify-content-around w-100 mb-3">
 									<select class="form-select form-select-sm me-2" id="exitVersusPlayers">
 										<option selected data-i18n="players_choice"></option>
-										<option value="2">2 P</option>
-										<option value="3">3 P</option>
-										<option value="4">4 P</option>
+										<option value="2" data-i18n="2_players"></option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
 									</select>
 									<select class="form-select form-select-sm ms-2" id="exitVersusLevel">
 										<option selected>Best of</option>

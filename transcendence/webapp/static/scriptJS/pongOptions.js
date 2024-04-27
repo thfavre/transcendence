@@ -53,10 +53,7 @@ function	launchPongVersus()
 
 	if (totalParticipants < 2 || selectedPlayers < 1)
 	{
-		let	modalBody = document.getElementById('errorMessage');
-		modalBody.textContent = "You must select at least 1 player and a total of at least 2 contestants.";
-		let	alertModal = new bootstrap.Modal(document.getElementById('errorModal'));
-		alertModal.show();
+		updateModalMessage('pong_versus_modal');
 		return;
 	}
 }
@@ -70,11 +67,7 @@ function	launchPongTournament()
 
 	if (isNaN(selectedPlayers))
 	{
-		let	modalBody = document.getElementById('errorMessage');
-		modalBody.textContent = "Please select an option to start the game.";
-		let	alertModal = new bootstrap.Modal(document.getElementById('errorModal'));
-		alertModal.show();
+		updateModalMessage('pong_tournament_modal');
 		return;
 	}
-
 }
