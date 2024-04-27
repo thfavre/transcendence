@@ -95,4 +95,4 @@ function gameLoop() {
 
 }
 
-gameLoop();
+// gameLoop();

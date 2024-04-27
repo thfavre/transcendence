@@ -7,7 +7,7 @@ export default class Tournement {
 		this.camera = camera;
 		this.playersNb = playersNb;
 		this.currentGameNb = 0;
-		this.BO = 2; // Best of 3
+		this.BO = 999; // Best of 3
 		// this.level = new Level(scene, mapArray, playersNb);
 		this.scores = []
 		for (let i = 0; i < playersNb; i++) {
@@ -18,7 +18,7 @@ export default class Tournement {
 
 	initNewGame() {
 		var randomTournamentMap = maps.randomTournamentMap[Math.floor(Math.random()*maps.randomTournamentMap.length)];
-		randomTournamentMap = maps.speedySquare; // ! TODO remove
+		// randomTournamentMap = maps.speedySquare; // ! TODO remove
 		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb);
 		this.currentGameNb++;
 	}
