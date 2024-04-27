@@ -54,7 +54,7 @@ scene.add(ambientLight);
 
 var directionalLight = new THREE.DirectionalLight( '#ffffff', constants.directionalLightIntensity);
 directionalLight.position.set(-2, -2, 14);
-directionalLight.shadow.camera.near = 12;
+directionalLight.shadow.camera.near = 8;
 directionalLight.shadow.camera.far = 26;
 directionalLight.shadow.camera.top = 40;
 directionalLight.shadow.camera.bottom = -2;
@@ -70,7 +70,8 @@ if (constants.DEBUG) {
 }
 
 // Controls
-// const controls = new OrbitControls(camera, renderer.domElement);
+if (constants.DEBUG)
+	new OrbitControls(camera, renderer.domElement);
 
 
 // Keys

@@ -44,11 +44,12 @@ export default class Player extends Cube{
 
 
 
-	constructor({scene, x=0, y=0, depth=1, presetNb=0, preset=presets[presetNb], particlesSystem}) {
+	constructor({scene, x=0, y=0, depth=1, playerNb=0, preset=presets[playerNb], particlesSystem}) {
 		super({scene: scene, x: x, y: y, depth: depth, color: preset.color});
 		this.scene = scene;
 		this.depth = depth;
 		this.particlesSystem = particlesSystem;
+		this.playerNb = playerNb;
 		// position and movement
 		this.keys = {
 			up: preset.upKey,
@@ -67,9 +68,6 @@ export default class Player extends Cube{
 		this.spotLight = this.createSpotlight(this.spotLightIntensity);
 
 		this.hasWin = false;
-		// this.loadSkin('assets/models/Cube Bricks.glb');
-		// this.smallCubesMeshes = this.createSmallerCubes();
-
 		// powerups
 		// slow
 		this.slowDuration = 0;
@@ -80,6 +78,15 @@ export default class Player extends Cube{
 		this.dazedDuration = 0;
 		this.dazedKeys = {up: this.keys.down, down: this.keys.up, left: this.keys.right, right: this.keys.left};
 		this.defaultKeys = {up: this.keys.up, down: this.keys.down, left: this.keys.left, right: this.keys.right};
+	}
+
+	delete() {
+		this.scene.remove(this.mesh);
+		this.mesh.geometry.dispose();
+		this.mesh.material.dispose()
+		this.scene.remove(this.spotLight);
+		this.scene.remove(this.spotLight.target);
+		this.spotLight.dispose();
 	}
 
 	createSpotlight(intensity) {
@@ -164,8 +171,9 @@ export default class Player extends Cube{
 		}
 	}
 
-	updateMovement(dt, mapData, keysJustPressed, powerups) {
-		this.setMovement(keysJustPressed);
+	updateMovement(dt, mapData, keysJustPressed, powerups, registerMovements=true) {
+		if (registerMovements)
+			this.setMovement(keysJustPressed);
 
 		if (this.movingDirection.x != 0 || this.movingDirection.y != 0)
 		{
@@ -260,17 +268,16 @@ export default class Player extends Cube{
 		this.mesh.position.z = Math.abs(Math.sin(this.winTimer*3))*1.5;
 		// conffetti
 		if (this.particlesSystem.triggerPulse(dt, this.canMove ? 20 : 200))
-			this.particlesSystem.addParticle(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z, particles.ConfettiParticle);
+			this.particlesSystem.addParticle(this.mesh.position.x, this.mesh.position.y, 10, particles.ConfettiParticle);
 	}
 
 
-	update(dt, keysJustPressed, mapData, powerups) {
-		this.updateMovement(dt, mapData, keysJustPressed, powerups);
+	update(dt, keysJustPressed, mapData, powerups, canMove=true) {
+		this.updateMovement(dt, mapData, keysJustPressed, powerups, canMove);
 		this.updatePowerups(dt);
 		if (this.hasWin) {
 			this.winAnimation(dt)
 		}
-
 	}
 
 }

@@ -6,14 +6,16 @@ import * as constants from './constants.js';
 
 class Powerup extends Cube {
 	constructor({scene, x, y, color}) {
-		super({scene: scene, x: x, y: y, z: 0, width: 0.5, depth: 0.5, color: color});
+		super({scene: scene, x: x, y: y, z: 0, width: 0.4, depth: 0.4, color: color});
 		this.scene = scene;
 		this.position = new THREE.Vector2(x, y);
 		this.hasBeenActivated = false;
 		// to make them fall
 		this.mesh.position.z = 10;
-		this.fallSpeed = 31;
+		this.fallSpeed = 20;
+		this.rotateSpeed = 1;
 	}
+
 	fall(dt) {
 		if (this.mesh.position.z > 0) {
 			this.mesh.position.z = Math.max(0, this.mesh.position.z - this.fallSpeed * dt);
@@ -21,8 +23,8 @@ class Powerup extends Cube {
 	}
 
 	update(dt) {
-		this.mesh.rotation.x += dt;
-		this.mesh.rotation.y += dt;
+		this.mesh.rotation.x += dt * this.rotateSpeed;
+		this.mesh.rotation.y += dt * this.rotateSpeed;
 		this.fall(dt);
 
 	}

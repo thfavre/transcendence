@@ -10,6 +10,12 @@ export default class ParticlesSystem {
 		this._particles = [];
 	}
 
+	delete() {
+		for (let particle of this._particles) {
+			particle.delete();
+		}
+	}
+
 	/** Returns true frequency times per seconds in average*/
 	triggerPulse(dt, frequency) {
 		// can not return true more than once per frame
@@ -30,9 +36,7 @@ export default class ParticlesSystem {
 		// console.log('updating particles');
 		for (var particle of this._particles) {
 			if (particle.shouldRemove()) {
-				particle.mesh.geometry.dispose();
-				particle.mesh.material.dispose();
-				this.scene.remove(particle.mesh);
+				particle.delete();
 				this._particles.splice(this._particles.indexOf(particle), 1);
 				continue;
 			}
@@ -48,6 +52,12 @@ class Particle {
 	}
 	shouldRemove() {
 		throw new Error('Not implemented');
+	}
+
+	delete() {
+		this.mesh.geometry.dispose();
+		this.mesh.material.dispose();
+		this.scene.remove(this.mesh);
 	}
 
 	update(dt) {
@@ -243,8 +253,8 @@ export class ConfettiParticle extends Particle {
 	constructor({scene, x, y, z}) {
 		const geometry = new THREE.SphereGeometry(THREE.MathUtils.randFloat(0.07, 0.11), 6, 3)
 		super({scene: scene, x: x, y: y, z: z});
-		this.velocity = new THREE.Vector3(THREE.MathUtils.randFloat(-.7, .7), THREE.MathUtils.randFloat(-.7, .7), THREE.MathUtils.randFloat(3, 8));
-		this.gravity = new THREE.Vector3(0, 0, -3);
+		this.velocity = new THREE.Vector3(THREE.MathUtils.randFloat(-0.9, 0.9), THREE.MathUtils.randFloat(-0.9, 0.9), THREE.MathUtils.randFloat(0, 0));
+		this.gravity = new THREE.Vector3(0, 0, THREE.MathUtils.randFloat(-2, -1));
 		const color = THREE.MathUtils.randInt(0, 0xffffff)
 		this.mesh = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: color}));
 		this.mesh.position.copy(this.position);

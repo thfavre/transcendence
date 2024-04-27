@@ -15,13 +15,21 @@ export default class Game {
 		this.clock = new THREE.Clock();
 		this.particlesSystem = new ParticlesSystem(scene);
 		this.level = new Level(scene, camera, map, playersNb, this.particlesSystem);
-
 	// 	this.initNewGame();
+	}
+
+	delete() {
+		this.level.delete();
+		this.particlesSystem.delete();
 	}
 
 	// initNewGame() {
 	// 	this.game = new Game(this.scene);
 	// }
+
+	onGameOver(winner) {
+		console.log('Game over, winner is player ' + winner);
+	}
 
 	update(keysJustPressed) {
 		var dt = this.clock.getDelta();

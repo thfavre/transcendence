@@ -5,7 +5,6 @@ import Player from './Player.js';
 
 import MapData from './MapData.js';
 import * as powerups from './powerups.js';
-import { max } from 'three/examples/jsm/nodes/Nodes.js';
 import * as constants from './constants.js';
 
 
@@ -18,11 +17,11 @@ export default class Level {
 		this.particlesSystem = particlesSystem;
 		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
 
-		this.activateSpawnAnimation();
+		// this.activateSpawnAnimation();
 		this.createPlane(map.backgroundColor)
 		// powerups
 		this.spawnPowerupsFrequency = 10; // seconds
-		this.spawnPowerupsTimer = this.spawnPowerupsFrequency-1; // to spawn one at the beginning
+		this.spawnPowerupsTimer = 5;
 		this.allPowerups = [
 			powerups.SlowPowerup,
 			powerups.SlowPowerup,
@@ -33,13 +32,26 @@ export default class Level {
 		];
 
 		this.defineCameraStartPos();
+		this.winner = null; // the player who has won
+	}
+
+	delete() {
+		for (let wall of this.walls) {
+			wall.delete();
+		}
+		for (let player of this.players) {
+			player.delete();
+		}
+		for (let powerup of this.powerups) {
+			powerup.delete();
+		}
 	}
 
 	defineCameraStartPos() {
 		var mapHeight = this.mapData.getHeight();
 		var mapWidth = this.mapData.getWidth();
 		this.camera.position.x = mapWidth/2;
-		this.camera.position.y = 0;//mapHeight/2;
+		this.camera.position.y = this.showSpawnAnimation ? -mapHeight/4 : mapHeight/2; //mapHeight/2;
 		var maxMapSize = Math.max(mapHeight, mapWidth);
 		this.camera.position.z = Math.tan(constants.fov * Math.PI / 180/2) * maxMapSize/2;
 	}
@@ -83,7 +95,7 @@ export default class Level {
 
 	spawnAnimation(dt) {
 		if (!this.showSpawnAnimation)
-			return;
+			return false;
 		var haveAllWallsFallen = true;
 		// make walls fall
 		for (let i = 0; i < this.walls.length; i++) {
@@ -110,6 +122,7 @@ export default class Level {
 				wall.mesh.material.transparent = true;
 			}
 		}
+		return true;
 	}
 
 	loadMap(mapData, playersNb) {
@@ -147,7 +160,7 @@ export default class Level {
 				}
 				else if (cell === maps.PLAYER) {
 					for (let i = 0; i < playersNb; i++) {
-						const player = new Player({scene: this.scene, x: x, y: y, presetNb: i, particlesSystem: this.particlesSystem});
+						const player = new Player({scene: this.scene, x: x, y: y, playerNb: i, particlesSystem: this.particlesSystem});
 						players.push(player);
 					}
 				}
@@ -226,6 +239,8 @@ export default class Level {
 	}
 
 	updateCamera(dt, {x=null, y=null, moveSpeed=.5, maxDistFromCenter=2}) {
+		if (constants.DEBUG)
+			return;
 		var mapCenterX = this.mapData.getWidth()/2;
 		var mapCenterY = this.mapData.getHeight()/2;
 		if (!x || !y) {
@@ -249,11 +264,15 @@ export default class Level {
 	}
 
 	update(dt, keysJustPressed) {
-		this.spawnAnimation(dt);
-		for (let player of this.players) {
-			player.update(dt, keysJustPressed, this.mapData, this.powerups);
-			if (player.hasWin) {
-				this.updateCamera(dt, {x: player.position.x, y: player.position.y, maxDistFromCenter: 8, moveSpeed: 3});
+		if (keysJustPressed.length > 0)
+			console.log(keysJustPressed);
+		if (!this.spawnAnimation(dt)) {
+			for (let player of this.players) {
+				player.update(dt, keysJustPressed, this.mapData, this.powerups, this.winner==null);
+				if (player.hasWin) {
+						this.winner = player;
+						this.updateCamera(dt, {x: player.position.x, y: player.position.y, maxDistFromCenter: 8, moveSpeed: 3});
+				}
 			}
 		}
 		this.stackPlayers(dt);
