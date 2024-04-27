@@ -23,8 +23,8 @@ export default class AiPlayer extends Player {
 
 		// Wall
 		this.goalLength = startPos.distanceTo(endPos);
-		var dX = endPos.x - startPos.x;
-		var dY = endPos.y - startPos.y;
+		let dX = endPos.x - startPos.x;
+		let dY = endPos.y - startPos.y;
 		this.centerPos = new THREE.Vector3(startPos.x + dX/2, startPos.y + dY/2, 0);
 		this.centerPos.x += fieldEdgeDiameter/2*Math.cos(this.axeAngle);
 		this.centerPos.y += fieldEdgeDiameter/2*Math.sin(this.axeAngle);
@@ -39,7 +39,7 @@ export default class AiPlayer extends Player {
 		this.goal = this.createWall(this.startPos, this.endPos);
 		this.wallArray = [];
 		// create arrayWall of all walls except goal
-		for (var nbWalls = 1; nbWalls < this.totalPlayers; nbWalls++)
+		for (let nbWalls = 1; nbWalls < this.totalPlayers; nbWalls++)
 		{
 			if (fieldVertices[nbWalls] == this.startPos)
 				continue;
@@ -86,10 +86,6 @@ export default class AiPlayer extends Player {
 
 	// calculates the velocity after it reflects on a wall
 	calculateReflectedVelocity(ballVelocity, wallNormal) {
-		// Convert velocity and normal vectors into Three.js Vector3 objects
-		// const velocityVector = new THREE.Vector3(ballVelocity.x, ballVelocity.y, 0);
-		// const normalVector = new THREE.Vector3(wallNormal.x, wallNormal.y, 0);
-
 		// Normalize the normal vector
 		wallNormal.normalize();
 
@@ -109,7 +105,10 @@ export default class AiPlayer extends Player {
 	{
 		const b = -(slope * ballPosition.x) + ballPosition.y;
 		if (b < 0)
+		{
+			console.log("TRUE FOR BEHIND THE WALL");
 			return true;
+		}
 		else
 			return false;
 	}
@@ -122,17 +121,22 @@ export default class AiPlayer extends Player {
 	// return true if the ball is behind the wall
 	isBehindWall(startPos, endPos, ballPos)
 	{
-		const threshold = 0;
+		const threshold = 5;
 		const wallLen = this.pointsDistance(startPos, endPos) + threshold;
 		const startToBall = this.pointsDistance(startPos, ballPos);
 		const endToBall = this.pointsDistance(endPos, ballPos);
 
 		const sumDistances = startToBall + endToBall;
 
+		// console.log("sumDistances: ", sumDistances);
+		// console.log("wallLen: ", wallLen);
+
 		if ((sumDistances < wallLen) || (sumDistances > wallLen))
 			return false;
 		else
+		{
 			return true;
+		}
 	}
 
 	// predicts the position of the ball after time in ms
@@ -160,19 +164,22 @@ export default class AiPlayer extends Player {
 		for (let t = 0; t < simTime; t += incrTime)
 		{
 			predictedBallPos = this.getBallPositionTime(ballPosition, ballVelocity, t);
-			if (this.isBehindWall(this.goal.startPos, this.goal.endPos, predictedBallPos))
+			if (this.isBehindGoal(ballPosition, this.goal.slope))
 				break;
 			for (var i = 0; i < this.wallArray.length; i++)
 			{
-				if (this.isBehindWall(this.wallArray[i].startPos, this.wallArray[i].endPos, predictedBallPos))
+				if (this.isBehindGoal(ballPosition, this.wallArray[i].slope))
 				{
+					// console.log("ball velocity before reflection: ", ballVelocity);
 					ballVelocity = this.calculateReflectedVelocity(ballVelocity, this.wallArray[i].normal);
+					// console.log("ball velocity after reflection: ", ballVelocity);
 					break ;
 				}
 			}
-			// this.drawSphere(predictedBallPos);
 		}
-		console.log("predictedBallPos: ", predictedBallPos);
+		// console.log("predictedBallPos: ", predictedBallPos);
+		// this.drawSphere(predictedBallPos);
+
 		return predictedBallPos;
 	}
 
@@ -195,7 +202,8 @@ export default class AiPlayer extends Player {
 
 	updateBall(ball)
 	{
-		this.targetPosition = this.predictBallPosition(ball.body.position, ball.body.velocity);
+		const	ballVelocity = new THREE.Vector3(ball.body.velocity.x, ball.body.velocity.y, 0);
+		this.targetPosition = this.predictBallPosition(ball.body.position, ballVelocity);
 		// this.drawSphere(this.targetPosition);
 
 		// console.log("ball: ", ball);
@@ -218,10 +226,10 @@ export default class AiPlayer extends Player {
 
 	drawSphere(newPosition) {
 		// Remove existing sphere (if any)
-		// if (this.currentSphereMesh) {
-		// 	this.paddle.mesh.remove(this.currentSphereMesh);
-		// 	this.currentSphereMesh = null; // Reset the reference
-		// }
+		if (this.currentSphereMesh) {
+			this.paddle.mesh.remove(this.currentSphereMesh);
+			this.currentSphereMesh = null; // Reset the reference
+		}
 		var colors = ['#ff0000', '#00ff00', '#0000ff', '#ffffff','#f000f0', '#00bff']
 		var color=colors[this.playerNb];
 		// Create a new sphere
