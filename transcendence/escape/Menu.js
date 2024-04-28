@@ -26,6 +26,7 @@ export class Menu {
 		title.position.y = this.yPos;
 		this.menu.add(title);
 		const start = createText({font: this.font, message: 'Press Enter to start', size: 2, depth: 0.5, frontColor: '#ffffff', sideColor: '#000000'});
+		start.position.x = -300;
 		this.menu.add(start);
 		var minYPos = this.createPlayersKeys();
 		start.position.y = minYPos-4;
@@ -36,19 +37,29 @@ export class Menu {
 		var ySpace = 3;
 		var text = createText({font: this.font, message: 'Keys :', size: 2.2, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
 		text.position.y = this.yPos - 6;
+		text.position.x = -50;
 		this.menu.add(text);
 		var minYPos;
 
 		for (let i = 0; i < this.playersNb; i++) {
 			var frontColor = presets[i].color;
 			var text = createText({font: this.font, message: presets[i].upKeyText+' '+presets[i].leftKeyText+' '+presets[i].downKeyText+' '+presets[i].rightKeyText, size: 1.6, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
-			// text.position.x = -5;
+			text.position.x = -100 - i*10;
 			text.position.y = this.yPos - 10 - i*ySpace;
-			text.position.z = -.5;
 			this.menu.add(text);
 			minYPos = text.position.y;
 		}
 		return minYPos
+	}
+
+	moveRightAllMeshes(dt, xPos=0, speed=80) {
+		for (let mesh of this.menu.children) {
+			if (mesh.position.x < xPos)
+				mesh.position.x += speed * dt;
+			else
+				mesh.position.x = xPos;
+		}
+
 	}
 
 	delete() {
@@ -56,6 +67,8 @@ export class Menu {
 	}
 
 	moveCameraToMenu(dt) {
+		if (constants.DEBUG)
+			return true;
 		var hasMoved = true;
 		if (this.camera.position.y > this.yPos-10) {
 			this.camera.position.y -= 14 * dt;
@@ -77,8 +90,12 @@ export class Menu {
 
 	update(dt, keysJustPressed) {
 		if (this.inMenu) {
-			if (this.moveCameraToMenu(dt) && keysJustPressed.includes(13)) {
-				return false;
+			if (this.moveCameraToMenu(dt)) {
+				this.moveRightAllMeshes(dt);
+
+				if (keysJustPressed.includes(13)) {
+					return false;
+			}
 				// this.delete();
 			}
 		}

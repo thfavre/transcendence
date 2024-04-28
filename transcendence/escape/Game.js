@@ -19,7 +19,7 @@ export default class Game {
 		this.particlesSystem = new ParticlesSystem(scene);
 		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
 
-		this.activateSpawnAnimation();
+		// this.activateSpawnAnimation();
 		this.createPlane(map.backgroundColor)
 		// powerups
 		this.spawnPowerupsFrequency = 10; // seconds

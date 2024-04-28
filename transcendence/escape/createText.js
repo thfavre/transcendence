@@ -15,7 +15,6 @@ export default function createText({font, message, size=4, depth=0.5, curveSegme
 		bevelOffset,
 		bevelSegments
 	};
-	console.log(message)
 	const textGroup = new THREE.Object3D();
 	const textGeo = new TextGeometry(message, props);
 	textGeo.computeBoundingBox();

@@ -76,8 +76,10 @@ export default class Tournement {
 	}
 
 	onGameOver(winner) {
+		if (this.helperText) {
+			this.scene.remove(this.helperText);
+		}
 		this.scores[winner.playerNb]++;
-		console.log('Game over, winner is player ');
 		if (this.scores[winner.playerNb] >= this.gameToWin) {
 			// this.playersMeshes = this.game.getPlayersMeshesCopy();
 			this.isOver = true;
@@ -88,6 +90,19 @@ export default class Tournement {
 			this.destroyGame();
 			this.initNewGame();
 		}
+	}
+
+	showContinueText(winner) {
+		if (this.helperText) {
+			this.scene.remove(this.helperText);
+		}
+		const text = 'Press Enter';
+		this.helperText = createText({font: this.font, message: text, size: .7, depth: 0.2, frontColor: '#ffffff', sideColor: '#888888'});
+		this.helperText.position.y = winner.mesh.position.y + 2;
+		this.helperText.position.x = winner.mesh.position.x;
+		this.helperText.position.z = 1.5;
+		this.helperText.rotation.x = .2;
+		this.scene.add(this.helperText);
 	}
 
 	winScreen(dt) {
@@ -140,12 +155,13 @@ export default class Tournement {
 			if (keysJustPressed.includes(46)) {
 				this.game.players[0].position.x = -1;
 				this.game.players[0].movingDirection.x = -1;
-
 			}
 			if (this.game && !this.isOver) {
 				this.game.update(keysJustPressed);
-				if (this.game.winner !== null && keysJustPressed.includes(13)) {
-					this.onGameOver(this.game.winner);
+				if (this.game.winner !== null) {
+					this.showContinueText(this.game.winner);
+					if (keysJustPressed.includes(13))
+						this.onGameOver(this.game.winner);
 				}
 			}
 

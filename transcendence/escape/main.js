@@ -76,10 +76,10 @@ function main(playersNb, gameToWin, font, debug, callback) {
 
 
 	// Camera
-	const camera = new THREE.PerspectiveCamera( 90, sizes.width / sizes.height, 0.1, 10000);
+	const camera = new THREE.PerspectiveCamera( 90, sizes.width / sizes.height, 0.1, 300);
 	scene.add( camera );
-	// camera.position.x = 15;
-	// camera.position.y = 8;
+	if (constants.DEBUG)
+		camera.position.z = 40;
 
 	// camera.rotation.z = Math.PI;
 
