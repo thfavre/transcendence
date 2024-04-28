@@ -1,2 +1,0 @@
-# transcendence
-Good luck guys!
