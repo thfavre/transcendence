@@ -1,0 +1,87 @@
+import * as THREE from 'three';
+import * as constants from './constants.js';
+import createText from './createText.js';
+
+import {presets} from './Player.js';
+
+
+
+
+export class Menu {
+	constructor({scene, camera, renderer, font, playersNb=3}) {
+		this.scene = scene;
+		this.camera = camera;
+		this.renderer = renderer;
+		this.playersNb = playersNb;
+		this.font = font;
+		this.menu = new THREE.Object3D();
+		this.scene.add(this.menu);
+		this.yPos = -18;
+		this.createMenu();
+		this.inMenu = true;
+	}
+
+	createMenu() {
+		const title = createText({font: this.font, message: constants.NAME, size: 5, depth: 1, frontColor: '#ffffff', sideColor: '#000000'});
+		title.position.y = this.yPos;
+		this.menu.add(title);
+		const start = createText({font: this.font, message: 'Press Enter to start', size: 2, depth: 0.5, frontColor: '#ffffff', sideColor: '#000000'});
+		this.menu.add(start);
+		var minYPos = this.createPlayersKeys();
+		start.position.y = minYPos-4;
+	}
+
+
+	createPlayersKeys() {
+		var ySpace = 3;
+		var text = createText({font: this.font, message: 'Keys :', size: 2.2, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
+		text.position.y = this.yPos - 6;
+		this.menu.add(text);
+		var minYPos;
+
+		for (let i = 0; i < this.playersNb; i++) {
+			var frontColor = presets[i].color;
+			var text = createText({font: this.font, message: presets[i].upKeyText+' '+presets[i].leftKeyText+' '+presets[i].downKeyText+' '+presets[i].rightKeyText, size: 1.6, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
+			// text.position.x = -5;
+			text.position.y = this.yPos - 10 - i*ySpace;
+			text.position.z = -.5;
+			this.menu.add(text);
+			minYPos = text.position.y;
+		}
+		return minYPos
+	}
+
+	delete() {
+		this.scene.remove(this.menu);
+	}
+
+	moveCameraToMenu(dt) {
+		var hasMoved = true;
+		if (this.camera.position.y > this.yPos-10) {
+			this.camera.position.y -= 14 * dt;
+			hasMoved = false;
+		}
+		if (this.camera.position.z < 20) {
+			this.camera.position.z += 10 * dt;
+			hasMoved = false;
+		}
+		if (this.camera.position.x > 0) {
+			this.camera.position.x -= 10 * dt;
+			hasMoved = false;
+		}
+		this.camera.rotation.y = 0;
+		this.camera.rotation.z = 0;
+		this.camera.rotation.x = 0;
+		return hasMoved;
+	}
+
+	update(dt, keysJustPressed) {
+		if (this.inMenu) {
+			if (this.moveCameraToMenu(dt) && keysJustPressed.includes(13)) {
+				return false;
+				// this.delete();
+			}
+		}
+		return true;
+	}
+}

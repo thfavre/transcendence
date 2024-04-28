@@ -19,11 +19,11 @@ export default class Game {
 		this.particlesSystem = new ParticlesSystem(scene);
 		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
 
-		// this.activateSpawnAnimation();
+		this.activateSpawnAnimation();
 		this.createPlane(map.backgroundColor)
 		// powerups
 		this.spawnPowerupsFrequency = 10; // seconds
-		this.spawnPowerupsTimer = 5;
+		this.spawnPowerupsTimer = 0;
 		this.allPowerups = [
 			powerups.SlowPowerup,
 			powerups.SlowPowerup,
@@ -32,7 +32,6 @@ export default class Game {
 			powerups.DazedPowerup,
 			powerups.DazedPowerup
 		];
-
 		this.defineCameraStartPos();
 		this.winner = null; // the player who has won
 	}
@@ -53,14 +52,18 @@ export default class Game {
 	defineCameraStartPos() {
 		var mapHeight = this.mapData.getHeight();
 		var mapWidth = this.mapData.getWidth();
-		this.camera.position.x = mapWidth/2;
-		this.camera.position.y = this.showSpawnAnimation ? -mapHeight/4 : mapHeight/2; //mapHeight/2;
+		this.camera.rotation.y = 0;
+		this.camera.rotation.z = 0;
+		this.camera.rotation.x = 0;
+		// this.camera.position.x = mapWidth/2;
+		// this.camera.position.y = this.showSpawnAnimation ? -mapHeight/4 : mapHeight/2; //mapHeight/2;
 		var maxMapSize = Math.max(mapHeight, mapWidth);
-		this.camera.position.z = Math.tan(constants.fov * Math.PI / 180/2) * maxMapSize/2;
+		this.cameraZTarget = Math.tan(constants.fov * Math.PI / 180/2) * maxMapSize/2;
+		// this.camera.position.z = this.cameraZTarget;
 	}
 
 	createPlane(color=0xffffff) {
-		const geometry = new THREE.PlaneGeometry(100, 100);
+		const geometry = new THREE.PlaneGeometry(250, 150);
 		const material = new THREE.MeshStandardMaterial({color: color, side: THREE.DoubleSide});
 		const plane = new THREE.Mesh(geometry, material);
 		plane.position.z = -0.5;
@@ -72,8 +75,8 @@ export default class Game {
 
 	}
 
-	activateSpawnAnimation(duration=4) {
-		this.spawnAnimationFallHeight = 10;
+	activateSpawnAnimation(duration=7) {
+		this.spawnAnimationFallHeight = 8;
 		for (let i = 0; i < this.walls.length; i++) {
 			let wall = this.walls[i];
 			wall.mesh.position.z = this.spawnAnimationFallHeight;
@@ -244,6 +247,8 @@ export default class Game {
 	updateCamera(dt, {x=null, y=null, moveSpeed=.5, maxDistFromCenter=2}) {
 		if (constants.DEBUG)
 			return;
+		// move the camera to Z target
+		this.camera.position.z += (this.cameraZTarget - this.camera.position.z) * dt * moveSpeed;
 		var mapCenterX = this.mapData.getWidth()/2;
 		var mapCenterY = this.mapData.getHeight()/2;
 		if (!x || !y) {
@@ -284,7 +289,7 @@ export default class Game {
 		this.stackPlayers(dt);
 
 		this.updatePowerups(dt);
-		this.updateCamera(dt, {maxDistFromCenter: 2, moveSpeed: .3});
+		this.updateCamera(dt, {maxDistFromCenter: 2, moveSpeed: .4});
 
 
 	}

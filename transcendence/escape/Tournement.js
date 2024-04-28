@@ -1,27 +1,73 @@
 import * as THREE from 'three';
 import Game from './Game.js';
 import * as maps from './maps/maps.js';
+import * as constants from './constants.js';
+import createText from './createText.js';
+import { Menu } from './Menu.js';
+
+
 
 export default class Tournement {
-	constructor(scene, camera, playersNb=3) {
+	constructor(scene, camera, font, gameToWin=2, playersNb=3) {
 		this.scene = scene;
 		this.clock = new THREE.Clock();
 		this.camera = camera;
+		this.font = font;
 		this.playersNb = playersNb;
-		this.gameToWin = 2; // number of games to win
+		this.gameToWin = gameToWin; // number of games to win
 		this.isOver = false;
+		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb});
 		// this.level = new Level(scene, mapArray, playersNb);
 		this.scores = []
 		for (let i = 0; i < playersNb; i++) {
 			this.scores.push(0);
 		}
-		this.initNewGame();
+		// this.initNewGame();
 	}
+
+	createScoresTexts(showGameToWin=true) {
+		// clear the previous texts
+		if (this.scoresTexts) {
+			for (let text of this.scoresTexts) {
+				this.scene.remove(text);
+			}
+		}
+		this.scoresTexts = [];
+		var space = 1.6;
+		for (let i = 0; i < this.scores.length; i++) {
+			var frontColor = this.game.players[i].mesh.material.color;
+			var text = createText({font: this.font, message: this.scores[i].toString(), size: 1.8, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
+			text.position.x = i*space;
+			text.position.y = -3;
+			text.position.z = -.5;
+			this.scene.add(text);
+			this.scoresTexts.push(text);
+		}
+		// add / nbGames to win
+		if (showGameToWin) {
+			var text = createText({font: this.font, message: '/'+this.gameToWin.toString(), size: 2, depth: 0.2, frontColor: '#ffffff', sideColor: '#888888'});
+			text.position.x = (this.scores.length+.4)*space;
+			text.position.y = -3;
+			text.position.z = -.5;
+			this.scene.add(text);
+			this.scoresTexts.push(text);
+		}
+	}
+
+	// drawScores() {
+	// 	if (!this.scoresTexts)
+	// 		return;
+	// 	for (let i = 0; i < this.scores.length; i++) {
+	// 		// this.scoresTexts[i].position.x = i*2;
+	// 		// this.scoresTexts[i].position.y = 5;
+	// 	}
+	// }
 
 	initNewGame() {
 		var randomTournamentMap = maps.randomTournamentMap[Math.floor(Math.random()*maps.randomTournamentMap.length)];
 		// randomTournamentMap = maps.speedySquare; // ! TODO remove
-		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb);
+		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb, this.font);
+		this.createScoresTexts();
 	}
 
 	destroyGame() {
@@ -35,6 +81,9 @@ export default class Tournement {
 		if (this.scores[winner.playerNb] >= this.gameToWin) {
 			// this.playersMeshes = this.game.getPlayersMeshesCopy();
 			this.isOver = true;
+			this.createScoresTexts(false);
+			if (!constants.DEBUG)
+				this.camera.position.x = 0;
 		} else {
 			this.destroyGame();
 			this.initNewGame();
@@ -56,18 +105,22 @@ export default class Tournement {
 				player.tpToPosition(i*1.5+mapWidth/2, -2);
 				player.mesh.position.z = 0;
 				player.deceptionAnimation(dt);
+				player.spotLight.intensity = player.spotLightIntensity/2;
 
 			}
 			// this.game.players[i].mesh.position.z = 2;
 		}
 		// this.game.updateCamera(dt, {maxDistFromCenter: 10, moveSpeed: .3});
-		this.camera.position.z = 5;
-		this.camera.position.x = this.game.winner.mesh.position.x;
-		this.camera.position.y = this.game.winner.mesh.position.y-3;
-		// this.camera.lookAt(this.game.winner.mesh.position);
-		this.camera.rotation.x = .7;
-		this.camera.rotation.y = 0;
-		this.camera.rotation.z = 0;
+		if (!constants.DEBUG) {
+			this.camera.position.z = 5;
+			if (this.camera.position.x < this.game.winner.mesh.position.x)
+				this.camera.position.x += 3 * dt;
+			this.camera.position.y = this.game.winner.mesh.position.y-3;
+			// this.camera.lookAt(this.game.winner.mesh.position);
+			this.camera.rotation.x = .7;
+			this.camera.rotation.y = 0;
+			this.camera.rotation.z = 0;
+		}
 
 	// 	console.log('Tournement over, winner is player ', winner, winner.mesh.position.z);
 	// 	// winner.mesh.position.z = 2;
@@ -80,17 +133,25 @@ export default class Tournement {
 
 	update(keysJustPressed) {
 		var dt = this.clock.getDelta();
-		if (this.game && !this.isOver) {
-			this.game.update(keysJustPressed);
-			if (this.game.winner !== null && keysJustPressed.includes(13)) {
-				this.onGameOver(this.game.winner);
+		if (this.menu  && !this.menu.update(dt, keysJustPressed)) {
+			this.menu = null;
+			this.initNewGame();
+		} else {
+			if (keysJustPressed.includes(46)) {
+				this.game.players[0].position.x = -1;
+				this.game.players[0].movingDirection.x = -1;
+
+			}
+			if (this.game && !this.isOver) {
+				this.game.update(keysJustPressed);
+				if (this.game.winner !== null && keysJustPressed.includes(13)) {
+					this.onGameOver(this.game.winner);
+				}
+			}
+
+			if (this.isOver) {
+				this.winScreen(dt);
 			}
 		}
-
-		if (this.isOver) {
-			this.winScreen(dt);
-		}
-
-
 	}
 }

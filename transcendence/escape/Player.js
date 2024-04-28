@@ -8,35 +8,50 @@ import * as constants from './constants.js';
 import {LightsDownPowerup} from './powerups.js';
 
 
-const presets = [
+export const presets = [
 	{
 		color: '#ff0000',
 		upKey: 87,
 		leftKey: 65,
 		downKey: 83,
-		rightKey: 68
-
+		rightKey: 68,
+		upKeyText: 'W',
+		leftKeyText: 'A',
+		downKeyText: 'S',
+		rightKeyText: 'D'
 	},
 	{
 		color: '#00ff00',
 		upKey: 38,
 		leftKey: 37,
 		downKey: 40,
-		rightKey: 39
+		rightKey: 39,
+		upKeyText: 'UP',
+		leftKeyText: 'LEFT',
+		downKeyText: 'RIGHT',
+		rightKeyText: 'DOWN'
 	},
 	{
 		color: '#0000ff',
 		upKey: 73,
 		leftKey: 74,
 		downKey: 75,
-		rightKey: 76
+		rightKey: 76,
+		upKeyText: 'I',
+		leftKeyText: 'J',
+		downKeyText: 'K',
+		rightKeyText: 'L'
 	},
 	{
 		color: '#ff00ff',
 		upKey: 84,
 		leftKey: 70,
 		downKey: 71,
-		rightKey: 72
+		rightKey: 72,
+		upKeyText: 'T',
+		leftKeyText: 'F',
+		downKeyText: 'G',
+		rightKeyText: 'H'
 	}
 ]
 
@@ -91,7 +106,7 @@ export default class Player extends Cube{
 
 	createSpotlight(intensity) {
 		const color = this.mesh.material.color;
-		var light = new THREE.SpotLight(color, intensity, 12, Math.PI/4, 0.5, 2);
+		var light = new THREE.SpotLight(color, intensity, 16, Math.PI/4, 0.5, 2);
 		light.position.set(0, 0, 8);
 		// light.target.position.set(0, 0, 0);
 		this.mesh.add(light);
@@ -242,7 +257,6 @@ export default class Player extends Cube{
 			if (this.spotLightOffDuration <= 0) {
 				this.spotLight.intensity = this.spotLightIntensity;
 			// activate the big lights
-			console.log('LightsDown powerup deactivated');
 			LightsDownPowerup.activateSceneLights(this.scene);
 			this.spotLightOffDuration = -1;
 			}
@@ -269,6 +283,8 @@ export default class Player extends Cube{
 		// conffetti
 		if (this.particlesSystem.triggerPulse(dt, this.canMove ? 20 : 200))
 			this.particlesSystem.addParticle(this.mesh.position.x, this.mesh.position.y, 10, particles.ConfettiParticle);
+		LightsDownPowerup.activateSceneLights(this.scene);
+
 	}
 
 	do360(dt, speed=1, minHeight=1) {
