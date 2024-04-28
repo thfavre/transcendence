@@ -271,6 +271,24 @@ export default class Player extends Cube{
 			this.particlesSystem.addParticle(this.mesh.position.x, this.mesh.position.y, 10, particles.ConfettiParticle);
 	}
 
+	do360(dt, speed=1, minHeight=1) {
+		if (this.mesh.position.z >= minHeight)
+			this.mesh.rotation.z += speed*dt * Math.PI*2;
+	}
+
+	deceptionAnimation(dt, speed=.2) {
+		if (!this.deceptionTimer)
+			this.deceptionTimer = Math.random() * Math.PI * 2;
+		this.deceptionTimer += dt;
+
+		this.mesh.rotation.z = Math.sin(this.deceptionTimer*speed*Math.PI*2)/4;
+	}
+
+	tpToPosition(x, y) {
+		this.position.set(x, y);
+		this.mesh.position.set(x, y, this.mesh.position.z);
+	}
+
 
 	update(dt, keysJustPressed, mapData, powerups, canMove=true) {
 		this.updateMovement(dt, mapData, keysJustPressed, powerups, canMove);

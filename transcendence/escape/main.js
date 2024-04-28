@@ -57,7 +57,7 @@ directionalLight.position.set(-2, -2, 14);
 directionalLight.shadow.camera.near = 8;
 directionalLight.shadow.camera.far = 26;
 directionalLight.shadow.camera.top = 40;
-directionalLight.shadow.camera.bottom = -2;
+directionalLight.shadow.camera.bottom = -5;
 directionalLight.shadow.camera.left = -2;
 directionalLight.shadow.camera.right = 60;
 directionalLight.castShadow = true;

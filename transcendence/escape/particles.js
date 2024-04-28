@@ -251,7 +251,7 @@ export class DazedParticle extends Particle {
 
 export class ConfettiParticle extends Particle {
 	constructor({scene, x, y, z}) {
-		const geometry = new THREE.SphereGeometry(THREE.MathUtils.randFloat(0.07, 0.11), 6, 3)
+		const geometry = new THREE.SphereGeometry(THREE.MathUtils.randFloat(0.07, 0.11), 8, 4)
 		super({scene: scene, x: x, y: y, z: z});
 		this.velocity = new THREE.Vector3(THREE.MathUtils.randFloat(-0.9, 0.9), THREE.MathUtils.randFloat(-0.9, 0.9), THREE.MathUtils.randFloat(0, 0));
 		this.gravity = new THREE.Vector3(0, 0, THREE.MathUtils.randFloat(-2, -1));
