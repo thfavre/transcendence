@@ -109,6 +109,7 @@ export default class AiPlayer extends Player {
 		const reflectedComponent = this.calculateReflectedVelocity(parallelComponent, wallNormal);
 
 		const finalVelocity = reflectedComponent.add(wallVelocity);
+		this.drawSphere(finalVelocity);
 
 		return finalVelocity;
 	}
@@ -159,11 +160,17 @@ export default class AiPlayer extends Player {
 
 		const ballToWall = new THREE.Vector2().copy(wallStart).sub(ballPos);
 
-		const distance = Math.abs(ballToWall.dot(new THREE.Vector2(-wallVec.y, wallVec.x))) / wallVec.length();
+		const distance = Math.abs(ballToWall.dot(new THREE.Vector2(wallVec.y, wallVec.x))) / wallVec.length();
 
-		if (distance <= ballRadius) {
+		// console.log("wall normal: ", wallVec);
+		// console.log("ball Radius: ", ballRadius);
+		// console.log()
+		// console.log("distance: ", distance, " vs ballRadius " , ballRadius);
+
+		if (distance <= 3 * ballRadius) {
 			// Calculate the dot product between the ball's velocity and the wall's normal vector
-			const dotProduct = ballVel.dot(new THREE.Vector2(-wallVec.y, wallVec.x));
+			const dotProduct = ballVelocity.dot(new THREE.Vector2(wallVec.y, wallVec.x));
+			console.log("dot product: ", dotProduct);
 
 			// If the dot product is negative, the ball is moving towards the wall
 			if (dotProduct < 0) {
@@ -182,34 +189,64 @@ export default class AiPlayer extends Player {
 		let predictedPosition = new THREE.Vector3();
 		predictedPosition.x = ballPosition.x + ballVelocity.x * t;
 		predictedPosition.y = ballPosition.y + ballVelocity.y * t;
+		// this.drawSphere(predictedPosition);
 
 		return predictedPosition;
+	}
+
+	pointOnSegment(pointToCheck, wallStartPos, wallEndPos, wallSlope) {
+		const expectedY = wallSlope * (pointToCheck.x - wallStartPos.x) + wallStartPos.y;
+
+		// if (pointToCheck.y !== expectedY)
+		// 	return false;
+
+		if (Math.abs(pointToCheck.y - expectedY) > Number.EPSILON)
+			return false;
+
+		if ((pointToCheck.x >= Math.min(wallStartPos.x, wallEndPos.x)) && (pointToCheck.x <= Math.max(wallStartPos.x, wallEndPos.x)))
+			return true;
+
+		return false;
 	}
 
 
 	// get the new position where the ball intersects with the goal
 	predictBallPosition(ballPosition, ballVelocity)
 	{
-		const simTime = 1500;
+		const simTime = 2000;
 		const incrTime = 50;
 		let predictedBallPos;
+
 
 		// predictedBallPos = getBallPositionTime(ballPosition, ballVelocity, currTime);
 		for (let t = 0; t < simTime; t += incrTime)
 		{
 			predictedBallPos = this.getBallPositionTime(ballPosition, ballVelocity, t);
-			if (this.wallCollision(ballPosition, ballVelocity, this.goal.startPos, this.goal.endPos, this.ball.ballRadius))
+			if (this.pointOnSegment(predictedBallPos, this.goal.startPos, this.goal.endPos, this.goal.slope))
 				break;
 			for (var i = 0; i < this.wallArray.length; i++)
 			{
-				if (this.wallCollision(ballPosition, ballVelocity, this.wallArray[i].startPos, this.wallArray[i].endPos, this.ball.radius))
+				if (this.pointOnSegment(predictedBallPos, this.wallArray[i].startPos, this.wallArray[i].endPos, this.wallArray[i].slope))
 				{
-					// console.log("ball velocity before reflection: ", ballVelocity);
+					console.log("ball velocity before reflection: ", ballVelocity);
 					ballVelocity = this.calculateFinalVelocity(ballVelocity, this.wallArray[i].normal);
-					// console.log("ball velocity after reflection: ", ballVelocity);
+					console.log("ball velocity after reflection: ", ballVelocity);
 					break ;
 				}
 			}
+
+			// if (this.wallCollision(predictedBallPos, ballVelocity, this.goal.startPos, this.goal.endPos, this.ball.radius))
+			// 	break;
+			// for (var i = 0; i < this.wallArray.length; i++)
+			// {
+			// 	if (this.wallCollision(predictedBallPos, ballVelocity, this.wallArray[i].startPos, this.wallArray[i].endPos, this.ball.radius))
+			// 	{
+			// 		console.log("ball velocity before reflection: ", ballVelocity);
+			// 		ballVelocity = this.calculateFinalVelocity(ballVelocity, this.wallArray[i].normal);
+			// 		console.log("ball velocity after reflection: ", ballVelocity);
+			// 		break ;
+			// 	}
+			// }
 		}
 		// console.log("predictedBallPos: ", predictedBallPos);
 		// this.drawSphere(predictedBallPos);
@@ -236,8 +273,8 @@ export default class AiPlayer extends Player {
 
 	updateBall(ball)
 	{
+		this.ball = ball;
 		const	ballVelocity = new THREE.Vector3(ball.body.velocity.x, ball.body.velocity.y, 0);
-		console.log("ball: ", ball);
 		this.targetPosition = this.predictBallPosition(ball.body.position, ballVelocity);
 		// this.drawSphere(this.targetPosition);
 
