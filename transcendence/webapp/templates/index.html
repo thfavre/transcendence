@@ -225,6 +225,24 @@
 				</div>
 			</div>
 
+			<!-- Modal tournament -->
+			<div class="modal fade" id="tournamentModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" data-i18n="enter_player_names"></h5>
+						</div>
+						<div class="modal-body">
+							<form id="playerNamesForm"></form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" data-i18n="close_btn"></button>
+							<button type="button" class="btn btn-outline-info" onclick="submitPlayerNames()" data-i18n="start_btn"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- Footer block -->
 			<footer class="footer text-center py-3 mt-auto">
 				<div class="container d-flex justify-content-between align-items-center">

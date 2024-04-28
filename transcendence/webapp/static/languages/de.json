@@ -43,5 +43,9 @@
 	"1_ai": "1 KI",
 	"2_ai": "2 KI",
 	"3_ai": "3 KI",
-	"4_ai": "4 KI"
+	"4_ai": "4 KI",
+	"enter_player_names": "Wählen Sie Aliase",
+	"close_btn": "Schließen",
+	"start_btn": "Start",
+	"player": "Gast"
 }

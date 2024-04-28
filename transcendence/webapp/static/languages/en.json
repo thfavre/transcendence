@@ -43,5 +43,9 @@
 	"1_ai": "1 AI",
 	"2_ai": "2 AI",
 	"3_ai": "3 AI",
-	"4_ai": "4 AI"
+	"4_ai": "4 AI",
+	"enter_player_names": "Choose aliases",
+	"close_btn": "Close",
+	"start_btn": "Start",
+	"player": "Guest"
 }

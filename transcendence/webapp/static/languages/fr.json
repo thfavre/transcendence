@@ -2,7 +2,7 @@
 	"new_game": "Nouvelle partie",
 	"profile": "Profil",
 	"high_score": "Meilleurs scores",
-	"credits": "Crédits",
+	"credits": "Credits",
 	"login_btn": "Se connecter",
 	"back_menu_btn": "Revenir au menu",
 	"back_btn": "Revenir",
@@ -43,5 +43,9 @@
 	"1_ai": "1 IA",
 	"2_ai": "2 IA",
 	"3_ai": "3 IA",
-	"4_ai": "4 IA"
+	"4_ai": "4 IA",
+	"enter_player_names": "Choisissez des alias",
+	"close_btn": "Fermez",
+	"start_btn": "Commencez",
+	"player": "Convive"
 }
