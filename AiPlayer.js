@@ -19,7 +19,7 @@ export default class AiPlayer extends Player {
 		this.endPos = endPos;
 		this.scene = scene
 
-		console.log("vertices: ", fieldVertices);
+		console.log("physicsWorld: ", physicsWorld);
 
 		// Wall
 		this.goalLength = startPos.distanceTo(endPos);
@@ -44,9 +44,14 @@ export default class AiPlayer extends Player {
 			if (fieldVertices[nbWalls] == this.startPos)
 				continue;
 			else
+			{
 				this.wallArray.push(this.createWall(fieldVertices[nbWalls], fieldVertices[nbWalls+1]));
+
+			}
 		}
-		console.log("goal: ", this.goal);
+		this.goalPos = this.wallArray.length;
+		this.wallArray.push(this.goal);
+		console.log("goal box: ", this.wallArray[this.goalPos].box);
 		console.log("wallArray: ", this.wallArray);
 	}
 
@@ -63,7 +68,8 @@ export default class AiPlayer extends Player {
 			slope: this.calculateSlope(startPos, endPos),
 			angle: this.getAngle(),
 			normal: this.calculateNormal(startPos, endPos),
-			equation: (x) => this.calculateSlope(startPos, endPos) * x + (startPos.y - this.calculateSlope(startPos, endPos) * startPos.x)
+			equation: (x) => this.calculateSlope(startPos, endPos) * x + (startPos.y - this.calculateSlope(startPos, endPos) * startPos.x),
+			segment: new THREE.Line3(startPos, endPos)
 		};
 	}
 
@@ -349,13 +355,80 @@ export default class AiPlayer extends Player {
 		return predictedBallPos;
 	}
 
+	calculateWallNormal(startPos, endPos) {
+		// Find the direction vector of the segment
+		const directionVector = {
+			x: endPos.x - startPos.x,
+			y: endPos.y - startPos.y
+		};
+
+		// Rotate the direction vector by 90 degrees
+		const normalVector = {
+			x: -directionVector.y,
+			y: directionVector.x
+		};
+
+		// Normalize the normal vector
+		const length = Math.sqrt(normalVector.x * normalVector.x + normalVector.y * normalVector.y);
+		const normalizedNormal = new THREE.Vector3(normalVector.x / length, normalVector.y / length, 0);
+
+		return normalizedNormal;
+	}
+
+	normalizeV3(vector)
+	{
+		const magnitude = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2) + Math.pow(vector.z, 2));
+		const nromalizedV3 = new THREE.Vector3(vector.x / magnitude, vector.y / magnitude, vector.z / magnitude);
+
+	}
+
+
+	getBallInterWithray()
+	{
+		// const ray = new THREE.Ray(this.ball.body.position, this.ball.body.velocity);
+
+		// ray.intersectBox(this.wallArray[this.goalPos].box, target);
+
+		let pointOnRay = new THREE.Vector3();
+		let pointOnSegment = new THREE.Vector3();
+		const normalizedVelocity = new THREE.Vector3(this.ball.body.velocity.x, this.ball.body.velocity.y, this.ball.body.velocity.z);
+		normalizedVelocity.normalize();
+		const ray = new THREE.Ray(this.ball.body.position, normalizedVelocity);
+		ray.distanceSqToSegment(this.startPos, this.endPos, pointOnRay, pointOnSegment);
+		// this.drawSphere(pointOnRay);
+		return pointOnRay;
+
+
+		// // for (wallIndex = 0; wallIndex < this.wallArray.length; wallIndex++)
+		// // {
+		// // 	if (ray.intersectLine(this.wallArray[wallIndex].segment, target))
+		// // 		break;
+		// // }
+		// // const closestPointToBall = new THREE.Vector3();
+		// // ray.distanceSqToSegment(this.wallArray[this.goalPos].startPos, this.wallArray[this.goalPos].endPos, useless, closestPointToBall);
+		// const closestPoint = new THREE.Vector3();
+		// ray.closestPointToPoint(this.wallArray[this.goalPos].startPos, closestPoint);
+
+		// // Check if the closest point lies within the segment bounds
+		// const isInsideSegmentBounds = this.wallArray[this.goalPos].startPos.distanceToSquared(closestPoint) <= this.wallArray[this.goalPos].startPos.distanceToSquared(this.wallArray[this.goalPos].endPos) &&
+		// this.wallArray[this.goalPos].endPos.distanceToSquared(closestPoint) <= this.wallArray[this.goalPos].startPos.distanceToSquared(this.wallArray[this.goalPos].endPos);
+
+		// // If the closest point is within the segment bounds, it's an intersection
+		// if (isInsideSegmentBounds) {
+		// 	this.drawSphere(closestPoint);
+		// 	return closestPoint;
+		// }
+
+	}
+
 	// ---------- Working DO NOT TOUCH ----------
 
 	updateBall(ball)
 	{
 		this.ball = ball;
 		const	ballVelocity = new THREE.Vector3(ball.body.velocity.x, ball.body.velocity.y, 0);
-		this.targetPosition = this.predictBallPosition(ball.body.position, ballVelocity);
+		// this.targetPosition = this.predictBallPosition(ball.body.position, ballVelocity);
+		this.targetPosition = this.getBallInterWithray();
 		console.log("targetPosition: ", this.targetPosition);
 		// this.drawSphere(this.targetPosition);
 
