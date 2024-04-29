@@ -3,13 +3,61 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import * as constants from './constants.js';
 import Tournement from './Tournement.js';
+import TimedGames from './TimedGames.js';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 // import Game from './Game.js';
 
+// const loader = new FontLoader();
+// loader.load( 'assets/fonts/Gugi_Regular.json', ( font ) => {
+// 	console.log("Font loaded", font);
+// 	FONT = font;
+// });
 
-window.startGame = function game(playersNb, callback) {
+
+const fontLoader = new FontLoader();
+// Define a function to load the font
+function loadFont(e) {
+  return new Promise((resolve, reject) => {
+    fontLoader.load(
+      // Path to your font file
+      'assets/fonts/Gugi_Regular.json',
+      (font) => {
+        // Font loaded successfully
+        resolve(font);
+      },
+      (onLoad) => {
+        // console.log('Font loading:', (onLoad.loaded / onLoad.total * 100).toFixed(2) + '%');
+      },
+      (onError) => {
+        reject(new Error('Failed to load font'));
+      }
+    );
+  });
+}
+
+
+// load fonts and then start the game
+function init(playersNb, gameToWin, gameMode="tournement", debug=false, callback) {
+	Promise.all([loadFont(), /* Load other assets here */])
+  		.then((values) => {
+    		const font = values[0]; // Access the loaded font
+
+    		// Start your game logic here
+			main(playersNb, gameToWin, gameMode, font, debug, callback);
+  		})
+  		.catch((error) => {
+    		console.error('Error loading font or assets:', error);
+		});
+}
+
+function main(playersNb, gameToWin, gameMode, font, debug, callback) {
+	constants.setDegub(debug);
+	if (constants.DEBUG) {
+		console.log('Debug mode');
+	}
 
 	// Canvas
-	const canvas = document.querySelector('canvas.webgl');
+	const canvas = document.querySelector('#webgl');
 
 	// Sizes
 	const sizes = {
@@ -29,18 +77,17 @@ window.startGame = function game(playersNb, callback) {
 
 
 	// Camera
-	const camera = new THREE.PerspectiveCamera( 90, sizes.width / sizes.height, 0.1, 10000);
+	const camera = new THREE.PerspectiveCamera( 90, sizes.width / sizes.height, 0.1, 300);
 	scene.add( camera );
-	camera.position.z = 20;
-	// camera.position.x = 15;
-	// camera.position.y = 8;
+	if (constants.DEBUG)
+		camera.position.z = 40;
 
 	// camera.rotation.z = Math.PI;
 
 	// Renderer
 	const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
-	renderer.setSize( sizes.width, sizes.height );
-	document.body.appendChild( renderer.domElement );
+	// renderer.setSize( sizes.width, sizes.height );
+	// document.body.appendChild( renderer.domElement );
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.VSMShadowMap;
 	// renderer.toneMapping = THREE.CineonToneMapping; // ReinhardToneMapping
@@ -83,19 +130,38 @@ window.startGame = function game(playersNb, callback) {
 	};
 
 	// Creation
-	const game = new Tournement(scene, camera, playersNb);
+	var game;
+	if (gameMode == 'tournement') {
+		game = new Tournement(scene, camera, font, gameToWin, playersNb);
+	} else if (gameMode == 'solo') {
+		game = new TimedGames(scene, camera, font, gameToWin, 1);
+	} else {
+		console.error('Unknown game mode', gameMode, 'Choose between "tournement" and "solo"');
+		return;
+	}
 
 
 	// Main loop
 	function gameLoop() {
-		window.requestAnimationFrame(gameLoop);
-		game.update(keysJustPressed);
-		callback([game.getScores(), game.game.players[0].mesh.position.x]);
+		if (!game.update(keysJustPressed)) {
+			callback(game);
+			renderer.dispose();
+			return;
+		}
 		renderer.render(scene, camera);
 		keysJustPressed = [];
+		window.requestAnimationFrame(gameLoop);
 	}
 
 	gameLoop();
+
 }
 
-// game()
+init(4, 2, 'solo', false, (game) => {
+	console.log('Tournement is over', game.scores);
+	game.time;
+});
+
+
+window.gameEscape = init;
+

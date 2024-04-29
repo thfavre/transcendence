@@ -7,63 +7,25 @@ import { Menu } from './Menu.js';
 
 
 
-export default class Tournement {
-	constructor(scene, camera, font, gameToWin=2, playersNb=3) {
+export default class TimedGames {
+	constructor(scene, camera, font, gameToWin=2, playersNb=1) {
 		this.scene = scene;
 		this.clock = new THREE.Clock();
 		this.camera = camera;
 		this.font = font;
 		this.playersNb = playersNb;
 		this.gameToWin = gameToWin; // number of games to win
+		this.currentGameNb = 0;
 		this.isOver = false;
 		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb});
 		this.allMaps = maps.tournamentMap;
-		// this.level = new Level(scene, mapArray, playersNb);
-		this.scores = []
+		this.time = 0;
 		this.stop = false;
-		for (let i = 0; i < playersNb; i++) {
-			this.scores.push(0);
-		}
+		// this.level = new Level(scene, mapArray, playersNb);
+
 		// this.initNewGame();
 	}
 
-	createScoresTexts(showGameToWin=true) {
-		// clear the previous texts
-		if (this.scoresTexts) {
-			for (let text of this.scoresTexts) {
-				this.scene.remove(text);
-			}
-		}
-		this.scoresTexts = [];
-		var space = 1.6;
-		for (let i = 0; i < this.scores.length; i++) {
-			var frontColor = this.game.players[i].mesh.material.color;
-			var text = createText({font: this.font, message: this.scores[i].toString(), size: 1.8, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
-			text.position.x = i*space;
-			text.position.y = -3;
-			text.position.z = -.5;
-			this.scene.add(text);
-			this.scoresTexts.push(text);
-		}
-		// add / nbGames to win
-		if (showGameToWin) {
-			var text = createText({font: this.font, message: '/'+this.gameToWin.toString(), size: 2, depth: 0.2, frontColor: '#ffffff', sideColor: '#888888'});
-			text.position.x = (this.scores.length+.4)*space;
-			text.position.y = -3;
-			text.position.z = -.5;
-			this.scene.add(text);
-			this.scoresTexts.push(text);
-		}
-	}
-
-	// drawScores() {
-	// 	if (!this.scoresTexts)
-	// 		return;
-	// 	for (let i = 0; i < this.scores.length; i++) {
-	// 		// this.scoresTexts[i].position.x = i*2;
-	// 		// this.scoresTexts[i].position.y = 5;
-	// 	}
-	// }
 
 	initNewGame() {
 		var randomTournamentMap = this.allMaps[Math.floor(Math.random()*this.allMaps.length)];
@@ -73,12 +35,28 @@ export default class Tournement {
 		}
 		// randomTournamentMap = maps.speedySquare; // ! TODO remove
 		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb, this.font);
-		this.createScoresTexts();
 	}
 
 	destroyGame() {
 		this.game.delete();
 		this.game = null;
+	}
+
+	showTimer() {
+		if (this.timerText) {
+			this.scene.remove(this.timerText);
+		}
+
+		var minutes = Math.floor(this.time / 60);
+		var seconds = Math.floor(this.time % 60);
+		var str = minutes.toString() + ':' + (seconds < 10 ? '0' : '') + seconds.toString();
+
+		this.timerText = createText({font: this.font, message: str, size:2, depth: 0.2, frontColor: '#ffffff', sideColor: '#888888'});
+		this.timerText.position.x = 2;
+		this.timerText.position.y = -2.3;
+		this.timerText.position.z = -.5;
+		this.scene.add(this.timerText);
+
 	}
 
 	delete() {
@@ -88,23 +66,17 @@ export default class Tournement {
 			this.menu.delete();
 		if (this.helperText)
 			this.scene.remove(this.helperText);
-		if (this.scoresTexts) {
-			for (let text of this.scoresTexts) {
-				this.scene.remove(text);
-			}
-		}
 	}
 
 	onGameOver(winner) {
+		this.currentGameNb++;
 		if (this.helperText) {
 			this.scene.remove(this.helperText);
 			this.helperText = null;
 		}
-		this.scores[winner.playerNb]++;
-		if (this.scores[winner.playerNb] >= this.gameToWin) {
+		if (this.currentGameNb >= this.gameToWin) {
 			// this.playersMeshes = this.game.getPlayersMeshesCopy();
 			this.isOver = true;
-			this.createScoresTexts(false);
 			if (!constants.DEBUG)
 				this.camera.position.x = 0;
 		} else {
@@ -132,7 +104,7 @@ export default class Tournement {
 			player.update(dt, [], this.game.mapData, this.game.powerups, false);
 		}
 		var mapWidth = this.game.mapData.getWidth();
-		for (var i = 0; i < this.scores.length; i++) {
+		for (var i = 0; i < this.playersNb; i++) {
 			var player = this.game.players[i];
 			if (player == this.game.winner) { // winner
 				player.tpToPosition(i*1.5+mapWidth/2, -4);
@@ -176,21 +148,21 @@ export default class Tournement {
 		if (this.menu  && !this.menu.update(dt, keysJustPressed)) {
 			this.menu = null;
 			this.initNewGame();
-		} else {
+		} else { // game is running
 			if (keysJustPressed.includes(46)) {
 				this.game.players[0].position.x = -1;
 				this.game.players[0].movingDirection.x = -1;
 			}
 			if (this.game && !this.isOver) {
+				this.showTimer();
 				this.game.update(keysJustPressed);
 				if (this.game.winner !== null) {
 					this.showContinueText(this.game.winner);
 					if (keysJustPressed.includes(13))
 						this.onGameOver(this.game.winner);
-				}
-			}
-
-			else if (this.isOver) {
+				} else
+					this.time += dt;
+			} else if (this.isOver) {
 				this.winScreen(dt);
 				if (keysJustPressed.includes(13)) {
 					this.delete();
