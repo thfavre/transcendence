@@ -21,6 +21,7 @@ from .views import index
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
+	path('update-score/', views.update_score, name='update_score'), #test to catch score when we send it from front
     re_path(r'^.*/$', index, name='app'), # catch all urls
 
 ]
