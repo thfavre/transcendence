@@ -9,7 +9,7 @@ if len(sys.argv) == 2:
 else:
     blockSize = 40 #size of the grid block
 
-WIDTH, HEIGHT = 720, 680 #the window size
+WIDTH, HEIGHT = 840, 680 #the window size
 
 
 # if no level to import : import_level = None if a level to import # -> l.31

@@ -17,6 +17,7 @@ export default class Tournement {
 		this.gameToWin = gameToWin; // number of games to win
 		this.isOver = false;
 		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb});
+		this.allMaps = maps.tournamentMap;
 		// this.level = new Level(scene, mapArray, playersNb);
 		this.scores = []
 		for (let i = 0; i < playersNb; i++) {
@@ -64,7 +65,8 @@ export default class Tournement {
 	// }
 
 	initNewGame() {
-		var randomTournamentMap = maps.randomTournamentMap[Math.floor(Math.random()*maps.randomTournamentMap.length)];
+		var randomTournamentMap = this.allMaps[Math.floor(Math.random()*this.allMaps.length)];
+		this.allMaps = this.allMaps.filter(map => map !== randomTournamentMap);
 		// randomTournamentMap = maps.speedySquare; // ! TODO remove
 		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb, this.font);
 		this.createScoresTexts();

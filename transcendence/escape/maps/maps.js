@@ -430,7 +430,7 @@ export const speedySquare = {
 
 
 // --- tournements ---
-export const randomTournamentMap = [
+export const tournamentMap = [
 	duck,
 	note,
 	usa,
