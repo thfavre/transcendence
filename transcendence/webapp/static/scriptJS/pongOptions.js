@@ -56,6 +56,9 @@ function	launchPongVersus()
 		updateModalMessage('pong_versus_modal');
 		return;
 	}
+
+	pongMenu.classList.add('d-none');
+	pongVersusIG.classList.remove('d-none');
 }
 
 // Start Pong Tournament after checking that the conditions are OK
@@ -71,6 +74,9 @@ function	launchPongTournament()
 		return;
 	}
 	selectPlayersNames(selectedPlayers);
+
+	pongMenu.classList.add('d-none'); // TO MOVE - NOT THE RIGHT PLACE TO PUT IT
+	pongTournamentIG.classList.remove('d-none'); // TO MOVE - NOT THE RIGHT PLACE TO PUT IT
 }
 
 // Select the players names for the Pong Tournament

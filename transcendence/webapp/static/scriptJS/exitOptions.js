@@ -1,3 +1,4 @@
+let	isSwitchOn = false;
 
 // Start Find the Exit (solo) after checking that the conditions are OK
 function	launchExitSolo()
@@ -11,9 +12,12 @@ function	launchExitSolo()
 		updateModalMessage('exit_solo_modal');
 		return;
 	}
+
+	findExitMenu.classList.add('d-none');
+	findExitSoloIG.classList.remove('d-none');
 }
 
-// Start Find the Exi (Versus) after checking that the conditions are OK
+// Start Find the Exit (Versus) after checking that the conditions are OK
 
 function launchExitVersus()
 {
@@ -28,6 +32,10 @@ function launchExitVersus()
 		updateModalMessage('exit_versus_modal');
 		return;
 	}
+
+	findExitMenu.classList.add('d-none');
+	findExitVersusIG.classList.remove('d-none');
+
 	console.log("Selected Players: " + selectedPlayers);
 	if (window.startGame) {  // Check if function exists (avoid errors)
 		console.log("Starting game");
@@ -43,3 +51,15 @@ function launchExitVersus()
 
 }
 
+// Caught the switch button state
+
+document.addEventListener('DOMContentLoaded', function()
+{
+	let switchInput = document.getElementById('switchBonus');
+
+	switchInput.addEventListener('change', function()
+	{
+		isSwitchOn = this.checked;
+		console.log(isSwitchOn);
+	});
+});
