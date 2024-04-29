@@ -46,7 +46,6 @@ export default class AiPlayer extends Player {
 			else
 			{
 				this.wallArray.push(this.createWall(fieldVertices[nbWalls], fieldVertices[nbWalls+1]));
-
 			}
 		}
 		this.goalPos = this.wallArray.length;
@@ -378,8 +377,52 @@ export default class AiPlayer extends Player {
 	normalizeV3(vector)
 	{
 		const magnitude = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2) + Math.pow(vector.z, 2));
-		const nromalizedV3 = new THREE.Vector3(vector.x / magnitude, vector.y / magnitude, vector.z / magnitude);
+		const normalizeV3 = new THREE.Vector3(vector.x / magnitude, vector.y / magnitude, vector.z / magnitude);
+		return normalizeV3;
+	}
 
+	// isPointOnSegment(point, startPos, endPos) {
+	// 	// Check if the point is collinear with the start and end positions
+	// 	const epsilon = 0.000001; // Small value to handle floating point imprecision
+
+	// 	function isCollinear(p1, p2, p3) {
+	// 		const crossProduct = (p3.y - p1.y) * (p2.x - p1.x) - (p2.y - p1.y) * (p3.x - p1.x);
+	// 		return Math.abs(crossProduct) < epsilon;
+	// 	}
+
+	// 	if (!isCollinear(startPos, endPos, point)) {
+	// 		return false;
+	// 	}
+
+	// 	// Check if the point is within the bounding box of the segment
+	// 	function isWithinBounds(p, p1, p2) {
+	// 		return (p.x >= Math.min(p1.x, p2.x) && p.x <= Math.max(p1.x, p2.x)) &&
+	// 			   (p.y >= Math.min(p1.y, p2.y) && p.y <= Math.max(p1.y, p2.y)) &&
+	// 			   (p.z >= Math.min(p1.z, p2.z) && p.z <= Math.max(p1.z, p2.z));
+	// 	}
+
+	// 	return isWithinBounds(point, startPos, endPos);
+	// }
+
+
+	isPointOnSegment(point, startPos, endPos) {
+		const tolerance = 0.000001; // Tolerance for floating point comparisons
+
+		// Calculate the distance between two points
+		function distanceSquared(p1, p2) {
+			const dx = p2.x - p1.x;
+			const dy = p2.y - p1.y;
+			const dz = p2.z - p1.z;
+			return dx * dx + dy * dy + dz * dz;
+		}
+
+		// Calculate the squared distance between the start and end points
+		const segmentLengthSquared = distanceSquared(startPos, endPos);
+
+		// Check if the point is on the segment within the given tolerance
+		return (
+			distanceSquared(startPos, point) + distanceSquared(point, endPos) - segmentLengthSquared
+		) < tolerance;
 	}
 
 
@@ -395,7 +438,28 @@ export default class AiPlayer extends Player {
 		normalizedVelocity.normalize();
 		const ray = new THREE.Ray(this.ball.body.position, normalizedVelocity);
 		ray.distanceSqToSegment(this.startPos, this.endPos, pointOnRay, pointOnSegment);
-		// this.drawSphere(pointOnRay);
+		if (!this.isPointOnSegment(pointOnRay, this.startPos, this.endPos))
+		{
+			console.log("test");
+			for (const wall of this.wallArray)
+			{
+				if (!this.isPointOnSegment(pointOnRay, wall.startPos, wall.endPos))
+				{
+					// incidentVector = normalize(intersectionPoint - startPointOfRay)
+					// normalVector = calculateNormalVectorOfWall(segment)
+					// reflectionVector = incidentVector - 2 * dot(incidentVector, normalVector) * normalVector
+					// newDirection = intersectionPoint + reflectionVector
+					const incidentVector = this.normalizeV3((pointOnRay.sub(ray.origin)));
+					const reflectionVector = incidentVector - 2 * incidentVector.dot(wall.normal) * wall.normal;
+					const newRayDirector = pointOnRay.add(reflectionVector);
+					// ray.set(pointOnRay, newRayDirector);
+					// ray.lookAt(newRayDirector);
+					ray.distanceSqToSegment(this.startPos, this.endPos, pointOnRay, pointOnSegment);
+					// break ;
+				}
+			}
+		}
+		this.drawSphere(pointOnRay);
 		return pointOnRay;
 
 
@@ -426,7 +490,7 @@ export default class AiPlayer extends Player {
 	updateBall(ball)
 	{
 		this.ball = ball;
-		const	ballVelocity = new THREE.Vector3(ball.body.velocity.x, ball.body.velocity.y, 0);
+		// const	ballVelocity = new THREE.Vector3(ball.body.velocity.x, ball.body.velocity.y, 0);
 		// this.targetPosition = this.predictBallPosition(ball.body.position, ballVelocity);
 		this.targetPosition = this.getBallInterWithray();
 		console.log("targetPosition: ", this.targetPosition);
@@ -438,14 +502,15 @@ export default class AiPlayer extends Player {
 		if (!this.targetPosition) {
 			return; // Do nothing if there's no target position
 		}
+		const threshold = 1;
 		const	startToTarget = this.startPos.distanceTo(this.targetPosition);
 		const	startToPaddle = this.startPos.distanceTo(this.paddle.body.position);
 		const	endToTarget = this.endPos.distanceTo(this.targetPosition);
 		const	endToPaddle = this.endPos.distanceTo(this.paddle.body.position);
 
-		if (startToTarget < startToPaddle)
+		if (startToTarget < startToPaddle - threshold)
 			this.paddle.moveDown();
-		else if (endToTarget < endToPaddle)
+		else if (endToTarget < endToPaddle - threshold)
 			this.paddle.moveUp();
 
 			// console.log("targetPosition: ", this.targetPosition, " paddlePosition:")
