@@ -175,7 +175,8 @@ export default class Menu {
 		// this.getCurrentPlayer().paddle.mesh.position.z = +200;
 		// this.state = "up key";
 		this.currentPlayer = 0;
-		this.currentPlayerCreator = new PlayerCreator(scene, physicsWorld, camera, game, this.currentPlayer, font);
+		if (!constants.SKIP_PLAYER_SELECTION)
+			this.currentPlayerCreator = new PlayerCreator(scene, physicsWorld, camera, game, this.currentPlayer, font);
 
 	}
 
@@ -217,8 +218,8 @@ export default class Menu {
 
 		if (constants.SKIP_PLAYER_SELECTION)
 		{
-			this.game.finishRound();
-			this.game.startNewRound();
+			this.game.createNewRound();
+			// this.game.newRoundTimer();
 			this.camera.position.z = 100;
 			return true;
 		}
@@ -237,8 +238,8 @@ export default class Menu {
 		{
 			if (this.zoomTo(100))
 			{
-				this.game.finishRound();
-				this.game.startNewRound();
+				this.game.createNewRound();
+				// this.game.newRoundTimer();
 				return true;
 			}
 		}

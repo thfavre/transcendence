@@ -12,13 +12,14 @@ import * as CANNON from 'cannon-es';
 import CannonDebugger from 'cannon-es-debugger';
 
 // import {Ball} from './Ball.js';
-import Game from './Game.js';
+import Versus from './Versus.js';
 import Menu from './Menu.js';
 import * as constants from './constants.js';
+import { VelocityShader } from 'three/examples/jsm/Addons.js';
 
 
 // Canvas
-const canvas = document.querySelector('canvas.webgl');
+const canvas = document.querySelector('#webgl');
 
 // Sizes
 const sizes = {
@@ -114,7 +115,7 @@ var menu;
 var pongGame;
 function init(font)
 {
-	pongGame = new Game(scene, physicsWorld, camera);
+	pongGame = new Versus(scene, physicsWorld, camera, font);
 	menu = new Menu(scene, physicsWorld, camera, pongGame, font);
 	animateMenu();
 
@@ -139,12 +140,8 @@ function onDocumentKeyUp(event) {
 
 };
 
-let time = Date.now();
 function animateMenu() {
-	const currentTime = Date.now();
-	const deltaTime = currentTime - time;
-	time = currentTime;
-	if (menu.update(deltaTime, keysdown, keysJustPressed) == true)
+	if (menu.update(keysdown, keysJustPressed) == true)
 		animateGame();
 	else
 		window.requestAnimationFrame( animateMenu );
@@ -158,10 +155,7 @@ function animateMenu() {
 function animateGame() {
 	window.requestAnimationFrame( animateGame );
 	// controls.update();
-	const currentTime = Date.now();
-	const deltaTime = currentTime - time;
-	time = currentTime;
-	pongGame.update(deltaTime, keysdown);
+	pongGame.update(keysdown);
 
 
 	// phsyics
@@ -178,13 +172,12 @@ function animateGame() {
 
 
 // animateGame();
-function loadFont()
+function main()
 {
 	const loader = new FontLoader();
 	loader.load( 'assets/fonts/Gugi_Regular.json', ( font ) => {
-		console.log("Font loaded", font);
 		init(font)
 	});
 }
 
-loadFont();
+main();

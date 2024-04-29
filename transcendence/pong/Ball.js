@@ -18,14 +18,15 @@ export default class Ball {
 			const model = gltf.scene;
 			model.scale.set(13, 13, 13);
 			this.mesh.add(model);
-			console.log('Ball model loaded');
 		}
 		);
 
 
-		this.moveSpeed = 40;
-		this.movingAngle = 0; // will be updated in the move function
+		this.moveSpeed = 5000;
+		this.acceleration = 250;
+		this.maxMoveSpeed = 15000;
 
+		this.movingAngle = 0; // will be updated in the move function // TODO! change method of doing this
 
 		// ---- Physics ----
 		this.body = new CANNON.Body({
@@ -67,11 +68,19 @@ export default class Ball {
 		}
 	}
 
+	isTooFar() {
+		const pos = this.body.position;
+		const tooFar = constants.FIELD_DIAMETER/1.5 + 10;
+		if (pos.x > tooFar || pos.x < -tooFar || pos.y > tooFar || pos.y < -tooFar)
+			return true;
+		return false;
+	}
+
 	move(dt) {
 		// make sure the ball move at a constant speed
 		this.movingAngle = Math.atan2(this.body.velocity.y, this.body.velocity.x);
-		var xComposant = Math.cos(this.movingAngle) * this.moveSpeed;
-		var yComposant = Math.sin(this.movingAngle) * this.moveSpeed;
+		var xComposant = Math.cos(this.movingAngle) * this.moveSpeed * dt;
+		var yComposant = Math.sin(this.movingAngle) * this.moveSpeed * dt;
 		this.body.velocity.x = xComposant;
 		this.body.velocity.y = yComposant;
 		this.body.velocity.z = 0; // make sure the ball doesn't move up or down
@@ -88,11 +97,16 @@ export default class Ball {
 		// this.mesh.quaternion.copy(this.body.quaternion);
 	}
 
+	increaseMoveSpeed(dt) {
+		this.moveSpeed += this.acceleration * dt;
+		if (this.moveSpeed > this.maxMoveSpeed)
+			this.moveSpeed = this.maxMoveSpeed;
+	}
+
 	update(dt) {
 		this.move(dt);
 		this.updateMeshPosAndRot();
-		// increase the speed
-		this.moveSpeed += 2/100;
+		this.increaseMoveSpeed(dt);
 
 	}
 

@@ -19,12 +19,12 @@ export default class HumanPlayer extends Player {
 		this.upKeyCode = upKeyCode;
 	}
 
-	movePaddle(keysdown)
+	movePaddle(dt, keysdown)
 	{
 		if (keysdown.includes(this.upKeyCode))
-			{this.paddle.moveUp();
+			{this.paddle.moveUp(dt);
 		}
 		if (keysdown.includes(this.downKeyCode))
-			this.paddle.moveDown();
+			this.paddle.moveDown(dt);
 	}
 }

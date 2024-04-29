@@ -7,15 +7,6 @@ import * as constants from './constants.js';
 
 import createLine from './createLine.js';
 
-function getRandomColor() {
-	var letters = '0123456789ABCDEF';
-	var color = '#';
-	for (var i = 0; i < 6; i++) {
-	  color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
-  }
-
 export default class Paddle {
 	// Mesh materials
 	// Basic : no shading
@@ -91,7 +82,7 @@ export default class Paddle {
 		// ---- Moving ----
 		this.maxMovingDistance = goalSize/2 - height/2;
 		var goalDeplacementTime = 1; // time to go from one side to the other [s]
-		this.moveSpeed = this.maxMovingDistance / goalDeplacementTime / constants.FPS;
+		this.moveSpeed = this.maxMovingDistance * 2 / goalDeplacementTime;
 
 		// ---- Mesh ----
 		const geometry = new THREE.BoxGeometry(width, height, depth);
@@ -178,11 +169,11 @@ export default class Paddle {
 			this.mesh.material = this.getPreviousMaterial();
 	}
 
-	move(speed) {
+	move(dt, speed) {
 		// make the paddle move in the direction of the angle
 		var angle = this.axeAngle + Math.PI/2;
-		var depX = speed * Math.cos(angle);
-		var depY = speed * Math.sin(angle);
+		var depX = speed * Math.cos(angle) * dt;
+		var depY = speed * Math.sin(angle) * dt;
 		var newPos = new THREE.Vector3(this.body.position.x + depX, this.body.position.y + depY, this.body.position.z);
 		var distanceToCenter = this.centerPos.distanceTo(newPos);
 		if (distanceToCenter > this.maxMovingDistance)
@@ -191,12 +182,12 @@ export default class Paddle {
 		this.body.position.y += depY;
 	}
 
-	moveUp() {
-		this.move(this.moveSpeed);
+	moveUp(dt) {
+		this.move(dt, this.moveSpeed);
 	}
 
-	moveDown() {
-		this.move(-this.moveSpeed);
+	moveDown(dt) {
+		this.move(dt, -this.moveSpeed);
 	}
 
 	scale(scale) {
