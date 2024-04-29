@@ -67,6 +67,9 @@ export default class Tournement {
 	initNewGame() {
 		var randomTournamentMap = this.allMaps[Math.floor(Math.random()*this.allMaps.length)];
 		this.allMaps = this.allMaps.filter(map => map !== randomTournamentMap);
+		if (this.allMaps.length == 0) { // all maps have been played
+			this.allMaps = maps.tournamentMap;
+		}
 		// randomTournamentMap = maps.speedySquare; // ! TODO remove
 		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb, this.font);
 		this.createScoresTexts();
