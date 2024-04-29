@@ -1,5 +1,5 @@
 {% load static %}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -11,7 +11,7 @@
 		<title>Transcendence</title>
 	</head>
 	<body class="bg-black custom-font">
-		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<noscript data-i18n="script_java"></noscript>
 		<video id="videoLaunch" class="position-absolute top-50 start-50 translate-middle w-100 h-100 fade show" autoplay muted loop>
 			<source src="{% static 'media/AnimatedLogo.mp4' %}" type="video/mp4">
 		</video>
@@ -23,128 +23,128 @@
 			<!-- Buttons block -->
 			<div class="d-flex justify-content-center" id="menuButtons">
 				<div class="d-grid gap-3 col-6 mx-auto">
-					<button id="newGameButton" class="custom-btn btn btn-link tracking-in-expand">New Game</button>
-					<button id="profileButton" class="custom-btn btn btn-link tracking-in-expand">Profile</button>
-					<button id="highScoreButton" class="custom-btn btn btn-link tracking-in-expand" >High Score</button>
-					<button id="creditsButton" class="custom-btn btn btn-link tracking-in-expand">Credits</button>
+					<button id="newGameButton" class="custom-btn btn btn-link tracking-in-expand" data-i18n="new_game"></button>
+					<button id="profileButton" class="custom-btn btn btn-link tracking-in-expand" data-i18n="profile"></button>
+					<button id="highScoreButton" class="custom-btn btn btn-link tracking-in-expand" data-i18n="high_score"></button>
+					<button id="creditsButton" class="custom-btn btn btn-link tracking-in-expand" data-i18n="credits"></button>
 				</div>
 			</div>
 
 			<!-- New Game block-->
 			<div id="newGameMenu" class="container d-none">
-				<div class="row justify-content-center">
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Pong</h5>
-								<p class="card-text"><em>Pong</em> is an iconic arcade game where players control paddles to volley a ball back and forth. The objective is to score points by maneuvering the ball past the opponent's paddle.</p>
-								<button id="pongButton" class="btn btn-outline-info">Select</button>
+								<p class="card-text" data-i18n="pong_description"></p>
+								<button id="pongButton" class="btn btn-outline-info" data-i18n="select_btn"></button>
 							</div>
 						</div>
 					</div>
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Find the Exit</h5>
-								<p class="card-text"><em>Find the Exit</em> is a puzzle game where players navigate through a maze using directional arrows. However, the player's character halts upon encountering a wall, intensifying the challenge.</p>
-								<button id="findExitButton" class="btn btn-outline-info">Select</button>
+								<p class="card-text" data-i18n="exit_description"></p>
+								<button id="findExitButton" class="btn btn-outline-info" data-i18n="select_btn"></button>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="d-flex justify-content-end">
-					<button id="backButtonNG" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
+					<button id="backButtonNG" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
 				</div>
 			</div>
 
 			<!-- Pong block -->
 			<div id="pongMenu" class="container d-none">
-				<div class="row justify-content-center">
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Versus</h5>
-								<p class="card-text">Up to 5 players, each with 3 lives.</p>
+								<p class="card-text" data-i18n="pong_versus"></p>
 								<div class="d-flex justify-content-around w-100 mb-3">
 									<select class="form-select form-select-sm me-2" id="pongVersusPlayer" onchange="updatePongPlayersVersus()">
-										<option selected>Players</option>
-										<option value="1">1 P</option>
-										<option value="2">2 P</option>
-										<option value="3">3 P</option>
-										<option value="4">4 P</option>
-										<option value="5">5 P</option>
+										<option selected data-i18n="players_choice"></option>
+										<option value="1" data-i18n="1_player"></option>
+										<option value="2" data-i18n="2_players"></option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
+										<option value="5" data-i18n="5_players"></option>
 									</select>
 									<select class="form-select form-select-sm ms-2" id="pongVersusAI" onchange="updatePongPlayersVersus()">
-										<option selected>AI</option>
-										<option value="1">1 AI</option>
-										<option value="2">2 AI</option>
-										<option value="3">3 AI</option>
-										<option value="4">4 AI</option>
+										<option selected data-i18n="ai_choice"></option>
+										<option value="1" data-i18n="1_ai"></option>
+										<option value="2" data-i18n="2_ai"></option>
+										<option value="3" data-i18n="3_ai"></option>
+										<option value="4" data-i18n="4_ai"></option>
 									</select>
 								</div>
-								<button class="btn btn-outline-info" onclick="launchPongVersus()">Play</button>
+								<button class="btn btn-outline-info" onclick="launchPongVersus()" data-i18n="play_btn"></button>
 							</div>
 						</div>
 					</div>
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
-								<h5 class="card-title">Tournament</h5>
-								<p class="card-text">Tournament bracket for up to 8 players.</p>
+								<h5 class="card-title" data-i18n="pong_tournament_title"></h5>
+								<p class="card-text" data-i18n="pong_tournament"></p>
 								<div class="d-flex justify-content-around w-100 mb-3">
 									<select class="form-select form-select-sm me-2" id="pongTournamentPlayer">
-										<option selected>Players</option>
-										<option value="3">3 P</option>
-										<option value="4">4 P</option>
-										<option value="5">5 P</option>
-										<option value="6">6 P</option>
-										<option value="7">7 P</option>
-										<option value="8">8 P</option>
+										<option selected data-i18n="players_choice"></option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
+										<option value="5" data-i18n="5_players"></option>
+										<option value="6" data-i18n="6_players"></option>
+										<option value="7" data-i18n="7_players"></option>
+										<option value="8" data-i18n="8_players"></option>
 									</select>
 								</div>
-								<button class="btn btn-outline-info" onclick="launchPongTournament()">Play</button>
+								<button class="btn btn-outline-info" onclick="launchPongTournament()" data-i18n="play_btn"></button>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="d-flex justify-content-end">
-					<button id="backButtonPong" class="btn btn-link custom-btn-back tracking-in-expand">Back</button>
+					<button id="backButtonPong" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
 				</div>
 			</div>
 
 			<!-- Find the exit block -->
 			<div id="findExitMenu" class="container d-none">
-				<div class="row justify-content-center">
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+				<div class="row justify-content-center align-items-stretch">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Solo</h5>
-								<p class="card-text">Complete up to 20 levels as quickly as possible.</p>
+								<p class="card-text" data-i18n="exit_solo"></p>
 								<div class="d-flex justify-content-around w-100 mb-3">
 									<select class="form-select form-select-sm me-2" id="exitSoloLevel">
-										<option selected>Number of levels</option>
-										<option value="1">1 level</option>
-										<option value="5">5 levels</option>
-										<option value="10">10 levels</option>
-										<option value="15">15 levels</option>
-										<option value="20">20 levels</option>
+										<option selected data-i18n="number_level"></option>
+										<option value="1" data-i18n="1_level"></option>
+										<option value="5" data-i18n="5_levels"></option>
+										<option value="10" data-i18n="10_levels"></option>
+										<option value="15" data-i18n="15_levels"></option>
+										<option value="20" data-i18n="20_levels"></option>
 									</select>
 								</div>
-								<button class="btn btn-outline-info" onclick="launchExitSolo()">Play</button>
+								<button class="btn btn-outline-info" onclick="launchExitSolo()" data-i18n="play_btn"></button>
 							</div>
 						</div>
 					</div>
-					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3">
+					<div class="col-12 col-sm-8 col-md-6 col-lg-4 mb-3 d-flex">
 						<div class="card m-2 text-center d-flex flex-column justify-content-center align-items-center">
 							<div class="card-body">
 								<h5 class="card-title">Versus</h5>
-								<p class="card-text">Play with up to 4 players in "Best of X" mode.</p>
+								<p class="card-text" data-i18n="exit_versus"></p>
 								<div class="d-flex justify-content-around w-100 mb-3">
 									<select class="form-select form-select-sm me-2" id="exitVersusPlayers">
-										<option selected>Players</option>
-										<option value="2">2 P</option>
-										<option value="3">3 P</option>
-										<option value="4">4 P</option>
+										<option selected data-i18n="players_choice"></option>
+										<option value="2" data-i18n="2_players"></option>
+										<option value="3" data-i18n="3_players"></option>
+										<option value="4" data-i18n="4_players"></option>
 									</select>
 									<select class="form-select form-select-sm ms-2" id="exitVersusLevel">
 										<option selected>Best of</option>
@@ -155,13 +155,13 @@
 										<option value="5">Bo5</option>
 									</select>
 								</div>
-								<button class="btn btn-outline-info" onclick="launchExitVersus()">Play</button>
+								<button class="btn btn-outline-info" onclick="launchExitVersus()" data-i18n="play_btn"></button>
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="d-flex justify-content-end">
-					<button id="backButtonFindExit" class="btn btn-link custom-btn-back tracking-in-expand">Back</button>
+					<button id="backButtonFindExit" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
 				</div>
 			</div>
 
@@ -169,7 +169,7 @@
 			<div id="profileMenu" class="container-fluid d-none">
 				<img src="{% static '/media/WorkInProgress.png' %}" class="img-fluid rounded mx-auto d-block" alt="...">
 				<div class="d-flex justify-content-end">
-					<button id="backButtonProfile" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
+					<button id="backButtonProfile" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
 				</div>
 			</div>
 
@@ -177,7 +177,7 @@
 			<div id="highScoreMenu" class="container-fluid d-none">
 				<img src="{% static '/media/WorkInProgress.png' %}" class="img-fluid rounded mx-auto d-block" alt="...">
 				<div class="d-flex justify-content-end">
-					<button id="backButtonHS" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
+					<button id="backButtonHS" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
 				</div>
 			</div>
 
@@ -198,7 +198,7 @@
 					</div>
 				</div>
 				<div class="d-flex justify-content-end">
-					<button id="backButtonCredits" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
+					<button id="backButtonCredits" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
 				</div>
 			</div>
 
@@ -206,20 +206,38 @@
 			<div id="notFoundMenu" class="container-fluid d-none">
 				<img src="{% static '/media/404.png' %}" class="img-fluid rounded mx-auto d-block" alt="...">
 				<div class="d-flex justify-content-end">
-					<button id="notFoundButtonHS" class="btn btn-link custom-btn-back tracking-in-expand">Back to menu</button>
+					<button id="notFoundButtonHS" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
 				</div>
 			</div>
 
-			<!-- Modal alerts  - Play Pong Versus -->
+			<!-- Modal alerts -->
 			<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
 				<div class="modal-dialog" role="document">
 					<div class="modal-content">
 						<div class="modal-header">
-							<h5 class="modal-title">Warning!</h5>
+							<h5 class="modal-title" data-i18n="warning"></h5>
 						</div>
 						<div class="modal-body" id="errorMessage">Default message.</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal">Get it</button>
+							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" data-i18n="modal_btn"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Modal tournament -->
+			<div class="modal fade" id="tournamentModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" data-i18n="enter_player_names"></h5>
+						</div>
+						<div class="modal-body">
+							<form id="playerNamesForm"></form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" data-i18n="close_btn"></button>
+							<button type="button" class="btn btn-outline-info" onclick="submitPlayerNames()" data-i18n="start_btn"></button>
 						</div>
 					</div>
 				</div>
@@ -231,15 +249,15 @@
 				<div class="container d-flex justify-content-between align-items-center">
 					<div class="dropdown">
 						<div>
-							<select class="form-select custom-select" aria-label="Choix de langue">
-								<option value="fr">ENG</option>
-								<option value="en">FR</option>
-								<option value="es">ESP</option>
+							<select class="form-select custom-select" aria-label="Choix de langue" onchange="changeLanguage(this.value)">
+								<option value="en">English</option>
+								<option value="fr">Français</option>
+								<option value="de">Deutsch</option>
 							</select>
 						</div>
 					</div>
 					<span class="text-muted">© 2024 Transcendence - v14.1</span>
-					<button class="btn btn-primary custom-btn-footer">Autre Bouton</button>
+					<button class="btn btn-primary custom-btn-footer" data-i18n="login_btn"></button>
 				</div>
 			</footer>
 		</div>
@@ -249,5 +267,6 @@
 	<script src="{% static '/scriptJS/cursor.js' %}"></script>
 	<script src="{% static '/scriptJS/pongOptions.js' %}"></script>
 	<script src="{% static '/scriptJS/exitOptions.js' %}"></script>
+	<script src="{% static '/scriptJS/translation.js' %}"></script>
 	<script src="{% static '/scriptJS/exitGame.js' %}"></script>
 </html>
