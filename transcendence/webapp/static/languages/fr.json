@@ -3,7 +3,7 @@
 	"profile": "Profil",
 	"high_score": "Meilleurs scores",
 	"credits": "Credits",
-	"login_btn": "Se connecter",
+	"disconnect_btn": "Déconnectez",
 	"back_menu_btn": "Revenir au menu",
 	"back_btn": "Revenir",
 	"select_btn": "Sélectionnez",
@@ -52,5 +52,8 @@
 	"3_wins": "3 Victoires",
 	"4_wins": "4 Victoires",
 	"5_wins": "5 Victoires",
-	"bonus_activation": "Activer bonus"
+	"bonus_activation": "Activer bonus",
+	"modal_login": "Choisissez un alias",
+	"register": "Enregistrer",
+	"username": "Entrez votre pseudo"
 }

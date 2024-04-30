@@ -277,6 +277,26 @@
 				</div>
 			</div>
 
+			<!-- Modal login -->
+			<div class="modal fade" id="usernameModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" data-i18n="modal_login"></h5>
+						</div>
+						<div class="modal-body">
+							<form id="usernameForm">
+								<div class="form-group">
+									<label for="userAlias" data-i18n="username"></label>
+									<input type="text" class="form-control" id="userAlias" required>
+								</div>
+								<button type="submit" class="btn btn-outline-info" data-i18n="register"></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- Footer block -->
 			<footer class="footer text-center py-3 mt-auto">
 				<!-- <canvas class="webgl"></canvas> -->
@@ -291,7 +311,7 @@
 						</div>
 					</div>
 					<span class="text-muted">© 2024 Transcendence - v14.1</span>
-					<button class="btn btn-primary custom-btn-footer" data-i18n="login_btn"></button>
+					<button class="btn btn-primary custom-btn-footer" onclick="disconnectUser()" data-i18n="disconnect_btn"></button>
 				</div>
 			</footer>
 		</div>
@@ -303,4 +323,5 @@
 	<script src="{% static '/scriptJS/exitOptions.js' %}"></script>
 	<script src="{% static '/scriptJS/translation.js' %}"></script>
 	<script src="{% static '/scriptJS/exitGame.js' %}"></script>
+	<script src="{% static '/scriptJS/login.js' %}"></script>
 </html>

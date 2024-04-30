@@ -106,6 +106,13 @@ function	route()
 {
 	const	path = window.location.pathname.toLowerCase();
 	hideAllMenus();
+	// username = '';
+	if (!username)
+	{
+		registerUsernameModal();
+		return;
+	}
+
 	switch (path)
 	{
 		case '/newgame/':
