@@ -87,7 +87,7 @@ export default class Paddle {
 		// ---- Mesh ----
 		const geometry = new THREE.BoxGeometry(width, height, depth);
 		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
-		const material = Paddle.materials[0].clone();
+		const material = Paddle.materials[Math.floor(Math.random() * Paddle.materials.length)].clone();// choose a random material
 		this.mesh = new THREE.Mesh(geometry, material);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
