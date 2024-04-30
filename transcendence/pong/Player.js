@@ -6,14 +6,14 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 
 export default class Player {
-	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter) {
+	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, playersNb) {
 		this.scene = scene;
 		this.physicsWorld = physicsWorld;
 		this.playerNb = playerNb;
 		this.startPos = startPos;
 		this.endPos = endPos;
 
-		this.axeAngle = 2*Math.PI/(constants.SEGMENTS*2) +  2*Math.PI/constants.SEGMENTS*(playerNb);  // TODO simplify the formula
+		this.axeAngle = 2*Math.PI/(playersNb*2) +  2*Math.PI/playersNb*(playerNb);  // TODO simplify the formula
 
 		this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
 
@@ -63,13 +63,15 @@ export default class Player {
 		this.physicsWorld.addBody(this.closedGoalBody);
 	}
 
-	closeGoal(dt) {
+	closeGoal(dt, instant=false) {
 		if (!this.closedGoalBody)
 			this.createClosedGoalBody();
 		// move the paddle to the center
 		this.paddle.mesh.position.copy(this.paddle.centerPos);
 		// increase the size of the paddle
-		if (this.paddle.mesh.scale.y < 5) {
+		if (instant) {
+			this.paddle.mesh.scale.set(1, 5, 1);
+		} else if (this.paddle.mesh.scale.y < 5) {
 			this.paddle.scale(4*dt)
 		}
 

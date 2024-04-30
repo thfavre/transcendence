@@ -7,10 +7,9 @@ import * as constants from './constants.js';
 // import { PointLightShadow } from 'three';
 
 export default class AIPlayer extends Player {
-	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, ball, fieldVertices) {
-		super (scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter);
+	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, ball, fieldVertices, playersNb) {
+		super (scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, playersNb);
 
-		this.totalPlayers = constants.SEGMENTS;
 		this.physicsWorld = physicsWorld;
 		this.ball = ball;
 		this.targetPosition = this.goalHitboxBody.position;
@@ -30,7 +29,7 @@ export default class AIPlayer extends Player {
 		this.goal = this.createWall(this.startPos, this.endPos);
 		this.wallArray = [];
 		// create arrayWall of all walls except goal
-		for (let nbWalls = 1; nbWalls < this.totalPlayers; nbWalls++)
+		for (let nbWalls = 1; nbWalls < this.playersNb; nbWalls++)
 		{
 			if (fieldVertices[nbWalls] == this.startPos)
 				continue;

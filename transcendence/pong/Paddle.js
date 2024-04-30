@@ -21,7 +21,7 @@ export default class Paddle {
 	static materials = [
 		new THREE.MeshBasicMaterial(
 			{
-				color: "#666666",
+				color: "#ffffff",
 				// emissive: "#ff0f00",
 				// emissiveIntensity: .7,
 
@@ -87,7 +87,7 @@ export default class Paddle {
 		// ---- Mesh ----
 		const geometry = new THREE.BoxGeometry(width, height, depth);
 		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
-		const material = Paddle.materials[0];
+		const material = Paddle.materials[0].clone();
 		this.mesh = new THREE.Mesh(geometry, material);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);

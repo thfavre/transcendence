@@ -9,10 +9,12 @@ import createLine from './createLine.js';
 import Background from './Background.js';
 
 export default class Game {
-	constructor(scene, physicsWorld, camera) {
+	constructor(scene, physicsWorld, camera, humanPlayerNb, AIPlayerNb) {
 		this.scene = scene;
 		this.physicsWorld = physicsWorld;
 		this.camera = camera;
+
+		this.playersNb = humanPlayerNb + AIPlayerNb;
 
 		this.fieldEdgeDiameter = 10;
 		this.clock = new THREE.Clock();
@@ -20,16 +22,34 @@ export default class Game {
 		this.roundStartTime = 1; // [s]
 		this.roundStartTimeStamp = Date.now();
 
-		this.fieldVertices =  this.createField();
+		this.fieldVertices =  this.createField(this.playersNb==2? 4 : this.playersNb);
 		this.players = [];
-		if (constants.SKIP_PLAYER_SELECTION) {
-			for (var i = 0; i < constants.SEGMENTS; i++) {
-				this.addPlayer(this.createAiPlayer(i));
-			}
-		}
+
+		if (this.playersNb == 2)
+			this.create2PlayerField()
+		// this.createPlayers();
+
 		this.createLights();
 		this.background = new Background(scene);
 	}
+
+	create2PlayerField() {
+		var wall1 = this.createHumanPlayer(1)
+		wall1.health = 0;
+		wall1.closeGoal(0, true);
+		this.addPlayer(wall1);
+		wall1.paddle.mesh.material.color.set('#3CD6EB');
+
+		var wall2 = this.createHumanPlayer(3);
+		wall2.health = 0;
+		wall2.paddle.mesh.material.color.set('#3CD6EB');
+		wall2.closeGoal(0, true);
+		this.addPlayer(wall2);
+	}
+
+	// createPlayers() {
+	// 	throw new Error("createPlayers() must be implemented by the subclass");
+	// }
 
 	createDirectionalLightTargetedOnBall(x, y, z) {
 		var directionalLight = new THREE.DirectionalLight( '#ffffff', 0.5);
@@ -101,8 +121,8 @@ export default class Game {
 
 
 
-	createField() {
-		const geometry = new THREE.CircleGeometry( constants.FIELD_DIAMETER/2, constants.SEGMENTS );
+	createField(segmentsNb) {
+		const geometry = new THREE.CircleGeometry( constants.FIELD_DIAMETER/2, segmentsNb );
 		const material = new THREE.MeshPhongMaterial( { color: "#666666" } );
 		const field = new THREE.Mesh( geometry, material );
 		field.receiveShadow = true;
@@ -113,7 +133,7 @@ export default class Game {
 		var fieldVertices = this.getFieldVertices(field);
 
 		// draw the center of the field
-		const centerGeometry = new THREE.CircleGeometry( 2, constants.SEGMENTS );
+		const centerGeometry = new THREE.CircleGeometry( 2, segmentsNb );
 		const centerMaterial = new THREE.MeshBasicMaterial( { color: '#C2F988' } );
 		const centerMesh = new THREE.Mesh( centerGeometry, centerMaterial );
 		centerMesh.position.set(0, 0, 1);
@@ -181,12 +201,12 @@ export default class Game {
 
 	createHumanPlayer(nb) {
 		var [vertex1, vertex2] = this.getPlayerVertices(nb);
-		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, 87, 83);
+		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, 87, 83, this.playersNb==2 ? 4 : this.playersNb);
 	}
 
 	createAiPlayer(nb) {
 		var [vertex1, vertex2] = this.getPlayerVertices(nb);
-		return new AIPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, this.ball, this.fieldVertices);
+		return new AIPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, this.ball, this.fieldVertices, this.playersNb==2 ? 4 : this.playersNb);
 	}
 
 	addPlayer(player) {

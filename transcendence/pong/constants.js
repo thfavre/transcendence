@@ -9,13 +9,13 @@ import * as THREE from 'three';
 
 export const FPS = 60;
 
-export const SEGMENTS = 3; // number of players
+// export const SEGMENTS = 3; // number of players
 export const FIELD_DIAMETER = 130;
 
 
 export const SKIP_PLAYER_SELECTION = true; // HumanPlayers will move with w/s
 
-export const AI_VISION_DELAY = 5; // The AI will see the ball every Xs
+export const AI_VISION_DELAY = 1; // The AI will see the ball every Xs
 
 export const DEBUG = true;
 

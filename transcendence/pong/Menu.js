@@ -12,14 +12,12 @@ import * as constants from './constants.js';
 
 
 class PlayerCreator {
-	constructor(scene, physicsWorld, camera, game, playerNb, font) {
+	constructor(scene, camera, game, playerNb, font) {
 		this.scene = scene;
-		this.physicsWorld = physicsWorld;
 		this.camera = camera;
 		this.game = game;
 		this.playerNb = playerNb;
 		this.font = font;
-
 		this.player = this.game.createHumanPlayer(playerNb);
 		this.game.addPlayer(this.player);
 		this.player.paddle.mesh.position.z = 230; // 230
@@ -138,7 +136,7 @@ class PlayerCreator {
 		if (this.player.paddle.mesh.position.z > this.player.paddle.body.position.z)
 		{
 			this.player.paddle.mesh.position.z -= this.fallSpeed;
-			this.fallSpeed += this.gravity * dt/1000;
+			this.fallSpeed += this.gravity * dt;
 			return true;
 		}
 		this.player.paddle.mesh.position.z = this.player.paddle.body.position.z;
@@ -161,13 +159,20 @@ class PlayerCreator {
 }
 
 export default class Menu {
-	constructor(scene, physicsWorld, camera, game, font) {
+	constructor(scene, camera, font, game , humanPlayerNb, AIPlayerNb) {
 		this.scene = scene;
-		// this.physicsWorld = physicsWorld;
 		this.camera = camera;
 		this.game = game;
 		this.font = font;
+		this.humanPlayerNb = humanPlayerNb;
+		this.AIPlayerNb = AIPlayerNb;
+		this.playersNb = humanPlayerNb + AIPlayerNb;
+
+		this.clock = new THREE.Clock();
+
 		this.camera.position.z = 308;
+		this.isDesactivated = false;
+
 
 		// this.currentPlayerCreation = 0;
 
@@ -175,36 +180,20 @@ export default class Menu {
 		// this.getCurrentPlayer().paddle.mesh.position.z = +200;
 		// this.state = "up key";
 		this.currentPlayer = 0;
-		if (!constants.SKIP_PLAYER_SELECTION)
-			this.currentPlayerCreator = new PlayerCreator(scene, physicsWorld, camera, game, this.currentPlayer, font);
+		this.players = [];
+		// if (!constants.SKIP_PLAYER_SELECTION)
+		this.currentPlayerCreator = new PlayerCreator(scene, camera, game, this.currentPlayer, font);
+		this.humanPlayerNb--;
+
 
 	}
 
-	// getCurrentPlayer()
-	// {
-	// 	return this.game.players[this.currentPlayerCreation];
-	// }
 
-	// askUpKey(keysJustPressed)
-	// {
-	// 	// get the key pressed
-	// 	if (keysJustPressed.length > 0)
-	// 		console.log("press on the key to go up", keysJustPressed[0]);
-
-	// }
-
-	// makePaddleFall()
-	// {
-	// 	if (this.getCurrentPlayer().paddle.mesh.position.z > this.getCurrentPlayer().paddle.body.position.z)
-	// 	{
-	// 		this.getCurrentPlayer().paddle.mesh.position.z -= 1;
-	// 	}
-	// }
-	zoomTo(value)
+	zoomTo(dt, value)
 	{
 		if (this.camera.position.z > value)
 		{
-			this.camera.position.z -= 1;
+			this.camera.position.z -= 200 * dt;
 			return false;
 		}
 
@@ -212,37 +201,78 @@ export default class Menu {
 		return true;
 	}
 
-	update(dt, keydown, keysJustPressed)
+	// createPlayer(dt, keydown) {
+	// 	this.currentPlayerCreator.update(dt, keydown);
+
+	// }
+
+	update(keysJustPressed)
 	{
-		this.game.background.update();
+		if (this.isDesactivated)
+			return false;
+		var dt = this.clock.getDelta();
+		this.game.background.update(dt);
+		// this.createPlayer(dt, keysJustPressed);
 
-		if (constants.SKIP_PLAYER_SELECTION)
-		{
-			this.game.createNewRound();
-			// this.game.newRoundTimer();
-			this.camera.position.z = 100;
-			return true;
-		}
 
-		if (this.currentPlayer < constants.SEGMENTS)
+		// if (constants.SKIP_PLAYER_SELECTION)
+		// {
+		// 	this.game.createNewRound();
+		// 	// this.game.newRoundTimer();
+		// 	this.camera.position.z = 100;
+		// 	return true;
+		// }
+
+		if (this.currentPlayer < this.playersNb || (this.playersNb==2 && this.currentPlayer==2))
 		{
-			if (this.currentPlayerCreator.update(dt, keysJustPressed))
+			if (!this.currentPlayerCreator || this.currentPlayerCreator.update(dt, keysJustPressed))
 			{
-				delete this.currentPlayerCreator;
 				this.currentPlayer++;
-				if (this.currentPlayer < constants.SEGMENTS)
-					this.currentPlayerCreator = new PlayerCreator(this.scene, this.physicsWorld, this.camera, this.game, this.currentPlayer, this.font);
+				if (this.playersNb==2 && this.currentPlayer==1) { // special 2 player map
+					this.currentPlayer++;
+				}
+				if (this.currentPlayer < this.playersNb || (this.playersNb==2 && this.currentPlayer==2)) {
+					if ((this.currentPlayer%2!=0 && this.AIPlayerNb > 0) || this.humanPlayerNb == 0) {
+						this.game.addPlayer(this.game.createAiPlayer(this.currentPlayer));
+						this.AIPlayerNb--;
+					} else {
+						this.currentPlayerCreator = new PlayerCreator(this.scene, this.camera, this.game, this.currentPlayer, this.font);
+						this.humanPlayerNb--;
+					}
+				}
+
+			// 	delete this.currentPlayerCreator;
+			// 	if (this.AIPlayerNb > 0) {
+			// 		console.log("AIPlayerNb", this.AIPlayerNb, this.currentPlayer, this.humanPlayerNb);
+			// 		this.game.addPlayer(this.game.createAiPlayer(this.currentPlayer));
+			// 		this.currentPlayer++;
+			// 		this.AIPlayerNb--;
+			// 	}
+			// 	if (this.humanPlayerNb > 0) {
+			// 		console.log("humanPlayerNb", this.humanPlayerNb, this.currentPlayer, this.AIPlayerNb);
+			// 		this.currentPlayerCreator = new PlayerCreator(this.scene, this.camera, this.game, this.currentPlayer, this.font);
+			// 		// this.currentPlayer++;
+			// 		this.humanPlayerNb--;
+			// 	}
+			// }
+			// if (this.humanPlayerNb == 0)
+			// {
+			// 	for (var i = 0; i < this.AIPlayerNb; i++) {
+			// 		console.log("aAIPlayerNb", this.AIPlayerNb, this.currentPlayer);
+			// 		this.game.addPlayer(this.game.createAiPlayer(this.currentPlayer));
+			// 		// this.AIPlayerNb--;
+			// 		this.currentPlayer++;
+			// 	}
+
 			}
 		}
-		else
-		{
-			if (this.zoomTo(100))
+		else if (this.zoomTo(dt, 100))
 			{
 				this.game.createNewRound();
+				this.isDesactivated = true;
 				// this.game.newRoundTimer();
 				return true;
 			}
-		}
-		return false;
+		return true;
 	}
 }

@@ -2,14 +2,27 @@ import AIPlayer from './AIPlayer.js';
 import Game from './Game'
 import HumanPlayer from './HumanPlayer.js';
 import createText from './createText.js';
+import * as constants from './constants.js';
+import Menu from './Menu.js';
 
 
 export default class Versus extends Game {
-	constructor(scene, physicsWorld, camera, font) {
-		super(scene, physicsWorld, camera);
+	constructor(scene, physicsWorld, camera, font, humanPlayerNb, AIPlayerNb) {
+		super(scene, physicsWorld, camera, humanPlayerNb, AIPlayerNb);
 		this.font = font;
+		this.menu = new Menu(scene, camera, font, this, humanPlayerNb, AIPlayerNb);
+		// this.createNewRound();
+		// camera.position.z = 100;
 	}
 
+	// createPlayers() {
+	// 	if (constants.SKIP_PLAYER_SELECTION) {
+	// 		for (var i = 0; i < constants.SEGMENTS-1; i++) {
+	// 			this.addPlayer(this.createAiPlayer(i));
+	// 		}
+	// 	}
+	// 	this.addPlayer(this.createHumanPlayer(constants.SEGMENTS-1));
+	// }
 
 	closeDeadPlayersGoal(dt) {
 		this.players.forEach((player) => {
@@ -20,11 +33,11 @@ export default class Versus extends Game {
 	}
 
 	isOnlyAIAlive() {
-		this.players.forEach((player) => {
-			if (player instanceof HumanPlayer && player.health > 0) {
-				return false
+		for (let player of this.players) {
+			if (!(player instanceof AIPlayer) && player.health > 0) {
+				return false;
 			}
-		});
+		}
 		return true;
 	}
 
@@ -60,7 +73,9 @@ export default class Versus extends Game {
 		}
 	}
 
-	update(keysdown) {
+	update(keysdown, keysJustPressed) {
+		if (this.menu.update(keysJustPressed) == true)
+			return true;
 		var dt = this.dt;
 		super.update(keysdown);
 		this.closeDeadPlayersGoal(dt);
