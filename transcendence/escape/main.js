@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import * as constants from './constants.js';
-import Tournement from './Tournement.js';
+import Tournament from './Tournament.js';
 import TimedGames from './TimedGames.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 // import Game from './Game.js';
@@ -37,7 +37,7 @@ function loadFont(e) {
 
 
 // load fonts and then start the game
-function init(playersNb, gameToWin, gameMode="tournement", debug=false, callback) {
+function init(playersNb, gameToWin, gameMode="tournament", debug=false, callback) {
 	Promise.all([loadFont(), /* Load other assets here */])
   		.then((values) => {
     		const font = values[0]; // Access the loaded font
@@ -131,12 +131,12 @@ function main(playersNb, gameToWin, gameMode, font, debug, callback) {
 
 	// Creation
 	var game;
-	if (gameMode == 'tournement') {
-		game = new Tournement(scene, camera, font, gameToWin, playersNb);
+	if (gameMode == 'tournament') {
+		game = new Tournament(scene, camera, font, gameToWin, playersNb);
 	} else if (gameMode == 'solo') {
 		game = new TimedGames(scene, camera, font, gameToWin, 1);
 	} else {
-		console.error('Unknown game mode', gameMode, 'Choose between "tournement" and "solo"');
+		console.error('Unknown game mode', gameMode, 'Choose between "tournament" and "solo"');
 		return;
 	}
 
@@ -157,10 +157,11 @@ function main(playersNb, gameToWin, gameMode, font, debug, callback) {
 
 }
 
-init(4, 2, 'solo', false, (game) => {
-	console.log('Tournement is over', game.scores);
-	game.time;
-});
+// init(4, 2, "solo", false, (tournament) => {
+// 	if (tournament.isOver) {
+// 		console.log('Tournament is over', tournament.scores);
+// 	}
+// });
 
 
 window.gameEscape = init;

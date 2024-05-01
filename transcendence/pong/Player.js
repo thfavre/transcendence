@@ -6,31 +6,31 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 
 export default class Player {
-	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter) {
+	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, playersNb) {
+		this.scene = scene;
 		this.physicsWorld = physicsWorld;
 		this.playerNb = playerNb;
+		this.startPos = startPos;
+		this.endPos = endPos;
 
-		this.axeAngle = 2*Math.PI/(constants.SEGMENTS*2) +  2*Math.PI/constants.SEGMENTS*(playerNb-1);  // TODO simplify the formula
+		this.axeAngle = 2*Math.PI/(playersNb*2) +  2*Math.PI/playersNb*(playerNb);  // TODO simplify the formula
 
 		this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
 
 		this.isBallInGoal = {a: false}; // ! TODO find a better way to do this (pass by reference)
 		this.createGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, this.isBallInGoal);
 
-		this.health = 3;
-		this.createHealthMeshes(scene);
-		this.createClosedGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter);
-
+		this.health = 1;
+		this.createHealthMeshes();
 	}
 
-	createHealthMeshes(scene) {
+	createHealthMeshes() {
 		this.healthMeshes = [];
 		const loader = new GLTFLoader();
 		loader.load("assets/models/Heart.glb", (gltf) => {
 			const model = gltf.scene;
 			// get the paddle size
 			const paddleSize = this.paddle.mesh.geometry.parameters.height;
-			console.log("paddleSize", paddleSize);
 			model.scale.set(3, 3, 3);
 			model.rotation.set(0, 0, -Math.PI/2);
 			for (var i = 0; i < this.health; i++) {
@@ -39,28 +39,42 @@ export default class Player {
 				this.healthMeshes.push(modelInstance);
 				this.paddle.mesh.add(modelInstance);
 			}
-			console.log('Heart model loaded');
 		}
 		);
 	}
 
-	createClosedGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter) {
-		var goalLength = startPos.distanceTo(endPos);
-		var dX = endPos.x - startPos.x;
-		var dY = endPos.y - startPos.y;
+	createClosedGoalBody() {
+		var goalLength = this.startPos.distanceTo(this.endPos);
+		var dX = this.endPos.x - this.startPos.x;
+		var dY = this.endPos.y - this.startPos.y;
 		var width = this.paddle.mesh.geometry.parameters.width
 		var depth = this.paddle.mesh.geometry.parameters.depth;
-		var centerPos = new THREE.Vector3(startPos.x + dX/2, startPos.y + dY/2, depth/2);
+		var centerPos = new THREE.Vector3(this.startPos.x + dX/2, this.startPos.y + dY/2, depth/2);
 
-		this.closedGoalHitboxBody = new CANNON.Body({ // Todo rename to make it more explicit ?
+		this.closedGoalBody = new CANNON.Body({ // Todo rename to make it more explicit ?
 			mass: 0,
 			shape: new CANNON.Box(new CANNON.Vec3(width/2, goalLength/2, depth/2)),
 			position: centerPos,
 			material: new CANNON.Material({ friction: 0, restitution: 1 }),
 		});
-		this.closedGoalHitboxBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), this.axeAngle);
-		this.closedGoalHitboxBody.collisionResponse = false;
-		this.closedGoalHitboxBody.isTrigger = true;
+		this.closedGoalBody.quaternion.setFromAxisAngle(new CANNON.Vec3(0, 0, 1), this.axeAngle);
+		this.closedGoalBody.collisionResponse = true;
+		// this.closedGoalHitboxBody.isTrigger = true;
+		this.physicsWorld.addBody(this.closedGoalBody);
+	}
+
+	closeGoal(dt, instant=false) {
+		if (!this.closedGoalBody)
+			this.createClosedGoalBody();
+		// move the paddle to the center
+		this.paddle.mesh.position.copy(this.paddle.centerPos);
+		// increase the size of the paddle
+		if (instant) {
+			this.paddle.mesh.scale.set(1, 1 / this.paddle.percentLengthSize, 1);
+		} else if (this.paddle.mesh.scale.y < 1 / this.paddle.percentLengthSize) {
+			this.paddle.scale(4*dt)
+		}
+
 	}
 
 	createGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, isBallInGoal) {
@@ -84,7 +98,6 @@ export default class Player {
 		this.goalHitboxBody.isTrigger = true;
 
 		this.goalHitboxBody.addEventListener("collide", function(event){
-			// console.log(event.body);
 			isBallInGoal.a = true;
 		});
 		physicsWorld.addBody(this.goalHitboxBody);
@@ -92,29 +105,20 @@ export default class Player {
 
 	loseHealth() {
 		this.health--;
-		this.paddle.mesh.remove(this.healthMeshes.pop());
-		if (this.health <= 0)
-			this.physicsWorld.addBody(this.closedGoalHitboxBody);
-
-
-		console.log("Ball is in player", this.playerNb, "goal", "Health:", this.health);
+		if (this.healthMeshes.length > 0)
+			this.paddle.mesh.remove(this.healthMeshes.pop());
 	}
 
-	movePaddle(keysdown) {
+	movePaddle(dt, keysdown) {
 		// to be implemented in the subclasses
 		throw new Error('You have to implement the method movePaddle in a Subclass!');
 	}
 
-	update(keysdown) {
+	update(dt, keysdown) {
 		if (this.health <= 0) {
-			// move the paddle to the center
-			this.paddle.mesh.position.copy(this.paddle.centerPos);
-			// increase the size of the paddle
-			if (this.paddle.mesh.scale.y < 5)
-				this.paddle.scale(0.1)
 			return;
 		}
-		this.movePaddle(keysdown)
+		this.movePaddle(dt, keysdown)
 		this.paddle.update();
 		if (this.isBallInGoal.a)
 		{

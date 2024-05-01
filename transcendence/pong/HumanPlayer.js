@@ -2,8 +2,9 @@ import Player from './Player.js';
 
 
 export default class HumanPlayer extends Player {
-	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, upKeyCode, downKeyCode) {
-		super(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter);
+	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, upKeyCode, downKeyCode, playersNb, name) {
+		super(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, playersNb);
+		this.name = name;
 		this.upKeyCode = upKeyCode; // 87, 83 for w, s
 		this.downKeyCode = downKeyCode;
 	}
@@ -19,12 +20,12 @@ export default class HumanPlayer extends Player {
 		this.upKeyCode = upKeyCode;
 	}
 
-	movePaddle(keysdown)
+	movePaddle(dt, keysdown)
 	{
 		if (keysdown.includes(this.upKeyCode))
-			{this.paddle.moveUp();
+			{this.paddle.moveUp(dt);
 		}
 		if (keysdown.includes(this.downKeyCode))
-			this.paddle.moveDown();
+			this.paddle.moveDown(dt);
 	}
 }
