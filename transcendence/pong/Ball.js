@@ -6,33 +6,37 @@ import * as constants from './constants.js';
 
 export default class Ball {
 	constructor(scene, physicsWorld) {
-		this.radius = 3;
-		const geometry = new THREE.SphereGeometry(this.radius, 16, 16);
-		const material = new THREE.MeshNormalMaterial();
+		var radius = 4;
+		const geometry = new THREE.SphereGeometry(radius, 20, 14);
+		// no material
+		const material = new THREE.MeshStandardMaterial({ color: 0x000000 });
 		this.mesh = new THREE.Mesh(geometry, material);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
 		// scene.add(constants.modelBall);
 		const loader = new GLTFLoader();
-		loader.load(constants.ballsModels[2], (gltf) => {
+		loader.load(constants.ballsModel, (gltf) => { // ! TODO do this in static
 			const model = gltf.scene;
-			model.scale.set(13, 13, 13);
+			model.scale.set(radius, radius, radius);
+			this.mesh.material.colorWrite = false;
+			this.mesh.material.depthWrite = false;
+			this.mesh.add(model);
 			this.mesh.add(model);
 		}
 		);
 
 
-		this.moveSpeed = 5000;
+		this.moveSpeed = 3000; //3000
 		this.acceleration = 250;
-		this.maxMoveSpeed = 15000;
+		this.maxMoveSpeed = 10000;
 
 		this.movingAngle = 0; // will be updated in the move function // TODO! change method of doing this
 
 		// ---- Physics ----
 		this.body = new CANNON.Body({
 			mass: 5,
-			shape: new CANNON.Sphere(this.radius),
-			position: new CANNON.Vec3(0, 0, this.radius),
+			shape: new CANNON.Sphere(radius),
+			position: new CANNON.Vec3(0, 0, radius),
 			// linearDamping: 0,
 			// angularDamping: .5,
 			velocity: new CANNON.Vec3(Math.random()-0.5, Math.random()-0.5, 0), // initial angle (will be set to a constant speed)
@@ -85,7 +89,7 @@ export default class Ball {
 		this.body.velocity.y = yComposant;
 		this.body.velocity.z = 0; // make sure the ball doesn't move up or down
 		// Making a ball rotate in the direction it is moving
-		var xRot =  -this.body.velocity.y/4500; // control the rotation speed
+		var xRot =  -this.body.velocity.y/500; // control the rotation speed
 		var yRot =  this.body.velocity.x/500;
 		this.mesh.rotation.x += xRot;
 		this.mesh.rotation.y += yRot;
@@ -104,8 +108,8 @@ export default class Ball {
 	}
 
 	update(dt) {
-		this.move(dt);
 		this.updateMeshPosAndRot();
+		this.move(dt);
 		this.increaseMoveSpeed(dt);
 
 	}

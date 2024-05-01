@@ -41,20 +41,21 @@ function loadFont(e) {
 }
 
 // load fonts and then start the game
-function init(humanPlayerNb, AIPlayerNb, gameMode="versus", debug=false, callback) {
+function init(humanPlayersName, AIPlayerNb, gameMode="versus", debug=false, callback) {
+	constants.setDebug(debug);
 	Promise.all([loadFont(), /* Load other assets here */])
   		.then((values) => {
     		const font = values[0]; // Access the loaded font
 
     		// Start your game logic here
-			main(humanPlayerNb, AIPlayerNb, gameMode, font, debug, callback);
+			main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback);
   		})
   		.catch((error) => {
     		console.error('Error loading font or assets:', error);
 		});
 }
 
-function main(humanPlayerNb, AIPlayerNb, gameMode, font, debug, callback) {
+function main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback) {
 	// Canvas
 	const canvas = document.querySelector('#webgl');
 
@@ -164,22 +165,29 @@ function main(humanPlayerNb, AIPlayerNb, gameMode, font, debug, callback) {
 
 
 	// ------- Creation
-	var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayerNb, AIPlayerNb);
+	if (gameMode == 'versus')
+		var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
+	else if (gameMode == 'tournament')
+		var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
+	else
+		throw new Error('Unknown game mode: ' + gameMode, 'Available modes are: versus, tournament');
 	// 	menu = new Menu(scene, physicsWorld, camera, pongGame, font);
 
 	// Main Loop
+	const clock = new THREE.Clock();
 	function gameLoop() {
-		// controls.update();
-		if (!pongGame.update(keysdown, keysJustPressed)){
+		var dt = clock.getDelta();
+		// phsyics
+		physicsWorld.fixedStep(dt);
+		if (constants.DEBUG)
+			cannonDebugger.update();
+
+		if (!pongGame.update(dt, keysdown, keysJustPressed)){
 			callback(pongGame);
 			return;
 		}
 
 
-		// phsyics
-		physicsWorld.fixedStep(1/constants.FPS);
-		if (constants.DEBUG)
-			cannonDebugger.update();
 
 		renderer.render( scene, camera );
 		composer.render();
@@ -233,8 +241,11 @@ function main(humanPlayerNb, AIPlayerNb, gameMode, font, debug, callback) {
 
 
 
+// versus : playerNb, iaNb, {nom1, guest1, guest2}, debug, callback
+// tournament : playerNb, 0, {nom1, nom2, noms} ,debug, callback
 
-init(2, 0, 'versus', true, (game) => {
+
+init(['Tjom','Bob'], 1, 'versus', false, (game) => {
 	console.log('Game is over', game);
 	game.time;
 });

@@ -12,13 +12,13 @@ import * as constants from './constants.js';
 
 
 class PlayerCreator {
-	constructor(scene, camera, game, playerNb, font) {
+	constructor(scene, camera, game, playerNb, playerName, font) {
 		this.scene = scene;
 		this.camera = camera;
 		this.game = game;
-		this.playerNb = playerNb;
+		this.playerName = playerName;
 		this.font = font;
-		this.player = this.game.createHumanPlayer(playerNb);
+		this.player = this.game.createHumanPlayer(playerNb, playerName);
 		this.game.addPlayer(this.player);
 		this.player.paddle.mesh.position.z = 230; // 230
 
@@ -78,7 +78,7 @@ class PlayerCreator {
 
 	askUpKey(keysJustPressed) {
 		this.setText({
-			text: "Player " + (this.playerNb+1) + ", press a key to go UP",
+			text: "Player " + this.playerName + ", press a key to go UP",
 			x: 0, y: 22, z: 270
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyDown && this.ifKeyValid(keysJustPressed[0]))
@@ -90,7 +90,7 @@ class PlayerCreator {
 
 	askDownKey(keysJustPressed) {
 		this.setText({
-			text: "Player " + (this.playerNb+1) + ", press a key to go DOWN",
+			text: "Player " + this.playerName + ", press a key to go DOWN",
 			x: 0, y: 22, z: 270
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyUp && this.ifKeyValid(keysJustPressed[0]))
@@ -103,7 +103,7 @@ class PlayerCreator {
 
 	askPaddleMaterial(keysJustPressed) {
 		this.setText({
-			text: "Player " + (this.playerNb+1) +
+			text: "Player " + this.playerName +
 					", choose your paddle color (" + String.fromCharCode(this.keyDown) + "/"+String.fromCharCode(this.keyUp) + ")",
 				x: 0, y: 26, z: 263});
 		// draw the previous and next paddle
@@ -159,14 +159,15 @@ class PlayerCreator {
 }
 
 export default class Menu {
-	constructor(scene, camera, font, game , humanPlayerNb, AIPlayerNb) {
+	constructor(scene, camera, font, game , humanPlayersName, AIPlayerNb) {
 		this.scene = scene;
 		this.camera = camera;
 		this.game = game;
 		this.font = font;
-		this.humanPlayerNb = humanPlayerNb;
+		this.humanPlayersName = humanPlayersName;
+		this.humanPlayerNb = humanPlayersName.length;
 		this.AIPlayerNb = AIPlayerNb;
-		this.playersNb = humanPlayerNb + AIPlayerNb;
+		this.playersNb = this.humanPlayerNb + AIPlayerNb;
 
 		this.clock = new THREE.Clock();
 
@@ -182,8 +183,13 @@ export default class Menu {
 		this.currentPlayer = 0;
 		this.players = [];
 		// if (!constants.SKIP_PLAYER_SELECTION)
-		this.currentPlayerCreator = new PlayerCreator(scene, camera, game, this.currentPlayer, font);
-		this.humanPlayerNb--;
+		if (this.humanPlayerNb > 0) {
+			var humanPlayerName = this.humanPlayersName.shift();
+			this.currentPlayerCreator = new PlayerCreator(scene, camera, game, this.currentPlayer, humanPlayerName, font);
+			this.humanPlayerNb--;
+		} else {
+			this.currentPlayer--;
+		}
 
 
 	}
@@ -236,7 +242,8 @@ export default class Menu {
 						this.game.addPlayer(this.game.createAiPlayer(this.currentPlayer));
 						this.AIPlayerNb--;
 					} else {
-						this.currentPlayerCreator = new PlayerCreator(this.scene, this.camera, this.game, this.currentPlayer, this.font);
+						var humanPlayerName = this.humanPlayersName.shift();
+						this.currentPlayerCreator = new PlayerCreator(this.scene, this.camera, this.game, this.currentPlayer, humanPlayerName, this.font);
 						this.humanPlayerNb--;
 					}
 				}

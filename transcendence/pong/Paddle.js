@@ -75,8 +75,8 @@ export default class Paddle {
 
 		// ---- Sizes ----
 		var width = 3;
-		var percentLengthSize = 0.2; // 0.5 = 50% of the goal size
-		var height = goalSize * percentLengthSize ; // length of the paddle...
+		this.percentLengthSize = 0.3; // 0.5 = 50% of the goal size
+		var height = goalSize * this.percentLengthSize ; // length of the paddle...
 		var depth = 3;
 
 		// ---- Moving ----

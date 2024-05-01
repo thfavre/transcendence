@@ -17,13 +17,13 @@ export default class Game {
 		this.playersNb = humanPlayerNb + AIPlayerNb;
 
 		this.fieldEdgeDiameter = 10;
-		this.clock = new THREE.Clock();
 
 		this.roundStartTime = 1; // [s]
 		this.roundStartTimeStamp = Date.now();
 
 		this.fieldVertices =  this.createField(this.playersNb==2? 4 : this.playersNb);
 		this.players = [];
+		this.clock = new THREE.Clock();
 
 		if (this.playersNb == 2)
 			this.create2PlayerField()
@@ -52,53 +52,74 @@ export default class Game {
 	// }
 
 	createDirectionalLightTargetedOnBall(x, y, z) {
-		var directionalLight = new THREE.DirectionalLight( '#ffffff', 0.5);
-		directionalLight.position.set(x, y, z);
+		// spotlights
+		var spotLight = new THREE.SpotLight( '#ffdeb0', 10, 90, Math.PI/6, 0.8, 0.2);
+		spotLight.position.set(x, y, z);
+		spotLight.target = this.ball.mesh;
+		spotLight.castShadow = true;
+		spotLight.shadow.camera.top = constants.FIELD_DIAMETER/2;
+		spotLight.shadow.camera.bottom = -constants.FIELD_DIAMETER/2;
+		spotLight.shadow.camera.left = -constants.FIELD_DIAMETER/2;
+		spotLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
+		spotLight.shadow.camera.near = 45;
+		spotLight.shadow.camera.far = 100;
+		//shadowHelper
+		// var shadowHelper = new THREE.CameraHelper( spotLight.shadow.camera );
 
-		// directionalLight.target.position.set(0, 0, 0);
-		directionalLight.target = this.ball.mesh;
-		directionalLight.castShadow = true;
-		directionalLight.shadow.camera.top = constants.FIELD_DIAMETER/2;
-		directionalLight.shadow.camera.bottom = -constants.FIELD_DIAMETER/2;
-		directionalLight.shadow.camera.left = -constants.FIELD_DIAMETER/2;
-		directionalLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
-		directionalLight.shadow.camera.near = 0.1;
-		directionalLight.shadow.camera.far = 500;
-		// directionalLight.shadow.mapSize.width = 1024;
+		// helper
 		if (constants.DEBUG) {
-			var helper = new THREE.DirectionalLightHelper( directionalLight, 3 );
-			this.scene.add( helper );
+			if (this.directionalLightBallTargetedShadowHelper)
+				this.scene.remove(this.directionalLightBallTargetedShadowHelper);
+			this.directionalLightBallTargetedShadowHelper = new THREE.CameraHelper( spotLight.shadow.camera );
+			this.scene.add( this.directionalLightBallTargetedShadowHelper );
 		}
-		return directionalLight;
+
+		// var directionalLight = new THREE.DirectionalLight( '#ffffff', 0.5);
+		// directionalLight.position.set(x, y, z);
+
+		// // directionalLight.target.position.set(0, 0, 0);
+		// directionalLight.target = this.ball.mesh;
+		// directionalLight.castShadow = true;
+		// directionalLight.shadow.camera.top = constants.FIELD_DIAMETER/2;
+		// directionalLight.shadow.camera.bottom = -constants.FIELD_DIAMETER/2;
+		// directionalLight.shadow.camera.left = -constants.FIELD_DIAMETER/2;
+		// directionalLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
+		// directionalLight.shadow.camera.near = 0.1;
+		// directionalLight.shadow.camera.far = 500;
+		// // directionalLight.shadow.mapSize.width = 1024;
+		// if (constants.DEBUG) {
+		// 	var helper = new THREE.DirectionalLightHelper( directionalLight, 3 );
+		// 	this.scene.add( helper );
+		// }
+		this.scene.add(spotLight);
+		return spotLight;
 	}
 
-	createDirectionalLightsTargetedOnBall() {
-		if (this.directionalLights) { // erease the previous lights
-			this.directionalLights.forEach((light) => {
-				this.scene.remove(light);
-			});
-		}
-		this.directionalLights = [];
-		for (var i = 1; i < this.fieldVertices.length; i++) {
-			var vertex = this.fieldVertices[i];
-			// draw a circle with three js
-			// vector going from the center of the field to the vertex
+	// createDirectionalLightsTargetedOnBall() {
+	// 	if (this.directionalLights) { // erease the previous lights
+	// 		this.directionalLights.forEach((light) => {
+	// 			this.scene.remove(light);
+	// 		});
+	// 	}
+	// 	this.directionalLights = [];
+	// 	for (var i = 1; i < this.fieldVertices.length; i++) {
+	// 		var vertex = this.fieldVertices[i];
+	// 		// draw a circle with three js
+	// 		// vector going from the center of the field to the vertex
 
-			var centerToVertex = new THREE.Vector3(vertex.x, vertex.y, 0);
-			centerToVertex.multiplyScalar(1.1);
-			// centerToVertex
-			centerToVertex.z = 60;
-			var directionalLight = this.createDirectionalLightTargetedOnBall(centerToVertex.x, centerToVertex.y, centerToVertex.z);
-			this.directionalLights.push(directionalLight);
-			this.scene.add(directionalLight);
+	// 		var centerToVertex = new THREE.Vector3(vertex.x, vertex.y, 0);
+	// 		// centerToVertex.multiplyScalar(1.1);
+	// 		// centerToVertex
+	// 		centerToVertex.z = 30;
+	// 		var directionalLight = this.createDirectionalLightTargetedOnBall(centerToVertex.x, centerToVertex.y, centerToVertex.z);
+	// 		this.directionalLights.push(directionalLight);
+	// 	}
 
-		}
-
-	}
+	// }
 
 
 	createLights() {
-		var hemisphereLight = new THREE.HemisphereLight( '#ddddbb', '#111111', 1);
+		var hemisphereLight = new THREE.HemisphereLight( '#aaaaad', '#111111', 2);
 		hemisphereLight.position.set(0, 0, 200);
 		this.scene.add(hemisphereLight);
 		// helper
@@ -199,9 +220,9 @@ export default class Game {
 		return [vertex1, vertex2];
 	}
 
-	createHumanPlayer(nb) {
+	createHumanPlayer(nb, name='NoName') {
 		var [vertex1, vertex2] = this.getPlayerVertices(nb);
-		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, 87, 83, this.playersNb==2 ? 4 : this.playersNb);
+		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, 87, 83, this.playersNb==2 ? 4 : this.playersNb, name);
 	}
 
 	createAiPlayer(nb) {
@@ -258,7 +279,10 @@ export default class Game {
 		if (this.ball)
 			this.deleteBall();
 		this.ball = this.createBall();
-		this.createDirectionalLightsTargetedOnBall();
+		// this.createDirectionalLightsTargetedOnBall();
+		if (this.directionalLightBallTargeted)
+			this.scene.remove(this.directionalLightBallTargeted);
+		this.directionalLightBallTargeted = this.createDirectionalLightTargetedOnBall(0, 0, 60)
 		this.ball.drawMovingVector();
 
 		this.roundStartTimeStamp = Date.now();
@@ -276,9 +300,9 @@ export default class Game {
 		}
 	}
 
-	update(keysdown) {
-		var dt = this.clock.getDelta();
-		this.dt = dt;
+	update(dt, keysdown) {
+		if (this.directionalLightBallTargetedShadowHelper)
+			this.directionalLightBallTargetedShadowHelper.update();
 		this.background.update();
 		// this.makeBallPOV()
 		if (this.newRoundTimer())

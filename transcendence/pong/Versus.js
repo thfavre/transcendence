@@ -7,10 +7,11 @@ import Menu from './Menu.js';
 
 
 export default class Versus extends Game {
-	constructor(scene, physicsWorld, camera, font, humanPlayerNb, AIPlayerNb) {
-		super(scene, physicsWorld, camera, humanPlayerNb, AIPlayerNb);
+	constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb) {
+		console.log(humanPlayersName.length)
+		super(scene, physicsWorld, camera, humanPlayersName.length, AIPlayerNb);
 		this.font = font;
-		this.menu = new Menu(scene, camera, font, this, humanPlayerNb, AIPlayerNb);
+		this.menu = new Menu(scene, camera, font, this, humanPlayersName, AIPlayerNb);
 		// this.createNewRound();
 		// camera.position.z = 100;
 	}
@@ -58,11 +59,11 @@ export default class Versus extends Game {
 					if (player instanceof AIPlayer) {
 						var text = "You lost against the AI...";
 					} else
-						var text = "Player " + player.playerNb + " wins!";
-					var winnerText = createText({font: this.font, message: text, size: 8, sideColor: "#000000", fontColor: "#ffffff"});
+						var text = player.name + " wins!";
+					var winnerText = createText({font: this.font, message: text, size: 8, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
 					winnerText.position.z = 8;
 					this.scene.add(winnerText);
-					var continueText = createText({font: this.font, message: "Press Enter to continue", size: 6, sideColor: "#000000", fontColor: "#ffffff"});
+					var continueText = createText({font: this.font, message: "Press Enter to continue", size: 6, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
 					continueText.position.z = 8;
 					continueText.position.y = -16;
 					this.scene.add(continueText);
@@ -73,11 +74,10 @@ export default class Versus extends Game {
 		}
 	}
 
-	update(keysdown, keysJustPressed) {
+	update(dt, keysdown, keysJustPressed) {
 		if (this.menu.update(keysJustPressed) == true)
 			return true;
-		var dt = this.dt;
-		super.update(keysdown);
+		super.update(dt, keysdown);
 		this.closeDeadPlayersGoal(dt);
 		if (this.isOnlyOnePlayerAlive() || this.isOnlyAIAlive()) {
 			this.showWinnerText();

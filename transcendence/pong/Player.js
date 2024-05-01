@@ -70,8 +70,8 @@ export default class Player {
 		this.paddle.mesh.position.copy(this.paddle.centerPos);
 		// increase the size of the paddle
 		if (instant) {
-			this.paddle.mesh.scale.set(1, 5, 1);
-		} else if (this.paddle.mesh.scale.y < 5) {
+			this.paddle.mesh.scale.set(1, 1 / this.paddle.percentLengthSize, 1);
+		} else if (this.paddle.mesh.scale.y < 1 / this.paddle.percentLengthSize) {
 			this.paddle.scale(4*dt)
 		}
 
