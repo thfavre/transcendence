@@ -26,3 +26,28 @@ function sendGameData(gameData) {
         console.error('Error sending game data:', error);
     });
 }
+
+// retrieves the last game played by the user
+function getLastGame(username) {
+    fetch(`/get_last_game?username=${username}`, {
+        method: 'GET'
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Failed to fetch last game data.');
+        }
+    })
+    .then(data => {
+        if (data.error) { // Check for 'error' property in the response
+            console.log("No game found:", data.error);
+        } else {
+            // Process the data (e.g., display it on the webpage)
+            console.log(data);
+        }
+    })
+    .catch(error => {
+        console.error(error);
+    });
+}

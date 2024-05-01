@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 
@@ -26,7 +27,7 @@ class GameResult(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     # Additional field for BO type if game ID is ET
-    bo_type = models.CharField(max_length=3, choices=BO_CHOICES, blank=True, null=True)
+    bo_type = models.CharField(max_length=5, choices=BO_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username}'s game {self.game_id} at position {self.position} on {self.date}"

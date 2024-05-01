@@ -1,13 +1,13 @@
 let username = localStorage.getItem('userAlias');
 
+function getCookie(name) {
+	const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+	return cookieValue ? cookieValue.pop() : '';
+}
 // Redirection to the main page to register a username
 
 function	registerUsernameModal()
 {
-	function getCookie(name) {
-		const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-		return cookieValue ? cookieValue.pop() : '';
-	}
 
 	const usernameModal = new bootstrap.Modal(document.getElementById('usernameModal'),
 	{
@@ -44,6 +44,7 @@ function	registerUsernameModal()
 		.then(response => {
 			if (response.ok) {
 				localStorage.setItem('userAlias', username);
+				getLastGame(username);
 				usernameModal.hide();
 			} else {
 				return response.json().then(data => {

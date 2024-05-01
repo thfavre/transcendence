@@ -2,7 +2,6 @@ let	isSwitchOn = false;
 
 // Start Find the Exit (solo) after checking that the conditions are OK
 function	launchExitSolo()
-
 {
 	let	levels = document.getElementById("exitSoloLevel");
 	let	NumberLevels = parseInt(levels.value);
@@ -18,12 +17,18 @@ function	launchExitSolo()
 
 	if (window.gameEscape) {  // Check if function exists (avoid errors)
 		console.log("Starting Versus game with " + NumberLevels + " levels");
- 		window.gameEscape(1, NumberLevels, 'solo', false, (tournement) => {
-				if (tournement.isOver)
-				{
-					console.log('SAVE THE SCORES here');
-					console.log('Solo game is over, time :', tournement.time);
-				}
+	window.gameEscape(1, NumberLevels, 'solo', false, (tournement) => {
+		if (tournement.isOver)
+		{
+			console.log('SAVE THE SCORES here');
+			console.log('Solo game is over, time :', tournement.time);
+			let Result = {
+				username: localStorage.getItem('userAlias'),
+				game_id: 'ES',
+				position: [tournement.time, NumberLevels]
+			}
+			sendGameData(Result);
+		}
 			});
 	} else {
 		console.error('gameEscape function not available.');

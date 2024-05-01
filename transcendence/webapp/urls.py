@@ -24,5 +24,6 @@ urlpatterns = [
     path('', index, name='index'),
     path('registerUsername', views.register_username, name='registerUsername'),
     path('save_game_result/', views.save_game_result, name='save_game_result'),
+    path('get_last_game', views.get_last_game, name='get_last_game'),
     re_path(r'^.*/$', index, name='app'), # catch all urls
 ]
