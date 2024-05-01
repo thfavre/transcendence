@@ -12,10 +12,15 @@ function	launchExitSolo()
 		updateModalMessage('exit_solo_modal');
 		return;
 	}
+
+	findExitMenu.classList.add('d-none');
+	findExitSoloIG.classList.remove('d-none');
+
 	if (window.gameEscape) {  // Check if function exists (avoid errors)
 		console.log("Starting Versus game with " + NumberLevels + " levels");
  		window.gameEscape(1, NumberLevels, 'solo', false, (tournement) => {
-				if (tournement.isOver) {
+				if (tournement.isOver)
+				{
 					console.log('SAVE THE SCORES here');
 					console.log('Solo game is over, time :', tournement.time);
 				}
@@ -23,10 +28,6 @@ function	launchExitSolo()
 	} else {
 		console.error('gameEscape function not available.');
 	}
-
-
-	findExitMenu.classList.add('d-none');
-	findExitSoloIG.classList.remove('d-none');
 }
 
 // Start Find the Exit (Versus) after checking that the conditions are OK
