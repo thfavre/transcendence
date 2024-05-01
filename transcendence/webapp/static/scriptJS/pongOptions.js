@@ -114,17 +114,3 @@ async function	selectPlayersNames(selectedPlayers)
 	});
 	playerNamesModal.show();
 }
-
-// function submitPlayerNames() {
-//     let form = document.getElementById("playerNamesForm");
-//     let names = [];
-//     for (let element of form.elements) {
-//         if (element.type === "text") {
-//             names.push(element.value);
-//         }
-//     }
-//     console.log(names); // Affiche ou traite les noms ici
-//     // Ferme le modal
-//     let playerNamesModal = bootstrap.Modal.getInstance(document.getElementById('tournamentModal'));
-//     playerNamesModal.hide();
-// }

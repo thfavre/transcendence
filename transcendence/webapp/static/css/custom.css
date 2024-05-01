@@ -16,6 +16,12 @@ body
 	color : #3CD6EB;
 }
 
+.custom-h2
+{
+	font-size: calc(1.1rem + 2vw);
+	color : #3CD6EB;
+}
+
 .custom-underline
 {
 	text-decoration: underline;
@@ -246,4 +252,23 @@ body
 {
 	background-color: #3CD6EB;
 	border-color: #3CD6EB;
+}
+
+/* Custom history menu */
+
+.nav-link.active
+{
+	background-color: #3CD6EB !important;
+	color: #fff !important;
+}
+
+.nav-link
+{
+	color: #3CD6EB;
+	font-size: calc(0.5rem + 0.5vw);
+}
+
+.nav-link:hover
+{
+	color: #fff;
 }

@@ -1,7 +1,7 @@
 {
 	"new_game": "Neues Spiel",
-	"profile": "Profil",
-	"high_score": "Beste Ergebnisse",
+	"history": "Historie",
+	"history_game": "Historie des Spiels",
 	"credits": "Kredit",
 	"disconnect_btn": "Melden Sie ab",
 	"back_menu_btn": "Zurück zum Menü",
@@ -55,5 +55,9 @@
 	"bonus_activation": "Bonus aktivieren",
 	"modal_login": "Wählen Sie einen Alias",
 	"register": "Registrieren",
-	"username": "Geben Sie Ihren Nicknamen ein"
+	"username": "Geben Sie Ihren Nicknamen ein",
+	"pong_versus_history": "Pong - Versus",
+	"pong_tournament_history": "Pong - Turnier",
+	"exit_solo_history": "Find the Exit - Solo",
+	"exit_versus_history": "Find the Exit - Versus"
 }
