@@ -7,7 +7,7 @@ import { Menu } from './Menu.js';
 
 
 
-export default class Tournement {
+export default class Tournament {
 	constructor(scene, camera, font, gameToWin=2, playersNb=3) {
 		this.scene = scene;
 		this.clock = new THREE.Clock();
@@ -142,7 +142,7 @@ export default class Tournement {
 			this.camera.rotation.z = 0;
 		}
 
-	// 	console.log('Tournement over, winner is player ', winner, winner.mesh.position.z);
+	// 	console.log('Tournament over, winner is player ', winner, winner.mesh.position.z);
 	// 	// winner.mesh.position.z = 2;
 	// 	winner.mesh.position.x = -2;
 	// 	winner.mesh.position.y = -2;

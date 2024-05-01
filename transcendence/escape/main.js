@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import * as constants from './constants.js';
-import Tournement from './Tournement.js';
+import Tournament from './Tournament.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 // import Game from './Game.js';
 
@@ -129,25 +129,25 @@ function main(playersNb, gameToWin, font, debug, callback) {
 	};
 
 	// Creation
-	const tournement = new Tournement(scene, camera, font, gameToWin, playersNb);
+	const tournament = new Tournament(scene, camera, font, gameToWin, playersNb);
 
 
 	// Main loop
 	function gameLoop() {
 		window.requestAnimationFrame(gameLoop);
-		tournement.update(keysJustPressed);
+		tournament.update(keysJustPressed);
 		renderer.render(scene, camera);
 		keysJustPressed = [];
-		callback(tournement);
+		callback(tournament);
 	}
 
 	gameLoop();
 
 }
 
-init(4, 2, false, (tournement) => {
-	if (tournement.isOver) {
-		console.log('Tournement is over', tournement.scores);
+init(4, 2, false, (tournament) => {
+	if (tournament.isOver) {
+		console.log('Tournament is over', tournament.scores);
 	}
 });
 
