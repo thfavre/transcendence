@@ -19,8 +19,16 @@ const	backButtonHS = document.getElementById("backButtonHS");
 const	backButtonCredits = document.getElementById("backButtonCredits");
 const	backButtonPong = document.getElementById("backButtonPong");
 const	backButtonFindExit = document.getElementById("backButtonFindExit");
+const	backButtonFindExitSolo = document.getElementById("backButtonFindExitSolo");
+const	backButtonFindExitVersus = document.getElementById("backButtonFindExitVersus");
+const	backButtonPongVersus = document.getElementById("backButtonPongVersus");
+const	backButtonPongTournament = document.getElementById("backButtonPongTournament");
 const	notFoundMenu = document.getElementById("notFoundMenu");
-const	allMenus = [menuButtons, newGameMenu, profileMenu, highScoreMenu, creditsMenu, notFoundMenu, pongMenu,findExitMenu];
+const	findExitSoloIG = document.getElementById("findExitSoloIG");
+const	findExitVersusIG = document.getElementById("findExitVersusIG");
+const	pongVersusIG = document.getElementById("pongVersusIG");
+const	pongTournamentIG = document.getElementById("pongTournamentIG");
+const	allMenus = [menuButtons, newGameMenu, profileMenu, highScoreMenu, creditsMenu, notFoundMenu, pongMenu,findExitMenu, findExitSoloIG, findExitVersusIG, pongVersusIG, pongTournamentIG];
 
 // Hide the video and show the menu
 
@@ -58,6 +66,10 @@ backButtonHS.addEventListener("click", () => switchMenu(menuButtons, highScoreMe
 backButtonCredits.addEventListener("click", () => switchMenu(menuButtons, creditsMenu, "/"));
 backButtonPong.addEventListener("click", () => switchMenu(newGameMenu, pongMenu, "/newGame"));
 backButtonFindExit.addEventListener("click", () => switchMenu(newGameMenu, findExitMenu, "/newGame"));
+backButtonFindExitSolo.addEventListener("click", () => switchMenu(findExitMenu, findExitSoloIG, "/newGame/findExit"));
+backButtonFindExitVersus.addEventListener("click", () => switchMenu(findExitMenu, findExitVersusIG, "/newGame/findExit"));
+backButtonPongVersus.addEventListener("click", () => switchMenu(pongMenu, pongVersusIG, "/newGame/pong"));
+backButtonPongTournament.addEventListener("click", () => switchMenu(pongMenu, pongTournamentIG, "/newGame/pong"));
 notFoundMenu.addEventListener("click", () => switchMenu(menuButtons, notFoundMenu, "/"));
 
 // Navigation with the browser's button (back and forward) and the history API (pushState and popstate)
@@ -94,6 +106,13 @@ function	route()
 {
 	const	path = window.location.pathname.toLowerCase();
 	hideAllMenus();
+	// username = '';
+	if (!username)
+	{
+		registerUsernameModal();
+		return;
+	}
+
 	switch (path)
 	{
 		case '/newgame/':
