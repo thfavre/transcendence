@@ -56,6 +56,23 @@ function	launchPongVersus()
 		updateModalMessage('pong_versus_modal');
 		return;
 	}
+	if (window.gamePong) {  // Check if function exists (avoid errors)
+		console.log("Starting Pong game with ", selectedPlayers, " players and ", selectedAI, " AI");
+		var humanNames = [];
+		for (let i = 1; i <= selectedPlayers; i++)
+		{
+			let playerName = "Guest " + i;
+			humanNames.push(playerName);
+		}
+		window.gamePong(humanNames, selectedAI, 'versus', false, (tournament) => {
+				if (tournament.isOver) {
+					console.log('SAVE THE SCORES here');
+					console.log('Tournament is over', tournament.scores);
+				}
+			});
+	} else {
+		console.error('gamePong function not available.');
+	}
 
 	pongMenu.classList.add('d-none');
 	pongVersusIG.classList.remove('d-none');

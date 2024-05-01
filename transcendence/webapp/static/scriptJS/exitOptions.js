@@ -46,13 +46,12 @@ function launchExitVersus()
 	}
 	if (window.gameEscape) {  // Check if function exists (avoid errors)
 		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels");
- 		window.gameEscape(selectedPlayers, NumberLevels, 'tournement', false, (tournement) => {
-				if (tournement.isOver) {
+ 		window.gameEscape(selectedPlayers, NumberLevels, 'tournament', false, (tournament) => {
+				if (tournament.isOver) {
 					console.log('SAVE THE SCORES here');
-					console.log('Tournement is over', tournement.scores);
+					console.log('Tournament is over', tournament.scores);
 				}
 			});
-
 		findExitMenu.classList.add('d-none');
 		findExitVersusIG.classList.remove('d-none');
 	} else {
