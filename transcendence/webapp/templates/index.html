@@ -286,6 +286,8 @@
 						</div>
 						<div class="modal-body">
 							<form id="usernameForm">
+								<!-- Need to add this for csrf token approval to send POST to Django -->
+								{% csrf_token %}
 								<div class="form-group">
 									<label for="userAlias" data-i18n="username"></label>
 									<input type="text" class="form-control" id="userAlias" required>
