@@ -56,6 +56,23 @@ function	launchPongVersus()
 		updateModalMessage('pong_versus_modal');
 		return;
 	}
+	if (window.gamePong) {  // Check if function exists (avoid errors)
+		console.log("Starting Pong game with ", selectedPlayers, " players and ", selectedAI, " AI");
+		var humanNames = [];
+		for (let i = 1; i <= selectedPlayers; i++)
+		{
+			let playerName = "Guest " + i;
+			humanNames.push(playerName);
+		}
+		window.gamePong(humanNames, selectedAI, 'versus', false, (tournament) => {
+				if (tournament.isOver) {
+					console.log('SAVE THE SCORES here');
+					console.log('Tournament is over', tournament.scores);
+				}
+			});
+	} else {
+		console.error('gamePong function not available.');
+	}
 
 	pongMenu.classList.add('d-none');
 	pongVersusIG.classList.remove('d-none');
@@ -114,17 +131,3 @@ async function	selectPlayersNames(selectedPlayers)
 	});
 	playerNamesModal.show();
 }
-
-// function submitPlayerNames() {
-//     let form = document.getElementById("playerNamesForm");
-//     let names = [];
-//     for (let element of form.elements) {
-//         if (element.type === "text") {
-//             names.push(element.value);
-//         }
-//     }
-//     console.log(names); // Affiche ou traite les noms ici
-//     // Ferme le modal
-//     let playerNamesModal = bootstrap.Modal.getInstance(document.getElementById('tournamentModal'));
-//     playerNamesModal.hide();
-// }

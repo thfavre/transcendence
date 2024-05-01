@@ -12,11 +12,15 @@ function	launchExitSolo()
 		updateModalMessage('exit_solo_modal');
 		return;
 	}
-<<<<<<< HEAD
+
+	findExitMenu.classList.add('d-none');
+	findExitSoloIG.classList.remove('d-none');
+
 	if (window.gameEscape) {  // Check if function exists (avoid errors)
 		console.log("Starting Versus game with " + NumberLevels + " levels");
  		window.gameEscape(1, NumberLevels, 'solo', false, (tournement) => {
-				if (tournement.isOver) {
+				if (tournement.isOver)
+				{
 					console.log('SAVE THE SCORES here');
 					console.log('Solo game is over, time :', tournement.time);
 				}
@@ -24,12 +28,6 @@ function	launchExitSolo()
 	} else {
 		console.error('gameEscape function not available.');
 	}
-
-=======
-
-	findExitMenu.classList.add('d-none');
-	findExitSoloIG.classList.remove('d-none');
->>>>>>> front-back
 }
 
 // Start Find the Exit (Versus) after checking that the conditions are OK
@@ -47,30 +45,16 @@ function launchExitVersus()
 		updateModalMessage('exit_versus_modal');
 		return;
 	}
-<<<<<<< HEAD
 	if (window.gameEscape) {  // Check if function exists (avoid errors)
 		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels");
- 		window.gameEscape(selectedPlayers, NumberLevels, 'tournement', false, (tournement) => {
-				if (tournement.isOver) {
+ 		window.gameEscape(selectedPlayers, NumberLevels, 'tournament', false, (tournament) => {
+				if (tournament.isOver) {
 					console.log('SAVE THE SCORES here');
-					console.log('Tournement is over', tournement.scores);
+					console.log('Tournament is over', tournament.scores);
 				}
 			});
-=======
-
-	findExitMenu.classList.add('d-none');
-	findExitVersusIG.classList.remove('d-none');
-
-	console.log("Selected Players: " + selectedPlayers);
-	if (window.startGame) {  // Check if function exists (avoid errors)
-		console.log("Starting game");
-		window.startGame(selectedPlayers, (data) => {
-			// const scores = data.scores;
-			console.log('Game Loop : (scores + player 1 x pos)', data);
-			// Display scores on the website (on html : <p id="scorePlayer1"></p>)
-			// document.getElementById('scorePlayer1').textContent = scores.player1;
-		  });
->>>>>>> front-back
+		findExitMenu.classList.add('d-none');
+		findExitVersusIG.classList.remove('d-none');
 	} else {
 		console.error('gameEscape function not available.');
 	}

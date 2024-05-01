@@ -7,15 +7,6 @@ import * as constants from './constants.js';
 
 import createLine from './createLine.js';
 
-function getRandomColor() {
-	var letters = '0123456789ABCDEF';
-	var color = '#';
-	for (var i = 0; i < 6; i++) {
-	  color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
-  }
-
 export default class Paddle {
 	// Mesh materials
 	// Basic : no shading
@@ -30,7 +21,7 @@ export default class Paddle {
 	static materials = [
 		new THREE.MeshBasicMaterial(
 			{
-				color: "#666666",
+				color: "#ffffff",
 				// emissive: "#ff0f00",
 				// emissiveIntensity: .7,
 
@@ -84,19 +75,19 @@ export default class Paddle {
 
 		// ---- Sizes ----
 		var width = 3;
-		var percentLengthSize = 0.2; // 0.5 = 50% of the goal size
-		var height = goalSize * percentLengthSize ; // length of the paddle...
+		this.percentLengthSize = 0.3; // 0.5 = 50% of the goal size
+		var height = goalSize * this.percentLengthSize ; // length of the paddle...
 		var depth = 3;
 
 		// ---- Moving ----
 		this.maxMovingDistance = goalSize/2 - height/2;
 		var goalDeplacementTime = 1; // time to go from one side to the other [s]
-		this.moveSpeed = this.maxMovingDistance / goalDeplacementTime / constants.FPS;
+		this.moveSpeed = this.maxMovingDistance * 2 / goalDeplacementTime;
 
 		// ---- Mesh ----
 		const geometry = new THREE.BoxGeometry(width, height, depth);
 		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
-		const material = Paddle.materials[0];
+		const material = Paddle.materials[Math.floor(Math.random() * Paddle.materials.length)].clone();// choose a random material
 		this.mesh = new THREE.Mesh(geometry, material);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
@@ -178,11 +169,11 @@ export default class Paddle {
 			this.mesh.material = this.getPreviousMaterial();
 	}
 
-	move(speed) {
+	move(dt, speed) {
 		// make the paddle move in the direction of the angle
 		var angle = this.axeAngle + Math.PI/2;
-		var depX = speed * Math.cos(angle);
-		var depY = speed * Math.sin(angle);
+		var depX = speed * Math.cos(angle) * dt;
+		var depY = speed * Math.sin(angle) * dt;
 		var newPos = new THREE.Vector3(this.body.position.x + depX, this.body.position.y + depY, this.body.position.z);
 		var distanceToCenter = this.centerPos.distanceTo(newPos);
 		if (distanceToCenter > this.maxMovingDistance)
@@ -191,12 +182,12 @@ export default class Paddle {
 		this.body.position.y += depY;
 	}
 
-	moveUp() {
-		this.move(this.moveSpeed);
+	moveUp(dt) {
+		this.move(dt, this.moveSpeed);
 	}
 
-	moveDown() {
-		this.move(-this.moveSpeed);
+	moveDown(dt) {
+		this.move(dt, -this.moveSpeed);
 	}
 
 	scale(scale) {

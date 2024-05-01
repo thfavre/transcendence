@@ -4,7 +4,8 @@ import * as THREE from 'three';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 
-export default function createText({font, message, size=4, height=0.5, curveSegments=12, bevelEnabled=false, bevelThickness=1, bevelSize=0.5, bevelOffset=0, bevelSegments=1}) {
+export default function createText({font, message, size=4, height=0.5, fontColor="#3CD6EB", sideColor="#ABEF85",
+			curveSegments=12, bevelEnabled=true, bevelThickness=1, bevelSize=0.5, bevelOffset=0, bevelSegments=1, shadow=false}) {
 	const props = {
 		font,
 		size,
@@ -16,7 +17,6 @@ export default function createText({font, message, size=4, height=0.5, curveSegm
 		bevelOffset,
 		bevelSegments
 	};
-	console.log(message)
 	const textGroup = new THREE.Object3D();
 	const textGeo = new TextGeometry(message, props);
 	textGeo.computeBoundingBox();
@@ -25,10 +25,14 @@ export default function createText({font, message, size=4, height=0.5, curveSegm
 		// 	color: 0x00f0ff
 		// });
 	let mat = [
-		new THREE.MeshBasicMaterial({ color: "#3CD6EB"}), // front
-		new THREE.MeshBasicMaterial({ color: "#ABEF85" }) // side
+		new THREE.MeshBasicMaterial({ color: fontColor}), // front
+		new THREE.MeshBasicMaterial({ color: sideColor }) // side
 	];
 	let mesh = new THREE.Mesh(textGeo, mat);
+	if (shadow) {
+		mesh.castShadow = true;
+		// mesh.receiveShadow = true;
+	}
 
 	// center the text
 	const centerOffsetX = - 0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);

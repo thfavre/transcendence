@@ -1,6 +1,6 @@
-import * as THREE from 'three';
+ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import Player from './Player.js';
+import AIPlayer from './AIPlayer.js';
 import Ball from './Ball.js';
 import * as constants from './constants.js';
 import HumanPlayer from './HumanPlayer.js';
@@ -9,124 +9,117 @@ import createLine from './createLine.js';
 import Background from './Background.js';
 
 export default class Game {
-	constructor(scene, physicsWorld, camera) {
+	constructor(scene, physicsWorld, camera, humanPlayerNb, AIPlayerNb) {
 		this.scene = scene;
 		this.physicsWorld = physicsWorld;
 		this.camera = camera;
 
+		this.playersNb = humanPlayerNb + AIPlayerNb;
+
 		this.fieldEdgeDiameter = 10;
 
-		this.roundStartTime = 1; // in seconds
+		this.roundStartTime = 1; // [s]
 		this.roundStartTimeStamp = Date.now();
 
-		this.fieldVertices =  this.createField();
+		this.fieldVertices =  this.createField(this.playersNb==2? 4 : this.playersNb);
 		this.players = [];
-		if (constants.SKIP_PLAYER_SELECTION) {
-			for (var i = 1; i < constants.SEGMENTS; i++) {
-				this.addPlayer(this.createHumanPlayer(i));
-			}
-		}
-		// this.players = this.createPlayers();
-		// this.finishRound()
+		this.clock = new THREE.Clock();
 
-		// lights
+		if (this.playersNb == 2)
+			this.create2PlayerField()
+		// this.createPlayers();
+
 		this.createLights();
-
-
-		// arena
-		// const fbxLoader = new FBXLoader();
-		// const material = new THREE.MeshNormalMaterial()
-		// fbxLoader.load(
-		// 	'assets/models/untitled.fbx',
-		// 	(object) => {
-		// 		object.traverse(function (child) {
-		// 		    // if (child.isMesh) {
-		// 			// 	child.material = material
-		// 			// 	if (child.material) {
-		// 		    //         child.material.transparent = false
-		// 		    //     }
-		// 		    // }
-		// 		})
-		// 		object.scale.set(5, 5, 5)
-		// 		object.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), Math.PI/2)
-		// 		scene.add(object)
-		// 	},
-		// 	(xhr) => {
-		// 		console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
-		// 	},
-		// 	(error) => {
-		// 		console.log(error)
-		// 	}
-		// );
-
 		this.background = new Background(scene);
 	}
 
+	create2PlayerField() {
+		var wall1 = this.createHumanPlayer(1)
+		wall1.health = 0;
+		wall1.closeGoal(0, true);
+		this.addPlayer(wall1);
+		wall1.paddle.mesh.material.color.set('#3CD6EB');
+
+		var wall2 = this.createHumanPlayer(3);
+		wall2.health = 0;
+		wall2.paddle.mesh.material.color.set('#3CD6EB');
+		wall2.closeGoal(0, true);
+		this.addPlayer(wall2);
+	}
+
+	// createPlayers() {
+	// 	throw new Error("createPlayers() must be implemented by the subclass");
+	// }
+
 	createDirectionalLightTargetedOnBall(x, y, z) {
-		var directionalLight = new THREE.DirectionalLight( '#ffffff', 0.5);
-		directionalLight.position.set(x, y, z);
+		// spotlights
+		var spotLight = new THREE.SpotLight( '#ffdeb0', 10, 90, Math.PI/6, 0.8, 0.2);
+		spotLight.position.set(x, y, z);
+		spotLight.target = this.ball.mesh;
+		spotLight.castShadow = true;
+		spotLight.shadow.camera.top = constants.FIELD_DIAMETER/2;
+		spotLight.shadow.camera.bottom = -constants.FIELD_DIAMETER/2;
+		spotLight.shadow.camera.left = -constants.FIELD_DIAMETER/2;
+		spotLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
+		spotLight.shadow.camera.near = 45;
+		spotLight.shadow.camera.far = 100;
+		//shadowHelper
+		// var shadowHelper = new THREE.CameraHelper( spotLight.shadow.camera );
 
-		// directionalLight.target.position.set(0, 0, 0);
-		directionalLight.target = this.ball.mesh;
-		directionalLight.castShadow = true;
-		directionalLight.shadow.camera.top = constants.FIELD_DIAMETER/2;
-		directionalLight.shadow.camera.bottom = -constants.FIELD_DIAMETER/2;
-		directionalLight.shadow.camera.left = -constants.FIELD_DIAMETER/2;
-		directionalLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
-		directionalLight.shadow.camera.near = 0.1;
-		directionalLight.shadow.camera.far = 500;
-		// directionalLight.shadow.mapSize.width = 1024;
+		// helper
 		if (constants.DEBUG) {
-			var helper = new THREE.DirectionalLightHelper( directionalLight, 3 );
-			this.scene.add( helper );
+			if (this.directionalLightBallTargetedShadowHelper)
+				this.scene.remove(this.directionalLightBallTargetedShadowHelper);
+			this.directionalLightBallTargetedShadowHelper = new THREE.CameraHelper( spotLight.shadow.camera );
+			this.scene.add( this.directionalLightBallTargetedShadowHelper );
 		}
-		return directionalLight;
+
+		// var directionalLight = new THREE.DirectionalLight( '#ffffff', 0.5);
+		// directionalLight.position.set(x, y, z);
+
+		// // directionalLight.target.position.set(0, 0, 0);
+		// directionalLight.target = this.ball.mesh;
+		// directionalLight.castShadow = true;
+		// directionalLight.shadow.camera.top = constants.FIELD_DIAMETER/2;
+		// directionalLight.shadow.camera.bottom = -constants.FIELD_DIAMETER/2;
+		// directionalLight.shadow.camera.left = -constants.FIELD_DIAMETER/2;
+		// directionalLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
+		// directionalLight.shadow.camera.near = 0.1;
+		// directionalLight.shadow.camera.far = 500;
+		// // directionalLight.shadow.mapSize.width = 1024;
+		// if (constants.DEBUG) {
+		// 	var helper = new THREE.DirectionalLightHelper( directionalLight, 3 );
+		// 	this.scene.add( helper );
+		// }
+		this.scene.add(spotLight);
+		return spotLight;
 	}
 
-	createDirectionalLightsTargetedOnBall() {
-		if (this.directionalLights) { // erease the previous lights
-			this.directionalLights.forEach((light) => {
-				this.scene.remove(light);
-			});
-		}
-		this.directionalLights = [];
-		for (var i = 1; i < this.fieldVertices.length; i++) {
-			var vertex = this.fieldVertices[i];
-			// draw a circle with three js
-			// vector going from the center of the field to the vertex
-
-			var centerToVertex = new THREE.Vector3(vertex.x, vertex.y, 0);
-			centerToVertex.multiplyScalar(1.1);
-			// centerToVertex
-			centerToVertex.z = 60;
-			var directionalLight = this.createDirectionalLightTargetedOnBall(centerToVertex.x, centerToVertex.y, centerToVertex.z);
-			this.directionalLights.push(directionalLight);
-			this.scene.add(directionalLight);
-
-		}
-
-	}
-
-	// createDirectionalLightStartup() {
-	// 	this.roundStartTimeStamp < this.roundStartTime*1000
-	// 	if (this.directionalLights.length >= i)
-	// 		return;
-	// 	var vertex = this.fieldVertices[i];
+	// createDirectionalLightsTargetedOnBall() {
+	// 	if (this.directionalLights) { // erease the previous lights
+	// 		this.directionalLights.forEach((light) => {
+	// 			this.scene.remove(light);
+	// 		});
+	// 	}
+	// 	this.directionalLights = [];
+	// 	for (var i = 1; i < this.fieldVertices.length; i++) {
+	// 		var vertex = this.fieldVertices[i];
 	// 		// draw a circle with three js
 	// 		// vector going from the center of the field to the vertex
 
 	// 		var centerToVertex = new THREE.Vector3(vertex.x, vertex.y, 0);
-	// 		centerToVertex.multiplyScalar(1.1);
+	// 		// centerToVertex.multiplyScalar(1.1);
 	// 		// centerToVertex
-	// 		centerToVertex.z = 60;
+	// 		centerToVertex.z = 30;
 	// 		var directionalLight = this.createDirectionalLightTargetedOnBall(centerToVertex.x, centerToVertex.y, centerToVertex.z);
 	// 		this.directionalLights.push(directionalLight);
-	// 		this.scene.add(directionalLight);
+	// 	}
+
 	// }
 
+
 	createLights() {
-		var hemisphereLight = new THREE.HemisphereLight( '#ddddbb', '#111111', 1);
-		console.log(hemisphereLight)
+		var hemisphereLight = new THREE.HemisphereLight( '#aaaaad', '#111111', 2);
 		hemisphereLight.position.set(0, 0, 200);
 		this.scene.add(hemisphereLight);
 		// helper
@@ -149,8 +142,8 @@ export default class Game {
 
 
 
-	createField() {
-		const geometry = new THREE.CircleGeometry( constants.FIELD_DIAMETER/2, constants.SEGMENTS );
+	createField(segmentsNb) {
+		const geometry = new THREE.CircleGeometry( constants.FIELD_DIAMETER/2, segmentsNb );
 		const material = new THREE.MeshPhongMaterial( { color: "#666666" } );
 		const field = new THREE.Mesh( geometry, material );
 		field.receiveShadow = true;
@@ -161,7 +154,7 @@ export default class Game {
 		var fieldVertices = this.getFieldVertices(field);
 
 		// draw the center of the field
-		const centerGeometry = new THREE.CircleGeometry( 2, constants.SEGMENTS );
+		const centerGeometry = new THREE.CircleGeometry( 2, segmentsNb );
 		const centerMaterial = new THREE.MeshBasicMaterial( { color: '#C2F988' } );
 		const centerMesh = new THREE.Mesh( centerGeometry, centerMaterial );
 		centerMesh.position.set(0, 0, 1);
@@ -186,12 +179,6 @@ export default class Game {
 	createFieldEdges(fieldVertices) { // ? TODO : rename Edge to pylons
 		for (var i = 1; i < fieldVertices.length; i++) {
 			var vertex = fieldVertices[i];
-			// if (i == fieldVertices.length-1) {
-			// 	var vertex2 = fieldVertices[0];
-			// } else {
-			// 	var vertex2 = fieldVertices[i+1];
-			// }
-			// console.log(vertex1, vertex2);
 			this.createEdge(vertex);
 		}
 	}
@@ -220,32 +207,9 @@ export default class Game {
 		edgeMesh.position.copy(edgeBody.position);
 		edgeMesh.quaternion.copy(edgeBody.quaternion);
 		this.scene.add(edgeMesh);
-
-
 	}
 
-	// addHumanPlayer(nb)
-	// {
-	// 	nb += 1; // to start at 1
-	// 	var vertex1 = this.fieldVertices[nb];
-	// 	if (nb == this.fieldVertices.length-1) {
-	// 		var vertex2 = this.fieldVertices[1];
-	// 	} else {
-	// 		var vertex2 = this.fieldVertices[nb+1];
-	// 	}
-	// 	this.players.push(new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter));
-	// }
-
-	// createPlayers() {
-	// 	var players = [];
-	// 	for (var i = 1; i <= constants.SEGMENTS; i++) {
-	// 		// console.log(vertex1, vertex2);
-	// 		addPlayer(this.createHumanPlayer(i));
-	// 		// break;
-	// 	}
-	// }
-
-	createHumanPlayer(nb) {
+	getPlayerVertices(nb) {
 		nb += 1; // to start at 1
 		var vertex1 = this.fieldVertices[nb];
 		if (nb == this.fieldVertices.length-1) {
@@ -253,12 +217,21 @@ export default class Game {
 		} else {
 			var vertex2 = this.fieldVertices[nb+1];
 		}
-		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, 87, 83);
+		return [vertex1, vertex2];
+	}
+
+	createHumanPlayer(nb, name='NoName') {
+		var [vertex1, vertex2] = this.getPlayerVertices(nb);
+		return new HumanPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, 87, 83, this.playersNb==2 ? 4 : this.playersNb, name);
+	}
+
+	createAiPlayer(nb) {
+		var [vertex1, vertex2] = this.getPlayerVertices(nb);
+		return new AIPlayer(this.scene, this.physicsWorld, nb, vertex1, vertex2, this.fieldEdgeDiameter, this.ball, this.fieldVertices, this.playersNb==2 ? 4 : this.playersNb);
 	}
 
 	addPlayer(player) {
 		this.players.push(player);
-		console.log("Player", player.playerNb, "added", this.players);
 	}
 
 	createBall() {
@@ -292,9 +265,9 @@ export default class Game {
 		// vecotr from the center of the field to the ball
 	}
 
-	startNewRound() {
+	newRoundTimer() {
+
 		if (Date.now() - this.roundStartTimeStamp < this.roundStartTime*1000) {
-			console.log("Waiting for the round to start");
 			this.ball.body.position.set(0, 0, 3);
 			return false;
 		}
@@ -302,31 +275,54 @@ export default class Game {
 		return true;
 	}
 
-	finishRound() {
+	createNewRound() {
 		if (this.ball)
 			this.deleteBall();
 		this.ball = this.createBall();
-		this.createDirectionalLightsTargetedOnBall();
+		// this.createDirectionalLightsTargetedOnBall();
+		if (this.directionalLightBallTargeted)
+			this.scene.remove(this.directionalLightBallTargeted);
+		this.directionalLightBallTargeted = this.createDirectionalLightTargetedOnBall(0, 0, 60)
 		this.ball.drawMovingVector();
 
 		this.roundStartTimeStamp = Date.now();
 	}
 
+	updateAIVision(delay) {
+		if (!this.previousVisionTime)
+			this.previousVisionTime = 0;
+		if (this.clock.getElapsedTime() - this.previousVisionTime > delay) {
+			this.players.forEach(player => {
+				if (player instanceof AIPlayer)
+					player.updateBall(this.ball);
+			});
+			this.previousVisionTime = this.clock.getElapsedTime();
+		}
+	}
+
 	update(dt, keysdown) {
+		if (this.directionalLightBallTargetedShadowHelper)
+			this.directionalLightBallTargetedShadowHelper.update();
 		this.background.update();
 		// this.makeBallPOV()
-		if (this.startNewRound())
+		if (this.newRoundTimer())
 			this.ball.update(dt);
 
 		// this.camera.rotation.z += 0.006;
 
+		// update the AI vison
+		this.updateAIVision(constants.AI_VISION_DELAY);
+
 		this.players.forEach(player => {
-			player.update(keysdown);
+			player.update(dt, keysdown);
 			if (player.isBallInGoal.a) {
-				// console.log("Ball is in player", player.playerNb, "goal");
 				player.isBallInGoal.a = false;
-				this.finishRound();
+				this.createNewRound();
 			}
 		});
+		// check if the ball is too far
+		if (this.ball.isTooFar()) {
+			this.createNewRound();
+		}
 	}
 }

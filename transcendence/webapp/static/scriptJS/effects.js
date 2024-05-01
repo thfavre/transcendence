@@ -2,20 +2,17 @@ const	videoLaunch = document.getElementById("videoLaunch");
 const	menu = document.getElementById("menu");
 const	menuButtons = document.getElementById("menuButtons");
 const	newGameButton = document.getElementById("newGameButton");
-const	profileButton = document.getElementById("profileButton");
-const	highScoreButton = document.getElementById("highScoreButton");
+const	historyButton = document.getElementById("historyButton");
 const	creditsButton = document.getElementById("creditsButton");
 const	pongButton = document.getElementById("pongButton");
 const	findExitButton = document.getElementById("findExitButton");
 const	newGameMenu = document.getElementById("newGameMenu");
-const	profileMenu = document.getElementById("profileMenu");
-const	highScoreMenu = document.getElementById("highScoreMenu");
+const	historyMenu = document.getElementById("historyMenu");
 const	creditsMenu = document.getElementById("creditsMenu");
 const	pongMenu = document.getElementById("pongMenu");
 const	findExitMenu = document.getElementById("findExitMenu");
 const	backButtonNG = document.getElementById("backButtonNG");
-const	backButtonProfile = document.getElementById("backButtonProfile");
-const	backButtonHS = document.getElementById("backButtonHS");
+const	backButtonHistory = document.getElementById("backButtonHistory");
 const	backButtonCredits = document.getElementById("backButtonCredits");
 const	backButtonPong = document.getElementById("backButtonPong");
 const	backButtonFindExit = document.getElementById("backButtonFindExit");
@@ -28,7 +25,7 @@ const	findExitSoloIG = document.getElementById("findExitSoloIG");
 const	findExitVersusIG = document.getElementById("findExitVersusIG");
 const	pongVersusIG = document.getElementById("pongVersusIG");
 const	pongTournamentIG = document.getElementById("pongTournamentIG");
-const	allMenus = [menuButtons, newGameMenu, profileMenu, highScoreMenu, creditsMenu, notFoundMenu, pongMenu,findExitMenu, findExitSoloIG, findExitVersusIG, pongVersusIG, pongTournamentIG];
+const	allMenus = [menuButtons, newGameMenu, historyMenu, creditsMenu, notFoundMenu, pongMenu,findExitMenu, findExitSoloIG, findExitVersusIG, pongVersusIG, pongTournamentIG];
 
 // Hide the video and show the menu
 
@@ -55,14 +52,12 @@ function	switchMenu(menuToShow, menuToRemove, url)
 }
 
 newGameButton.addEventListener("click", () => switchMenu(newGameMenu, menuButtons, "/newGame"));
-profileButton.addEventListener("click", () => switchMenu(profileMenu, menuButtons, "/profile"));
-highScoreButton.addEventListener("click", () => switchMenu(highScoreMenu, menuButtons, "/highScore"));
+historyButton.addEventListener("click", () => switchMenu(historyMenu, menuButtons, "/history"));
 creditsButton.addEventListener("click", () => switchMenu(creditsMenu, menuButtons, "/credits"));
 pongButton.addEventListener("click", () => switchMenu(pongMenu, newGameMenu, "/newGame/pong"));
 findExitButton.addEventListener("click", () => switchMenu(findExitMenu, newGameMenu, "/newGame/findExit"));
 backButtonNG.addEventListener("click", () => switchMenu(menuButtons, newGameMenu, "/"));
-backButtonProfile.addEventListener("click", () => switchMenu(menuButtons, profileMenu, "/"));
-backButtonHS.addEventListener("click", () => switchMenu(menuButtons, highScoreMenu, "/"));
+backButtonHistory.addEventListener("click", () => switchMenu(menuButtons, historyMenu, "/"));
 backButtonCredits.addEventListener("click", () => switchMenu(menuButtons, creditsMenu, "/"));
 backButtonPong.addEventListener("click", () => switchMenu(newGameMenu, pongMenu, "/newGame"));
 backButtonFindExit.addEventListener("click", () => switchMenu(newGameMenu, findExitMenu, "/newGame"));
@@ -118,11 +113,8 @@ function	route()
 		case '/newgame/':
 			newGameMenu.classList.remove('d-none');
 			break;
-		case '/profile/':
-			profileMenu.classList.remove('d-none');
-			break;
-		case '/highscore/':
-			highScoreMenu.classList.remove('d-none');
+		case '/history/':
+			historyMenu.classList.remove('d-none');
 			break;
 		case '/credits/':
 			creditsMenu.classList.remove('d-none');
@@ -162,4 +154,13 @@ function createBackgroundSpots()
 		fragment.appendChild(spot);
 	}
 	document.body.appendChild(fragment);
+}
+
+// Back to the main menu from title
+
+function	backToMain()
+{
+	hideAllMenus();
+	menuButtons.classList.remove("d-none");
+	history.pushState({menu: "menuButtons"}, "", "/");
 }

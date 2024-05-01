@@ -9,13 +9,18 @@ import * as THREE from 'three';
 
 export const FPS = 60;
 
-export const SEGMENTS = 6; // number of players
+// export const SEGMENTS = 3; // number of players
 export const FIELD_DIAMETER = 130;
 
 
-export const SKIP_PLAYER_SELECTION = false; // HumanPlayers will move with w/s
+export const SKIP_PLAYER_SELECTION = true; // HumanPlayers will move with w/s
 
-export const DEBUG = false;
+export const AI_VISION_DELAY =3; // The AI will see the ball every Xs
+
+export var DEBUG;
+export function setDebug(value) {
+	DEBUG = value;
+}
 
 // textures // TODO ? put in a class? other file ..?
 export const textureLoader = new THREE.TextureLoader();
@@ -34,15 +39,7 @@ export const textureMetallic = textureLoader.load("assets/textures/metal-003/Met
 // model
 // Basket Ball by Zsky [CC-BY] via Poly Pizza
 // export const modelBasketBall = "assets/models/Basket Ball.glb";
-export const ballsModels = [
-	"assets/models/balls/Basket Ball.glb",
-	"assets/models/balls/8 Ball.glb",
-	"assets/models/balls/Raw ham.glb",
-	"assets/models/balls/Small Airplane.glb",
-	"assets/models/balls/beach ball.glb",
-	"assets/models/balls/Chicken.glb",
-]
-// const loader = new GLTFLoader();
+export const ballsModel = "assets/models/balls/drone.glb";
 
 
 
