@@ -1,7 +1,7 @@
 {
 	"new_game": "Nouvelle partie",
-	"profile": "Profil",
-	"high_score": "Meilleurs scores",
+	"history": "Historique",
+	"history_game": "Historique des parties",
 	"credits": "Credits",
 	"disconnect_btn": "Déconnectez",
 	"back_menu_btn": "Revenir au menu",
@@ -55,5 +55,9 @@
 	"bonus_activation": "Activer bonus",
 	"modal_login": "Choisissez un alias",
 	"register": "Enregistrer",
-	"username": "Entrez votre pseudo"
+	"username": "Entrez votre pseudo",
+	"pong_versus_history": "Pong - Versus",
+	"pong_tournament_history": "Pong - Tournoi",
+	"exit_solo_history": "Find the Exit - Solo",
+	"exit_versus_history": "Find the Exit - Versus"
 }
