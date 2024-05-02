@@ -25,12 +25,17 @@ function	registerUsernameModal()
 	function handleFormSubmit(event){
 		event.preventDefault();
 		const username = document.getElementById('userAlias').value; // TODO - CHECK VALUE
+		console.log("Username: ", username);
+		console.log("UsernameFormSubmitted: ", usernameFormSubmitted);
 
 		if (!username) {
 			alert("Please enter a username.");
 			return;
 		} else if (!/^[a-zA-Z0-9]+$/.test(username)) {
 			alert("Username can only contain letters and numbers.");	//TODO Need to change the way error is returned to make it prettier
+			return;
+		} else if (username.length < 2 || username.length > 20) {
+			alert("Username must be between 2 and 20 characters.");	//TODO Need to change the way error is returned to make it prettier
 			return;
 		}
 

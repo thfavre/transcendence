@@ -16,7 +16,7 @@ def index(request):
 def register_username(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        # username = self.cleaned_data['username']
+        # username = self.cleaned_data['username']   #Might use this as it is more secure and has more validation
         username = data.get('username')
 
         # Protection against XSS and SQL injection
@@ -33,10 +33,7 @@ def register_username(request):
 
         # Create the user
         try:
-            user = User.objects.create_user(username=username)
-            print("Existing users:", user)
-            for existing_user in User.objects.all():
-                print(existing_user.username)
+            User.objects.create_user(username=username)
             return JsonResponse({'success': True})
         except IntegrityError:
             return JsonResponse({'success': False, 'error': 'Failed to create user.'})
