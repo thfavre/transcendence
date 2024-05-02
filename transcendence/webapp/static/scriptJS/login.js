@@ -43,8 +43,10 @@ function	registerUsernameModal()
 		})
 		.then(response => {
 			if (response.ok) {
+				console.log("Username if response OK: ", username);
 				localStorage.setItem('userAlias', username);
-				getLastGame(username);
+				// getLastGame(username);
+				// getDatabase();
 				usernameModal.hide();
 			} else {
 				return response.json().then(data => {

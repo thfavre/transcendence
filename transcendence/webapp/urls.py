@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from . import views
-from .views import index
+from .views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,5 +25,7 @@ urlpatterns = [
     path('registerUsername', views.register_username, name='registerUsername'),
     path('save_game_result/', views.save_game_result, name='save_game_result'),
     path('get_last_game', views.get_last_game, name='get_last_game'),
+    path('print_all_records/', print_all_records, name='print_all_records'),
+    path('get_game_history/', get_game_history, name='get_game_history'),
     re_path(r'^.*/$', index, name='app'), # catch all urls
 ]

@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from django.utils.html import escape
 from datetime import datetime
 from django.shortcuts import get_object_or_404
+from .models import GameResult
 import json
 
 
@@ -15,6 +16,7 @@ def index(request):
 def register_username(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        # username = self.cleaned_data['username']
         username = data.get('username')
 
         # Protection against XSS and SQL injection
@@ -32,7 +34,7 @@ def register_username(request):
         # Create the user
         try:
             user = User.objects.create_user(username=username)
-            print("Existing users:")
+            print("Existing users:", user)
             for existing_user in User.objects.all():
                 print(existing_user.username)
             return JsonResponse({'success': True})
@@ -44,26 +46,31 @@ def register_username(request):
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
-
+# saves the games info in a model GameResult, and associates it to the 'username'
 def save_game_result(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
             user_id = data.get('username')
-            game_id = data.get('game_id')
-            position = data.get('position')
+            game_id = data.get('gameHistory', {}).get('game_id')
+            position = data.get('gameHistory', {}).get('position')
             date = datetime.now()
-            bo_type = data.get('bo_type')
-            print("Received data:", data)  # Print received data for debugging
+            bo_type = data.get('gameHistory', {}).get('bo_type')
+            try:
+                user = User.objects.get(username=user_id)
+            except User.DoesNotExit:
+                return JsonResponse({'success': False, 'error': 'User does not exist.'})
+
 
             # Create and save a new GameResult instance
             game_result = GameResult.objects.create(
-                user=user_id,
+                user=user,
                 game_id=game_id,
                 position=position,
                 date=date,
                 bo_type=bo_type
             )
+
             print("Saved game result:", game_result)  # Print saved game result for debugging
 
 
@@ -75,6 +82,27 @@ def save_game_result(request):
     else:
         # Return an error response for invalid request method
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+# Returns the last 10 games associated to 'username', from game 'game_id'
+def get_game_history(request):
+    if request.method == 'GET':
+        username = request.GET.get('username')
+        game_id = request.GET.get('game_id')
+
+        try:
+            # Retrieve the last 10 game results of the specified type for the user
+            game_history = GameResult.objects.filter(user__username=username, game_id=game_id).order_by('-date')[:10]
+
+            # Prepare the response data
+            history_data = [{'user': result.user.username, 'game_id': result.game_id, 'position': result.position, 'date': result.date, 'bo_type': result.bo_type} for result in game_history]
+
+            return JsonResponse(history_data, safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
 
 
 
@@ -96,6 +124,33 @@ def get_last_game(request):
         else:
             return JsonResponse({'error': 'No game found for this user.'}, status=404)
 
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+
+def print_all_records(request):
+    if request.method == 'GET':
+        try:
+            # Retrieve all users
+            all_users = User.objects.all()
+
+            # Retrieve all game results
+            all_game_results = GameResult.objects.all()
+
+            # Prepare response data
+            user_data = [{'username': user.username} for user in all_users]
+            game_result_data = [{'user': result.user.username, 'game_id': result.game_id, 'position': result.position, 'date': result.date, 'bo_type': result.bo_type} for result in all_game_results]
+
+            # Print all records (for debugging purposes)
+            for user in all_users:
+                print(user)
+            for result in all_game_results:
+                print(result)
+
+            # Return the response with both sets of data
+            return JsonResponse({'users': user_data, 'game_results': game_result_data, 'success': True})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
