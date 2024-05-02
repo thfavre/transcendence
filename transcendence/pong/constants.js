@@ -39,7 +39,7 @@ export const textureMetallic = textureLoader.load("assets/textures/metal-003/Met
 // model
 // Basket Ball by Zsky [CC-BY] via Poly Pizza
 // export const modelBasketBall = "assets/models/Basket Ball.glb";
-export const ballsModel = "assets/models/balls/drone.glb";
+export const ballsModel = "assets/models/drone.glb";
 
 
 

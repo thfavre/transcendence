@@ -41,23 +41,34 @@ function loadFont(e) {
 }
 
 // load fonts and then start the game
-function init(humanPlayersName, AIPlayerNb, gameMode="versus", debug=false, callback) {
+function init(humanPlayersName, AIPlayerNb, gameMode="versus", selector, debug=false, callback) {
 	constants.setDebug(debug);
 	Promise.all([loadFont(), /* Load other assets here */])
   		.then((values) => {
     		const font = values[0]; // Access the loaded font
 
     		// Start your game logic here
-			main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback);
+			main(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, callback);
   		})
   		.catch((error) => {
     		console.error('Error loading font or assets:', error);
 		});
 }
 
-function main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback) {
+function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, callback) {
 	// Canvas
-	const canvas = document.querySelector('#webgl');
+	const canvas = document.querySelector(selector);
+	// resize
+	// window.addEventListener( 'resize', onWindowResize, false );
+	// function onWindowResize(){
+	// 	const width = window.innerWidth;
+	// 	const height = window.innerHeight;
+	// 	console.log('resize', width, height, renderer);
+	// 	camera.aspect = width / height;
+	// 	camera.updateProjectionMatrix();
+	// 	renderer.setSize( width, height );
+	// 	composer.setSize(width, height);
+	// }
 
 	// Sizes
 	const sizes = {
@@ -68,7 +79,6 @@ function main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback) {
 	// Scene
 	const scene = new THREE.Scene();
 	scene.background = new THREE.Color('#000000');
-	// scene.background = constants.textureLoader.load("assets/textures/space.jpg");
 	if (constants.DEBUG) {
 		const axesHelper = new THREE.AxesHelper(10);
 		scene.add(axesHelper);
@@ -83,7 +93,7 @@ function main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback) {
 
 	// Renderer
 	const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
-	// renderer.setSize( sizes.width, sizes.height );
+	renderer.setSize( sizes.width, sizes.height);
 	// document.body.appendChild( renderer.domElement );
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.VSMShadowMap;
@@ -160,7 +170,6 @@ function main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback) {
 	function onDocumentKeyUp(event) {
 		var keyCode = event.which;
 		keysdown.splice(keysdown.indexOf(keyCode), 1);
-
 	};
 
 
@@ -196,46 +205,6 @@ function main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback) {
 	}
 
 
-	// function init(font)
-	// {
-	// 	pongGame = new Versus(scene, physicsWorld, camera, font);
-	// 	menu = new Menu(scene, physicsWorld, camera, pongGame, font);
-	// 	animateMenu();
-
-	// }
-
-	// ------- Update
-	// camera.position.z = 100;
-
-
-	// function animateMenu() {
-	// 	if (menu.update(keysdown, keysJustPressed) == true)
-	// 		animateGame();
-	// 	else
-	// 		window.requestAnimationFrame( animateMenu );
-
-	// 	renderer.render( scene, camera );
-	// 	composer.render();
-	// 	keysJustPressed = [];
-
-	// }
-
-	// function animateGame() {
-	// 	window.requestAnimationFrame( animateGame );
-	// 	// controls.update();
-	// 	pongGame.update(keysdown);
-
-
-	// 	// phsyics
-	// 	physicsWorld.fixedStep(1/constants.FPS);
-	// 	if (constants.DEBUG)
-	// 		cannonDebugger.update();
-
-	// 	renderer.render( scene, camera );
-	// 	composer.render();
-	// 	keysJustPressed = [];
-
-	// }
 	gameLoop();
 }
 
@@ -245,8 +214,8 @@ function main(humanPlayersName, AIPlayerNb, gameMode, font, debug, callback) {
 // tournament : playerNb, 0, {nom1, nom2, noms} ,debug, callback
 
 
-// init(['Tjom','Bob'], 1, 'versus', false, (game) => {
-// 	console.log('Game is over', game);
-// 	game.time;
-// });
+init(['Tjom','Bob'], 1, 'tournament', '#webgl', false, (game) => {
+	console.log('Game is over', game);
+	game.time;
+});
 window.gamePong = init;

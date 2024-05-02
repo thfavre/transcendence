@@ -5,9 +5,11 @@ import createText from './createText.js';
 import * as constants from './constants.js';
 import Menu from './Menu.js';
 
+export var forceStopGame = false;
 
 export default class Versus extends Game {
 	constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb) {
+		forceStopGame = false;
 		console.log(humanPlayersName.length)
 		super(scene, physicsWorld, camera, humanPlayersName.length, AIPlayerNb);
 		this.font = font;
@@ -85,7 +87,7 @@ export default class Versus extends Game {
 				return false;
 			}
 		}
-		if (this.stop) {
+		if (this.stop || forceStopGame) {// ? TODO this.stop is not needed anymore
 			// TODO free
 			return false;
 		}
