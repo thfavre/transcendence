@@ -1,4 +1,5 @@
 let username = localStorage.getItem('userAlias');
+let usernameFormSubmitted = false;
 
 function getCookie(name) {
 	const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
@@ -18,7 +19,10 @@ function	registerUsernameModal()
 	menuButtons.classList.remove('d-none');
 	usernameModal.show();
 
-	document.getElementById('usernameForm').addEventListener('submit', function (event) {
+	const usernameForm = document.getElementById('usernameForm');
+
+	// document.getElementById('usernameForm').addEventListener('submit', function (event) {
+	function handleFormSubmit(event){
 		event.preventDefault();
 		const username = document.getElementById('userAlias').value; // TODO - CHECK VALUE
 
@@ -45,9 +49,11 @@ function	registerUsernameModal()
 			if (response.ok) {
 				console.log("Username if response OK: ", username);
 				localStorage.setItem('userAlias', username);
+				getGameHistory(username, 'ES');
 				// getLastGame(username);
-				// getDatabase();
+				getDatabase();
 				usernameModal.hide();
+				usernameForm.removeEventListener('submit',handleFormSubmit);
 			} else {
 				return response.json().then(data => {
 					alert('Error registering username: ' + data.error);
@@ -55,7 +61,10 @@ function	registerUsernameModal()
 			}
 		})
 		.catch(error => console.error('Error sending data:', error));
-	});
+	}
+
+	usernameForm.addEventListener('submit', handleFormSubmit);
+	// });
 }
 
 // Disconnect the user and redirect to the main page
