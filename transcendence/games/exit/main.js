@@ -59,12 +59,6 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debu
 	// Canvas
 	const canvas = document.querySelector(selector);
 
-	// Sizes
-	const sizes = {
-		width: 1000,
-		height: 800
-	}
-
 	// Scene
 	const scene = new THREE.Scene();
 	scene.background = new THREE.Color('#444444');
@@ -77,7 +71,7 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debu
 
 
 	// Camera
-	const camera = new THREE.PerspectiveCamera( 90, sizes.width / sizes.height, 0.1, 300);
+	const camera = new THREE.PerspectiveCamera( 90, canvas.clientWidth / canvas.clientHeight, 0.1, 300);
 	scene.add( camera );
 	if (constants.DEBUG)
 		camera.position.z = 40;
@@ -94,6 +88,16 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debu
 	// renderer.toneMappingExposure = 1.5;
 	renderer.setPixelRatio(window.devicePixelRatio);
 
+	// resize
+	// window.addEventListener("resize", onCanvasResize, false);
+  	function onCanvasResize() {
+		const width = canvas.clientWidth;
+		const height = canvas.clientHeight;
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix();
+		renderer.setSize(width, height, false);
+  	}
+  	onCanvasResize(); // call it once to set canvas size
 
 	// Lights
 	const ambientLight = new THREE.AmbientLight(0xffffff, constants.ambientLightIntensity);
