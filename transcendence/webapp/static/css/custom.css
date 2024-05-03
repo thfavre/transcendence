@@ -161,7 +161,7 @@ body
 
 .custom-background-spot
 {
-	position: absolute;
+	position: fixed;
 	width: 5vw;
 	height: 5vw;
 	background-image: radial-gradient(closest-side, rgba(60, 214, 235, 0.5) 0%, rgba(60, 214, 235, 0.3) 50%, rgba(0, 0, 0, 0) 100%);
