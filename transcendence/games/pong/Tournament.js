@@ -1,0 +1,118 @@
+import AIPlayer from './AIPlayer.js';
+import Game from './Game'
+import HumanPlayer from './HumanPlayer.js';
+import createText from './createText.js';
+import * as constants from './constants.js';
+import Menu from './Menu.js';
+
+export var forceStopGame = false;
+
+export default class Tournament {
+	constructor(scene, physicsWorld, camera, font, humanPlayersName) {
+		this.scene = scene;
+		this.physicsWorld = physicsWorld;
+		this.camera = camera;
+		this.realPlayersNb = humanPlayersName.length;
+
+		this.game = new Game(scene, physicsWorld, camera, humanPlayersName.length, 0);
+		// super(scene, physicsWorld, camera, humanPlayersName.length, 0);
+		forceStopGame = false;
+		this.font = font;
+		this.menu = new Menu(scene, camera, font, this.game, humanPlayersName, 0);
+
+		this.betweenRoundTime = 5; // time between rounds [s]
+		// this.showText(null);
+		this.winner = null;
+	}
+
+	showText({text, size=8, y=0}) {
+		if (this.currentText == text)
+			return;
+		// delete previous text
+		if (this.textMesh) {
+			this.textMesh.traverse( function (child) {
+				if (child.geometry)
+					child.geometry.dispose();
+			} );
+			this.scene.remove(this.textMesh);
+		}
+		if (!text)
+			return;
+		// create new text
+		this.currentText = text;
+		this.textMesh = createText({font: this.font, message: text, size: size, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
+		this.textMesh.position.z = 8;
+		this.textMesh.position.y = y;
+		this.scene.add(this.textMesh);
+	}
+
+	copyPlayerAttributes(player, newPlayer) {
+		// newPlayer.health = player.health;// to keep the health
+		newPlayer.downKeyCode = player.downKeyCode;
+		newPlayer.upKeyCode = player.upKeyCode;
+		newPlayer.paddle.mesh.material = player.paddle.mesh.material; // ? clone?
+	}
+
+	createNewGame(excludePlayer) {
+		this.showText({text: excludePlayer.name + " is out!", y:constants.FIELD_DIAMETER/2+10});
+		var players = this.game.players.filter((player) => player != excludePlayer);
+		this.realPlayersNb = players.length;
+		this.game.delete()
+		this.game = new Game(this.scene, this.physicsWorld, this.camera, players.length, 0);
+		for (var i = 0; i < players.length; i++) {
+			var playerNb = i;
+			if (players.length == 2 && i == 1)
+				playerNb = 2;
+			var player = this.game.createHumanPlayer(playerNb, players[i].name);
+			this.copyPlayerAttributes(players[i], player);
+			this.game.addPlayer(player);
+
+		}
+
+		this.game.createNewRound();
+		// this.createNewRound();
+		// camera.position.z = 100;
+	}
+
+	manageGoal() {
+		var goalPlayer = this.game.getGoalPlayer();
+		if (goalPlayer == null)
+			return;
+		if (goalPlayer.health > 0) {
+			this.game.createNewRound();
+			return;
+		}
+		// one player is dead
+		if (this.game.playersNb == 2) {
+			var winner = this.game.players.filter((player) => player.health > 0)[0];
+			if (winner) {
+				this.winner = winner;
+				this.showText({text:winner.name + " wins! (Press Enter to finish)", size:8});
+			}
+			else
+				this.showText({text:"You lost against ... Nobody!? (Press Enter to finish)", size:6});
+
+			return
+		}
+
+		this.createNewGame(goalPlayer);
+	}
+
+	update(dt, keysdown, keysJustPressed) {
+		if (this.menu.update(keysJustPressed) == true)
+			return true;
+		this.game.update(dt, keysdown);
+
+		this.manageGoal();
+
+		if (this.winner && keysdown.includes(13)) {
+			return false;
+		}
+
+		if (this.stop || forceStopGame) {// ? TODO this.stop is not needed anymore
+			// TODO free
+			return false;
+		}
+		return true;
+	}
+}

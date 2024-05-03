@@ -24,9 +24,20 @@ export default class Player {
 		this.createHealthMeshes();
 	}
 
+	delete() {
+		this.physicsWorld.removeBody(this.goalHitboxBody);
+		if (this.closedGoalBody)
+			this.physicsWorld.removeBody(this.closedGoalBody);
+		// this.healthMeshes.forEach((healthMesh) => {
+		// 	this.paddle.mesh.remove(healthMesh);
+		// });
+		this.paddle.delete();
+	}
+
 	createHealthMeshes() {
 		this.healthMeshes = [];
 		const loader = new GLTFLoader();
+		// TODO make the heart a static variable
 		loader.load("pong/assets/models/Heart.glb", (gltf) => {
 			const model = gltf.scene;
 			// get the paddle size

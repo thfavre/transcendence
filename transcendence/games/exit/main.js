@@ -163,7 +163,3 @@ function main(playersNb, gameToWin, gameMode, selector, font, debug, callback) {
 // 		console.log('Tournament is over', tournament.scores);
 // 	}
 // });
-
-
-window.gameEscape = init;
-

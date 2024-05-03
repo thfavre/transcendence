@@ -69,6 +69,8 @@ export default class Paddle {
 
 
 	constructor(scene, physicsWorld, startPos, endPos, axeAngle, fieldEdgeDiameter) {
+		this.scene = scene;
+		this.physicsWorld = physicsWorld;
 		this.axeAngle = axeAngle;
 
 		var goalSize = startPos.distanceTo(endPos) - fieldEdgeDiameter;
@@ -138,13 +140,18 @@ export default class Paddle {
 		this.updateMeshPosAndRot();
 	}
 
+	delete() {
+		this.scene.remove(this.mesh);
+		this.physicsWorld.removeBody(this.body);
+	}
+
 	getNextMaterial() {
 		var matIndex = Paddle.materials.indexOf(this.mesh.material);
 		if (matIndex == -1)
 			matIndex = 0;
 		else
 			matIndex = (matIndex + 1) % Paddle.materials.length;
-		return Paddle.materials[matIndex];
+		return Paddle.materials[matIndex]; // ? TODO clone needed?
 	}
 
 	getPreviousMaterial() {

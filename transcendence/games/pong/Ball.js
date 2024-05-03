@@ -26,9 +26,9 @@ export default class Ball {
 		);
 
 
-		this.moveSpeed = 3000; //3000
+		this.moveSpeed = 10000; //3000
 		this.acceleration = 250;
-		this.maxMoveSpeed = 10000;
+		this.maxMoveSpeed = 100000;
 
 		this.movingAngle = 0; // will be updated in the move function // TODO! change method of doing this
 

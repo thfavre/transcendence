@@ -170,6 +170,10 @@ export default class Background {
 		this.stars.push(...this.createMovingObject(FallingBox, {number: 150, maxSpawnDistance: 300, spawnUnderField: false}));
 	}
 
+	delete() {
+		this.stars.forEach(star => this.scene.remove(star.mesh));
+	}
+
 
 	createMovingObject(movingObjectClass, {number=100, maxSpawnDistance=200, safeZoneAroundFieldBorder=30, spawnUnderField=false}) {
 		const objects = [];

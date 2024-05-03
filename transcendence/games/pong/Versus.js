@@ -79,6 +79,11 @@ export default class Versus extends Game {
 		if (this.menu.update(keysJustPressed) == true)
 			return true;
 		super.update(dt, keysdown);
+
+		if (this.getGoalPlayer() != null) {
+			this.createNewRound();
+		}
+
 		this.closeDeadPlayersGoal(dt);
 		if (this.isOnlyOnePlayerAlive() || this.isOnlyAIAlive()) {
 			this.showWinnerText();

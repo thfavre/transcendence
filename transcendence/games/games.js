@@ -6,7 +6,7 @@ window.pongGame = pongGame;
 window.exitGame = exitGame;
 
 
-pongGame(['Tjom','Bob'], 1, 'tournament', '#webgl1', false, (game) => {
+pongGame(['Thom','Bob', 'Greg'], 0, 'tournament', '#webgl1', false, (game) => {
 	console.log('Game is over', game);
 	game.time;
 });

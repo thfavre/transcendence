@@ -18,7 +18,7 @@ export default class Game {
 
 		this.fieldEdgeDiameter = 10;
 
-		this.roundStartTime = 1; // [s]
+		this.roundStartTime = 1.5; // [s]
 		this.roundStartTimeStamp = Date.now();
 
 		this.fieldVertices =  this.createField(this.playersNb==2? 4 : this.playersNb);
@@ -31,6 +31,24 @@ export default class Game {
 
 		this.createLights();
 		this.background = new Background(scene);
+	}
+
+	delete() {
+		this.players.forEach((player) => {
+			player.delete();
+		} );
+		this.deleteBall();
+		this.background.delete();
+		this.fieldMeshes.forEach((mesh) => {
+			this.scene.remove(mesh);
+		});
+		this.fieldEdgeBodies.forEach((body) => {
+			this.physicsWorld.removeBody(body);
+		});
+		this.scene.remove(this.directionalLightBallTargeted);
+		if (this.directionalLightBallTargetedShadowHelper)
+			this.scene.remove(this.directionalLightBallTargetedShadowHelper);
+		this.scene.remove(this.hemisphereLight);
 	}
 
 	create2PlayerField() {
@@ -119,12 +137,12 @@ export default class Game {
 
 
 	createLights() {
-		var hemisphereLight = new THREE.HemisphereLight( '#aaaaad', '#111111', 2);
-		hemisphereLight.position.set(0, 0, 200);
-		this.scene.add(hemisphereLight);
+		this.hemisphereLight = new THREE.HemisphereLight( '#aaaaad', '#111111', 2);
+		this.hemisphereLight.position.set(0, 0, 200);
+		this.scene.add(this.hemisphereLight);
 		// helper
 		if (constants.DEBUG) {
-			var helper = new THREE.HemisphereLightHelper( hemisphereLight, 5 );
+			var helper = new THREE.HemisphereLightHelper( this.hemisphereLight, 5 );
 			this.scene.add( helper );
 		}
 
@@ -143,13 +161,18 @@ export default class Game {
 
 
 	createField(segmentsNb) {
+		this.fieldMeshes = [];
+		this.fieldEdgeBodies = [];
 		const geometry = new THREE.CircleGeometry( constants.FIELD_DIAMETER/2, segmentsNb );
 		const material = new THREE.MeshPhongMaterial( { color: "#666666" } );
 		const field = new THREE.Mesh( geometry, material );
 		field.receiveShadow = true;
 		this.scene.add(field);
+		this.fieldMeshes.push(field);
 		// field border lines colors
-		this.scene.add(createLine({points: geometry.attributes.position.array.slice(3), color: '#3CD6EB', lineWidth: 0.004}));
+		const line = createLine({points: geometry.attributes.position.array.slice(3), color: '#3CD6EB', lineWidth: 0.004})
+		this.fieldMeshes.push(line);
+		this.scene.add(line);
 
 		var fieldVertices = this.getFieldVertices(field);
 
@@ -159,6 +182,7 @@ export default class Game {
 		const centerMesh = new THREE.Mesh( centerGeometry, centerMaterial );
 		centerMesh.position.set(0, 0, 1);
 		this.scene.add(centerMesh);
+		this.fieldMeshes.push(centerMesh);
 
 		this.createFieldEdges(fieldVertices);
 
@@ -207,6 +231,8 @@ export default class Game {
 		edgeMesh.position.copy(edgeBody.position);
 		edgeMesh.quaternion.copy(edgeBody.quaternion);
 		this.scene.add(edgeMesh);
+		this.fieldMeshes.push(edgeMesh);
+		this.fieldEdgeBodies.push(edgeBody);
 	}
 
 	getPlayerVertices(nb) {
@@ -300,6 +326,17 @@ export default class Game {
 		}
 	}
 
+	// Return the player that got the goal
+	getGoalPlayer() {
+		for (var i = 0; i < this.players.length; i++) {
+			if (this.players[i].isBallInGoal.a) {
+				this.players[i].isBallInGoal.a = false;
+				return this.players[i];
+			}
+		}
+		return null;
+	}
+
 	update(dt, keysdown) {
 		if (this.directionalLightBallTargetedShadowHelper)
 			this.directionalLightBallTargetedShadowHelper.update();
@@ -315,10 +352,10 @@ export default class Game {
 
 		this.players.forEach(player => {
 			player.update(dt, keysdown);
-			if (player.isBallInGoal.a) {
-				player.isBallInGoal.a = false;
-				this.createNewRound();
-			}
+		// 	if (player.isBallInGoal.a) {
+		// 		player.isBallInGoal.a = false;
+		// 		this.createNewRound();
+			// }
 		});
 		// check if the ball is too far
 		if (this.ball.isTooFar()) {

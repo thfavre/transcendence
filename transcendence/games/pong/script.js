@@ -16,6 +16,7 @@ import Versus from './Versus.js';
 import Menu from './Menu.js';
 import * as constants from './constants.js';
 import { VelocityShader } from 'three/examples/jsm/Addons.js';
+import Tournament from './Tournament.js';
 
 
 
@@ -48,14 +49,14 @@ export default function init(humanPlayersName, AIPlayerNb, gameMode="versus", se
     		const font = values[0]; // Access the loaded font
 
     		// Start your game logic here
-			main(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, callback);
+			main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback);
   		})
   		.catch((error) => {
     		console.error('Error loading font or assets:', error);
 		});
 }
 
-function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, callback) {
+function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) {
 	// Canvas
 	const canvas = document.querySelector(selector);
 	// resize
@@ -173,7 +174,7 @@ function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, cal
 	if (gameMode == 'versus')
 		var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
 	else if (gameMode == 'tournament')
-		var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
+		var pongGame = new Tournament(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
 	else
 		throw new Error('Unknown game mode: ' + gameMode, 'Available modes are: versus, tournament');
 	// 	menu = new Menu(scene, physicsWorld, camera, pongGame, font);
@@ -214,4 +215,3 @@ function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, cal
 // 	console.log('Game is over', game);
 // 	game.time;
 // });
-window.gamePong = init;
