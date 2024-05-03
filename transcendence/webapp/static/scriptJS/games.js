@@ -34595,6 +34595,8 @@ function createLine({ points, color = "#FFFFFF", lineWidth = 1e-3, zOffset = 0 }
 }
 const _Paddle = class _Paddle {
   constructor(scene, physicsWorld, startPos, endPos, axeAngle, fieldEdgeDiameter) {
+    this.scene = scene;
+    this.physicsWorld = physicsWorld;
     this.axeAngle = axeAngle;
     var goalSize = startPos.distanceTo(endPos) - fieldEdgeDiameter;
     var width = 3;
@@ -34629,6 +34631,10 @@ const _Paddle = class _Paddle {
     this.body.quaternion.setFromAxisAngle(new Vec3(0, 0, 1), this.axeAngle);
     physicsWorld.addBody(this.body);
     this.updateMeshPosAndRot();
+  }
+  delete() {
+    this.scene.remove(this.mesh);
+    this.physicsWorld.removeBody(this.body);
   }
   getNextMaterial() {
     var matIndex = _Paddle.materials.indexOf(this.mesh.material);
@@ -37318,8 +37324,14 @@ let Player$1 = class Player {
     this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
     this.isBallInGoal = { a: false };
     this.createGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, this.isBallInGoal);
-    this.health = 1;
+    this.health = 3;
     this.createHealthMeshes();
+  }
+  delete() {
+    this.physicsWorld.removeBody(this.goalHitboxBody);
+    if (this.closedGoalBody)
+      this.physicsWorld.removeBody(this.closedGoalBody);
+    this.paddle.delete();
   }
   createHealthMeshes() {
     this.healthMeshes = [];
@@ -37530,7 +37542,7 @@ class AIPlayer extends Player$1 {
   }
 }
 class Ball {
-  constructor(scene, physicsWorld) {
+  constructor(scene, physicsWorld, startPositions) {
     var radius = 4;
     const geometry = new SphereGeometry(radius, 20, 14);
     const material = new MeshStandardMaterial({ color: 0 });
@@ -37553,13 +37565,16 @@ class Ball {
     this.acceleration = 250;
     this.maxMoveSpeed = 1e4;
     this.movingAngle = 0;
+    if (!startPositions || startPositions.length == 0)
+      startPositions = [new Vector2(0, 1), new Vector2(0, -1), new Vector2(1, 0), new Vector2(-1, 0)];
+    var randomStartPosition = startPositions[Math.floor(Math.random() * startPositions.length)];
     this.body = new Body({
       mass: 5,
       shape: new Sphere2(radius),
       position: new Vec3(0, 0, radius),
       // linearDamping: 0,
       // angularDamping: .5,
-      velocity: new Vec3(Math.random() - 0.5, Math.random() - 0.5, 0),
+      velocity: new Vec3(randomStartPosition.x, randomStartPosition.y, 0),
       // initial angle (will be set to a constant speed)
       material: new Material2({ friction: 1, restitution: 1 })
     });
@@ -37714,6 +37729,9 @@ class Background {
     this.stars.push(...this.createMovingObject(MovingSphere, { number: 100, maxSpawnDistance: 200, spawnUnderField: true }));
     this.stars.push(...this.createMovingObject(FallingBox, { number: 150, maxSpawnDistance: 300, spawnUnderField: false }));
   }
+  delete() {
+    this.stars.forEach((star2) => this.scene.remove(star2.mesh));
+  }
   createMovingObject(movingObjectClass, { number = 100, maxSpawnDistance = 200, safeZoneAroundFieldBorder = 30, spawnUnderField = false }) {
     const objects = [];
     for (let i = 0; i < number; i++) {
@@ -37739,7 +37757,7 @@ let Game$1 = class Game {
     this.camera = camera;
     this.playersNb = humanPlayerNb + AIPlayerNb;
     this.fieldEdgeDiameter = 10;
-    this.roundStartTime = 1;
+    this.roundStartTime = 1.5;
     this.roundStartTimeStamp = Date.now();
     this.fieldVertices = this.createField(this.playersNb == 2 ? 4 : this.playersNb);
     this.players = [];
@@ -37748,6 +37766,23 @@ let Game$1 = class Game {
       this.create2PlayerField();
     this.createLights();
     this.background = new Background(scene);
+  }
+  delete() {
+    this.players.forEach((player) => {
+      player.delete();
+    });
+    this.deleteBall();
+    this.background.delete();
+    this.fieldMeshes.forEach((mesh) => {
+      this.scene.remove(mesh);
+    });
+    this.fieldEdgeBodies.forEach((body) => {
+      this.physicsWorld.removeBody(body);
+    });
+    this.scene.remove(this.directionalLightBallTargeted);
+    if (this.directionalLightBallTargetedShadowHelper)
+      this.scene.remove(this.directionalLightBallTargetedShadowHelper);
+    this.scene.remove(this.hemisphereLight);
   }
   create2PlayerField() {
     var wall1 = this.createHumanPlayer(1);
@@ -37804,28 +37839,34 @@ let Game$1 = class Game {
   // 	}
   // }
   createLights() {
-    var hemisphereLight = new HemisphereLight("#aaaaad", "#111111", 2);
-    hemisphereLight.position.set(0, 0, 200);
-    this.scene.add(hemisphereLight);
+    this.hemisphereLight = new HemisphereLight("#aaaaad", "#111111", 2);
+    this.hemisphereLight.position.set(0, 0, 200);
+    this.scene.add(this.hemisphereLight);
     if (DEBUG$1) {
-      var helper = new HemisphereLightHelper(hemisphereLight, 5);
+      var helper = new HemisphereLightHelper(this.hemisphereLight, 5);
       this.scene.add(helper);
     }
     new AmbientLight(1052688);
   }
   createField(segmentsNb) {
+    this.fieldMeshes = [];
+    this.fieldEdgeBodies = [];
     const geometry = new CircleGeometry(FIELD_DIAMETER / 2, segmentsNb);
     const material = new MeshPhongMaterial({ color: "#666666" });
     const field = new Mesh(geometry, material);
     field.receiveShadow = true;
     this.scene.add(field);
-    this.scene.add(createLine({ points: geometry.attributes.position.array.slice(3), color: "#3CD6EB", lineWidth: 4e-3 }));
+    this.fieldMeshes.push(field);
+    const line = createLine({ points: geometry.attributes.position.array.slice(3), color: "#3CD6EB", lineWidth: 4e-3 });
+    this.fieldMeshes.push(line);
+    this.scene.add(line);
     var fieldVertices = this.getFieldVertices(field);
     const centerGeometry = new CircleGeometry(2, segmentsNb);
     const centerMaterial = new MeshBasicMaterial({ color: "#C2F988" });
     const centerMesh = new Mesh(centerGeometry, centerMaterial);
     centerMesh.position.set(0, 0, 1);
     this.scene.add(centerMesh);
+    this.fieldMeshes.push(centerMesh);
     this.createFieldEdges(fieldVertices);
     return fieldVertices;
   }
@@ -37864,6 +37905,8 @@ let Game$1 = class Game {
     edgeMesh.position.copy(edgeBody.position);
     edgeMesh.quaternion.copy(edgeBody.quaternion);
     this.scene.add(edgeMesh);
+    this.fieldMeshes.push(edgeMesh);
+    this.fieldEdgeBodies.push(edgeBody);
   }
   getPlayerVertices(nb) {
     nb += 1;
@@ -37887,7 +37930,12 @@ let Game$1 = class Game {
     this.players.push(player);
   }
   createBall() {
-    return new Ball(this.scene, this.physicsWorld);
+    var playersPos = [];
+    this.players.forEach((player) => {
+      if (player.health > 0)
+        playersPos.push(player.paddle.mesh.position);
+    });
+    return new Ball(this.scene, this.physicsWorld, playersPos);
   }
   deleteBall() {
     this.scene.remove(this.ball.mesh);
@@ -37935,6 +37983,16 @@ let Game$1 = class Game {
       this.previousVisionTime = this.clock.getElapsedTime();
     }
   }
+  // Return the player that got the goal
+  getGoalPlayer() {
+    for (var i = 0; i < this.players.length; i++) {
+      if (this.players[i].isBallInGoal.a) {
+        this.players[i].isBallInGoal.a = false;
+        return this.players[i];
+      }
+    }
+    return null;
+  }
   update(dt, keysdown) {
     if (this.directionalLightBallTargetedShadowHelper)
       this.directionalLightBallTargetedShadowHelper.update();
@@ -37944,10 +38002,6 @@ let Game$1 = class Game {
     this.updateAIVision(AI_VISION_DELAY);
     this.players.forEach((player) => {
       player.update(dt, keysdown);
-      if (player.isBallInGoal.a) {
-        player.isBallInGoal.a = false;
-        this.createNewRound();
-      }
     });
     if (this.ball.isTooFar()) {
       this.createNewRound();
@@ -38038,7 +38092,13 @@ class PlayerCreator {
   setText({ text, font = this.font, x = 0, y = 0, z = 0 }) {
     if (this.currentText == text)
       return;
-    this.scene.remove(this.textObj);
+    if (this.textObj) {
+      this.textObj.traverse(function(child) {
+        if (child.geometry)
+          child.geometry.dispose();
+      });
+      this.scene.remove(this.textObj);
+    }
     this.textObj = createText$1({ font, message: text });
     this.textObj.position.x = x;
     this.textObj.position.y = y;
@@ -38051,7 +38111,7 @@ class PlayerCreator {
   }
   askUpKey(keysJustPressed) {
     this.setText({
-      text: "Player " + this.playerName + ", press a key to go UP",
+      text: this.playerName + ", press a key to go UP",
       x: 0,
       y: 22,
       z: 270
@@ -38063,7 +38123,7 @@ class PlayerCreator {
   }
   askDownKey(keysJustPressed) {
     this.setText({
-      text: "Player " + this.playerName + ", press a key to go DOWN",
+      text: this.playerName + ", press a key to go DOWN",
       x: 0,
       y: 22,
       z: 270
@@ -38075,7 +38135,7 @@ class PlayerCreator {
   }
   askPaddleMaterial(keysJustPressed) {
     this.setText({
-      text: "Player " + this.playerName + ", choose your paddle color (" + String.fromCharCode(this.keyDown) + "/" + String.fromCharCode(this.keyUp) + ")",
+      text: this.playerName + ", choose your paddle color (" + String.fromCharCode(this.keyDown) + "/" + String.fromCharCode(this.keyUp) + ")",
       x: 0,
       y: 26,
       z: 263
@@ -38176,10 +38236,10 @@ let Menu$1 = class Menu {
     return true;
   }
 };
-var forceStopGame$2 = false;
+var forceStopGame$3 = false;
 class Versus extends Game$1 {
   constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb) {
-    forceStopGame$2 = false;
+    forceStopGame$3 = false;
     super(scene, physicsWorld, camera, humanPlayersName.length, AIPlayerNb);
     this.font = font;
     this.menu = new Menu$1(scene, camera, font, this, humanPlayersName, AIPlayerNb);
@@ -38241,6 +38301,9 @@ class Versus extends Game$1 {
     if (this.menu.update(keysJustPressed) == true)
       return true;
     super.update(dt, keysdown);
+    if (this.getGoalPlayer() != null) {
+      this.createNewRound();
+    }
     this.closeDeadPlayersGoal(dt);
     if (this.isOnlyOnePlayerAlive() || this.isOnlyAIAlive()) {
       this.showWinnerText();
@@ -38248,12 +38311,98 @@ class Versus extends Game$1 {
         return false;
       }
     }
-    if (this.stop || forceStopGame$2) {
+    if (this.stop || forceStopGame$3) {
       return false;
     }
     return true;
   }
 }
+var forceStopGame$2 = false;
+let Tournament$1 = class Tournament {
+  constructor(scene, physicsWorld, camera, font, humanPlayersName) {
+    this.scene = scene;
+    this.physicsWorld = physicsWorld;
+    this.camera = camera;
+    this.realPlayersNb = humanPlayersName.length;
+    this.game = new Game$1(scene, physicsWorld, camera, humanPlayersName.length, 0);
+    forceStopGame$2 = false;
+    this.font = font;
+    this.menu = new Menu$1(scene, camera, font, this.game, humanPlayersName, 0);
+    this.betweenRoundTime = 5;
+    this.winner = null;
+  }
+  showText({ text, size = 8, y = 0 }) {
+    if (this.currentText == text)
+      return;
+    if (this.textMesh) {
+      this.textMesh.traverse(function(child) {
+        if (child.geometry)
+          child.geometry.dispose();
+      });
+      this.scene.remove(this.textMesh);
+    }
+    if (!text)
+      return;
+    this.currentText = text;
+    this.textMesh = createText$1({ font: this.font, message: text, size, sideColor: "#000000", fontColor: "#ffffff", shadow: true });
+    this.textMesh.position.z = 8;
+    this.textMesh.position.y = y;
+    this.scene.add(this.textMesh);
+  }
+  copyPlayerAttributes(player, newPlayer) {
+    newPlayer.downKeyCode = player.downKeyCode;
+    newPlayer.upKeyCode = player.upKeyCode;
+    newPlayer.paddle.mesh.material = player.paddle.mesh.material;
+  }
+  createNewGame(excludePlayer) {
+    this.showText({ text: excludePlayer.name + " is out!", y: FIELD_DIAMETER / 2 + 10 });
+    var players = this.game.players.filter((player2) => player2 != excludePlayer);
+    this.realPlayersNb = players.length;
+    this.game.delete();
+    this.game = new Game$1(this.scene, this.physicsWorld, this.camera, players.length, 0);
+    for (var i = 0; i < players.length; i++) {
+      var playerNb = i;
+      if (players.length == 2 && i == 1)
+        playerNb = 2;
+      var player = this.game.createHumanPlayer(playerNb, players[i].name);
+      this.copyPlayerAttributes(players[i], player);
+      this.game.addPlayer(player);
+    }
+    this.game.createNewRound();
+  }
+  manageGoal() {
+    var goalPlayer = this.game.getGoalPlayer();
+    if (goalPlayer == null)
+      return;
+    if (goalPlayer.health > 0) {
+      this.game.createNewRound();
+      return;
+    }
+    if (this.game.playersNb == 2) {
+      var winner = this.game.players.filter((player) => player.health > 0)[0];
+      if (winner) {
+        this.winner = winner;
+        this.showText({ text: winner.name + " wins! (Press Enter to finish)", size: 8 });
+      } else
+        this.showText({ text: "You lost against ... Nobody!? (Press Enter to finish)", size: 6 });
+      return;
+    }
+    this.createNewGame(goalPlayer);
+  }
+  update(dt, keysdown, keysJustPressed) {
+    if (this.menu.update(keysJustPressed) == true)
+      return true;
+    this.game.update(dt, keysdown);
+    this.manageGoal();
+    if (this.winner && keysdown.includes(13)) {
+      return false;
+    }
+    if (this.stop || forceStopGame$2) {
+      return false;
+    }
+    return true;
+  }
+};
 const fontLoader$1 = new FontLoader();
 function loadFont$1(e) {
   return new Promise((resolve, reject) => {
@@ -38278,12 +38427,12 @@ function init$1(humanPlayersName, AIPlayerNb, gameMode = "versus", selector, deb
     /* Load other assets here */
   ]).then((values) => {
     const font = values[0];
-    main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, callback);
+    main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback);
   }).catch((error) => {
     console.error("Error loading font or assets:", error);
   });
 }
-function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, callback) {
+function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) {
   const canvas = document.querySelector(selector);
   const sizes = {
     width: 1e3,
@@ -38335,7 +38484,7 @@ function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, c
   if (gameMode == "versus")
     var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
   else if (gameMode == "tournament")
-    var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
+    var pongGame = new Tournament$1(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
   else
     throw new Error("Unknown game mode: " + gameMode, "Available modes are: versus, tournament");
   const clock = new Clock();
@@ -38355,7 +38504,6 @@ function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, debug, c
   }
   gameLoop();
 }
-window.gamePong = init$1;
 const NAME = "Find The Exit ";
 var DEBUG = false;
 function setDegub(debug) {
@@ -39384,7 +39532,7 @@ class MapData {
   }
 }
 class Game2 {
-  constructor(scene, camera, map, playersNb) {
+  constructor(scene, camera, map, playersNb, isPowerupsOn) {
     this.scene = scene;
     this.camera = camera;
     this.mapData = new MapData(map.array);
@@ -39392,6 +39540,7 @@ class Game2 {
     this.particlesSystem = new ParticlesSystem(scene);
     [this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
     this.createPlane(map.backgroundColor);
+    this.isPowerupsOn = isPowerupsOn;
     this.spawnPowerupsFrequency = 10;
     this.spawnPowerupsTimer = 0;
     this.allPowerups = [
@@ -39548,6 +39697,8 @@ class Game2 {
     }
   }
   spawnPowerup() {
+    if (!this.isPowerupsOn)
+      return;
     const pos = this.mapData.getRandomEmptyCell();
     if (pos !== null) {
       const PowerupClass = this.allPowerups[Math.floor(Math.random() * this.allPowerups.length)];
@@ -39735,8 +39886,8 @@ class Menu2 {
   }
 }
 var forceStopGame$1 = false;
-class Tournament {
-  constructor(scene, camera, font, gameToWin = 2, playersNb = 3) {
+class Tournament2 {
+  constructor(scene, camera, font, gameToWin = 2, playersNb = 3, isPowerupsOn = true) {
     forceStopGame$1 = false;
     this.scene = scene;
     this.clock = new Clock();
@@ -39744,6 +39895,7 @@ class Tournament {
     this.font = font;
     this.playersNb = playersNb;
     this.gameToWin = gameToWin;
+    this.isPowerupsOn = isPowerupsOn;
     this.isOver = false;
     this.menu = new Menu2({ scene, camera, font, playersNb });
     this.allMaps = tournamentMap;
@@ -39793,7 +39945,7 @@ class Tournament {
     if (this.allMaps.length == 0) {
       this.allMaps = tournamentMap;
     }
-    this.game = new Game2(this.scene, this.camera, randomTournamentMap, this.playersNb, this.font);
+    this.game = new Game2(this.scene, this.camera, randomTournamentMap, this.playersNb, this.isPowerupsOn);
     this.createScoresTexts();
   }
   destroyGame() {
@@ -39910,7 +40062,7 @@ class Tournament {
 }
 var forceStopGame = false;
 class TimedGames {
-  constructor(scene, camera, font, gameToWin = 2, playersNb = 1) {
+  constructor(scene, camera, font, gameToWin = 2, playersNb = 1, isPowerupsOn = false) {
     forceStopGame = false;
     this.scene = scene;
     this.clock = new Clock();
@@ -39918,6 +40070,7 @@ class TimedGames {
     this.font = font;
     this.playersNb = playersNb;
     this.gameToWin = gameToWin;
+    this.isPowerupsOn = isPowerupsOn;
     this.currentGameNb = 0;
     this.isOver = false;
     this.menu = new Menu2({ scene, camera, font, playersNb });
@@ -39931,7 +40084,7 @@ class TimedGames {
     if (this.allMaps.length == 0) {
       this.allMaps = tournamentMap;
     }
-    this.game = new Game2(this.scene, this.camera, randomTournamentMap, this.playersNb, this.font);
+    this.game = new Game2(this.scene, this.camera, randomTournamentMap, this.playersNb, this.isPowerupsOn);
   }
   destroyGame() {
     this.game.delete();
@@ -40075,18 +40228,18 @@ function loadFont(e) {
     );
   });
 }
-function init(playersNb, gameToWin, gameMode = "tournament", selector, debug = false, callback) {
+function init(playersNb, gameToWin, isPowerupsOn = true, gameMode = "tournament", selector, debug = false, callback) {
   Promise.all([
     loadFont()
     /* Load other assets here */
   ]).then((values) => {
     const font = values[0];
-    main(playersNb, gameToWin, gameMode, selector, font, debug, callback);
+    main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debug, callback);
   }).catch((error) => {
     console.error("Error loading font or assets:", error);
   });
 }
-function main(playersNb, gameToWin, gameMode, selector, font, debug, callback) {
+function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debug, callback) {
   setDegub(debug);
   if (DEBUG) {
     console.log("Debug mode");
@@ -40138,9 +40291,9 @@ function main(playersNb, gameToWin, gameMode, selector, font, debug, callback) {
   }
   var game;
   if (gameMode == "tournament") {
-    game = new Tournament(scene, camera, font, gameToWin, playersNb);
+    game = new Tournament2(scene, camera, font, gameToWin, playersNb, isPowerupsOn);
   } else if (gameMode == "solo") {
-    game = new TimedGames(scene, camera, font, gameToWin, 1);
+    game = new TimedGames(scene, camera, font, gameToWin, 1, isPowerupsOn);
   } else {
     console.error("Unknown game mode", gameMode, 'Choose between "tournament" and "solo"');
     return;
@@ -40158,6 +40311,5 @@ function main(playersNb, gameToWin, gameMode, selector, font, debug, callback) {
   }
   gameLoop();
 }
-window.gameEscape = init;
 window.pongGame = init$1;
 window.exitGame = init;
