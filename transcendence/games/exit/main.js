@@ -91,8 +91,12 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debu
 	// resize
 	// window.addEventListener("resize", onCanvasResize, false);
   	function onCanvasResize() {
-		const width = canvas.clientWidth;
-		const height = canvas.clientHeight;
+		var width = canvas.clientWidth;
+		var height = canvas.clientHeight;
+		if (width == 0 || height == 0) {
+			width = 1000;
+			height = 800;
+		}
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix();
 		renderer.setSize(width, height, false);

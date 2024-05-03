@@ -102,8 +102,12 @@ function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) 
 	// resize
 	window.addEventListener("resize", onCanvasResize, false);
   	function onCanvasResize() {
-		const width = canvas.clientWidth;
-		const height = canvas.clientHeight;
+		var width = canvas.clientWidth;
+		var height = canvas.clientHeight;
+		if (width == 0 || height == 0) {
+			width = 1000;
+			height = 800;
+		}
 		// update camera
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix();
