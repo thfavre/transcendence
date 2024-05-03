@@ -249,34 +249,34 @@ export default class Game {
 
 	updateCamera(dt, {x=null, y=null, moveSpeed=.5, maxDistFromCenter=2}) {
 		if (constants.DEBUG)
-			return;
-		// move the camera to Z target
-		this.camera.position.z += (this.cameraZTarget - this.camera.position.z) * dt * moveSpeed;
-		var mapCenterX = this.mapData.getWidth()/2;
-		var mapCenterY = this.mapData.getHeight()/2;
-		if (!x || !y) {
-			// average position of the players
-			var x = 0;
-			var y = 0;
-			for (let player of this.players) {
-				x += player.position.x;
-				y += player.position.y;
-			}
-			x /= this.players.length;
-			y /= this.players.length;
+		return;
+	// move the camera to Z target
+	this.camera.position.z += (this.cameraZTarget - this.camera.position.z) * dt * moveSpeed;
+	var mapCenterX = this.mapData.getWidth()/2;
+	var mapCenterY = this.mapData.getHeight()/2;
+	if (!x || !y) {
+		// average position of the players
+		var x = 0;
+		var y = 0;
+		for (let player of this.players) {
+			x += player.position.x;
+			y += player.position.y;
 		}
-		// limit the camera to the map
-		x = Math.min(Math.max(x, mapCenterX - maxDistFromCenter), mapCenterX + maxDistFromCenter);
-		y = Math.min(Math.max(y, mapCenterY - maxDistFromCenter), mapCenterY + maxDistFromCenter);
-
-		// slowly move the camera to the x, y
-		this.camera.position.x += (x - this.camera.position.x) * dt * moveSpeed;
-		this.camera.position.y += (y - this.camera.position.y) * dt * moveSpeed;
+		x /= this.players.length;
+		y /= this.players.length;
 	}
+	// limit the camera to the map
+	x = Math.min(Math.max(x, mapCenterX - maxDistFromCenter), mapCenterX + maxDistFromCenter);
+	y = Math.min(Math.max(y, mapCenterY - maxDistFromCenter), mapCenterY + maxDistFromCenter);
 
-	update(keysJustPressed) {
-		var dt = this.clock.getDelta();
-		this.particlesSystem.update(dt);
+	// slowly move the camera to the x, y
+	this.camera.position.x += (x - this.camera.position.x) * dt * moveSpeed;
+	this.camera.position.y += (y - this.camera.position.y) * dt * moveSpeed;
+}
+
+update(keysJustPressed) {
+	var dt = this.clock.getDelta();
+	this.particlesSystem.update(dt);
 
 		if (!this.spawnAnimation(dt)) {
 			for (let player of this.players) {

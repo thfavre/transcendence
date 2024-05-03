@@ -180,7 +180,7 @@ function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) 
 	function gameLoop() {
 		var dt = clock.getDelta();
 		// phsyics
-		physicsWorld.fixedStep(dt);
+		physicsWorld.step(dt);
 		if (constants.DEBUG)
 			cannonDebugger.update();
 

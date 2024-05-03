@@ -23,7 +23,7 @@ class PlayerCreator {
 		this.player.paddle.mesh.position.z = 230; // 230
 
 		this.fallSpeed = 0;
-		this.gravity = 9.8;
+		this.gravity = 400;
 
 
 		// this.keyUp = null;
@@ -141,7 +141,7 @@ class PlayerCreator {
 		this.scene.remove(this.textObj);
 		if (this.player.paddle.mesh.position.z > this.player.paddle.body.position.z)
 		{
-			this.player.paddle.mesh.position.z -= this.fallSpeed;
+			this.player.paddle.mesh.position.z -= this.fallSpeed * dt;
 			this.fallSpeed += this.gravity * dt;
 			return true;
 		}

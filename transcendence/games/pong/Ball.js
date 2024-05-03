@@ -26,9 +26,9 @@ export default class Ball {
 		);
 
 
-		this.moveSpeed = 3000; //3000
-		this.acceleration = 250;
-		this.maxMoveSpeed = 10000;
+		this.moveSpeed = 40; // initial speed
+		this.acceleration = 4; // acceleration per second
+		this.maxMoveSpeed = 180; // max speed (prevent the ball to move through the walls)
 
 		this.movingAngle = 0; // will be updated in the move function // TODO! change method of doing this
 
@@ -83,11 +83,11 @@ export default class Ball {
 		return false;
 	}
 
-	move(dt) {
+	move() {
 		// make sure the ball move at a constant speed
 		this.movingAngle = Math.atan2(this.body.velocity.y, this.body.velocity.x);
-		var xComposant = Math.cos(this.movingAngle) * this.moveSpeed * dt;
-		var yComposant = Math.sin(this.movingAngle) * this.moveSpeed * dt;
+		var xComposant = Math.cos(this.movingAngle) * this.moveSpeed;
+		var yComposant = Math.sin(this.movingAngle) * this.moveSpeed;
 		this.body.velocity.x = xComposant;
 		this.body.velocity.y = yComposant;
 		this.body.velocity.z = 0; // make sure the ball doesn't move up or down

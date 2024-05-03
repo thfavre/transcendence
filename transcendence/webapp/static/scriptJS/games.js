@@ -37561,9 +37561,9 @@ class Ball {
         this.mesh.add(model);
       }
     );
-    this.moveSpeed = 3e3;
-    this.acceleration = 250;
-    this.maxMoveSpeed = 1e4;
+    this.moveSpeed = 40;
+    this.acceleration = 4;
+    this.maxMoveSpeed = 180;
     this.movingAngle = 0;
     if (!startPositions || startPositions.length == 0)
       startPositions = [new Vector2(0, 1), new Vector2(0, -1), new Vector2(1, 0), new Vector2(-1, 0)];
@@ -37604,10 +37604,10 @@ class Ball {
       return true;
     return false;
   }
-  move(dt) {
+  move() {
     this.movingAngle = Math.atan2(this.body.velocity.y, this.body.velocity.x);
-    var xComposant = Math.cos(this.movingAngle) * this.moveSpeed * dt;
-    var yComposant = Math.sin(this.movingAngle) * this.moveSpeed * dt;
+    var xComposant = Math.cos(this.movingAngle) * this.moveSpeed;
+    var yComposant = Math.sin(this.movingAngle) * this.moveSpeed;
     this.body.velocity.x = xComposant;
     this.body.velocity.y = yComposant;
     this.body.velocity.z = 0;
@@ -38087,7 +38087,7 @@ class PlayerCreator {
     this.game.addPlayer(this.player);
     this.player.paddle.mesh.position.z = 230;
     this.fallSpeed = 0;
-    this.gravity = 9.8;
+    this.gravity = 400;
   }
   setText({ text, font = this.font, x = 0, y = 0, z = 0 }) {
     if (this.currentText == text)
@@ -38153,7 +38153,7 @@ class PlayerCreator {
   makePaddleFall(dt) {
     this.scene.remove(this.textObj);
     if (this.player.paddle.mesh.position.z > this.player.paddle.body.position.z) {
-      this.player.paddle.mesh.position.z -= this.fallSpeed;
+      this.player.paddle.mesh.position.z -= this.fallSpeed * dt;
       this.fallSpeed += this.gravity * dt;
       return true;
     }
@@ -38502,7 +38502,7 @@ function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback
   const clock = new Clock();
   function gameLoop() {
     var dt = clock.getDelta();
-    physicsWorld.fixedStep(dt);
+    physicsWorld.step(dt);
     if (DEBUG$1)
       cannonDebugger.update();
     if (!pongGame.update(dt, keysdown, keysJustPressed)) {

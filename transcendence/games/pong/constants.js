@@ -4,11 +4,6 @@ import * as THREE from 'three';
 // import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 
-
-
-
-export const FPS = 60;
-
 // export const SEGMENTS = 3; // number of players
 export const FIELD_DIAMETER = 130;
 
