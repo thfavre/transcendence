@@ -46,9 +46,16 @@ setTimeout(hideVideo, 1000);
 function	switchMenu(menuToShow, menuToRemove, url)
 {
 	console.log("Switching menu to", menuToShow.id);
+	// close running game
+	if (!forceStopGame)
+	{
+		forceStopGame = true;
+		console.log("The game has been stopped");
+	}
 	menuToShow.classList.remove("d-none");
 	menuToRemove.classList.add("d-none");
 	history.pushState({menu: menuToShow.id}, "", url);
+
 }
 
 newGameButton.addEventListener("click", () => switchMenu(newGameMenu, menuButtons, "/newGame"));
@@ -72,6 +79,11 @@ notFoundMenu.addEventListener("click", () => switchMenu(menuButtons, notFoundMen
 window.addEventListener("popstate", function(event)
 {
 	console.log("Historique modifié :")
+	if (!forceStopGame)
+	{
+		forceStopGame = true;
+		console.log("The game has been stopped");
+	}
 	hideAllMenus();
 	if (event.state !== null)
 	{
@@ -160,6 +172,7 @@ function createBackgroundSpots()
 
 function	backToMain()
 {
+	console.log("Back to main menu");
 	hideAllMenus();
 	menuButtons.classList.remove("d-none");
 	history.pushState({menu: "menuButtons"}, "", "/");

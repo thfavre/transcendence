@@ -15,9 +15,9 @@ function	launchExitSolo()
 	findExitMenu.classList.add('d-none');
 	findExitSoloIG.classList.remove('d-none');
 
-	if (window.gameEscape) {  // Check if function exists (avoid errors)
-		console.log("Starting Versus game with " + NumberLevels + " levels");
-	window.gameEscape(1, NumberLevels, 'solo', false, (tournement) => {
+	if (window.exitGame) {  // Check if function exists (avoid errors)
+		console.log("Starting SOLO game with " + NumberLevels + " levels");
+	window.exitGame(1, NumberLevels, false, 'solo', '#webglExitSolo', false, (tournement) => {
 		if (tournement.isOver)
 		{
 			console.log('SAVE THE SCORES here');
@@ -31,7 +31,7 @@ function	launchExitSolo()
 		}
 			});
 	} else {
-		console.error('gameEscape function not available.');
+		console.error('exitGame function not available.');
 	}
 }
 
@@ -50,9 +50,9 @@ function launchExitVersus()
 		updateModalMessage('exit_versus_modal');
 		return;
 	}
-	if (window.gameEscape) {  // Check if function exists (avoid errors)
+	if (window.exitGame) {  // Check if function exists (avoid errors)
 		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels");
- 		window.gameEscape(selectedPlayers, NumberLevels, 'tournament', false, (tournament) => {
+ 		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', '#webglExitVersus', false, (tournament) => {
 				if (tournament.isOver) {
 					console.log('SAVE THE SCORES here');
 					console.log('Tournament is over', tournament.scores);
@@ -61,7 +61,7 @@ function launchExitVersus()
 		findExitMenu.classList.add('d-none');
 		findExitVersusIG.classList.remove('d-none');
 	} else {
-		console.error('gameEscape function not available.');
+		console.error('exitGame function not available.');
 	}
 
 }

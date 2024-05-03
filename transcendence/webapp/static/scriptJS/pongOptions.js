@@ -56,22 +56,22 @@ function	launchPongVersus()
 		updateModalMessage('pong_versus_modal');
 		return;
 	}
-	if (window.gamePong) {  // Check if function exists (avoid errors)
-		console.log("Starting Pong game with ", selectedPlayers, " players and ", selectedAI, " AI");
-		var humanNames = [];
+	if (window.pongGame) {  // Check if function exists (avoid errors)
+		console.log("Starting Versus Pong game with ", selectedPlayers, " players and ", selectedAI, " AI");
+		var humanNames = []; // ! TODO get the main account name
 		for (let i = 1; i <= selectedPlayers; i++)
 		{
 			let playerName = "Guest " + i;
 			humanNames.push(playerName);
 		}
-		window.gamePong(humanNames, selectedAI, 'versus', false, (tournament) => {
+		window.pongGame(humanNames, selectedAI, 'versus', '#webglPongVesus', false, (tournament) => {
 				if (tournament.isOver) {
 					console.log('SAVE THE SCORES here');
 					console.log('Tournament is over', tournament.scores);
 				}
 			});
 	} else {
-		console.error('gamePong function not available.');
+		console.error('pongGame function not available.');
 	}
 
 	pongMenu.classList.add('d-none');
@@ -90,7 +90,25 @@ function	launchPongTournament()
 		updateModalMessage('pong_tournament_modal');
 		return;
 	}
-	selectPlayersNames(selectedPlayers);
+	// selectPlayersNames(selectedPlayers); // ! DO NOT WORK!!!!
+	if (window.pongGame) {  // Check if function exists (avoid errors)
+		console.log("Starting Tournament Pong game with ", selectedPlayers, " players");
+		var humanNames = [];
+		for (let i = 1; i <= selectedPlayers; i++)
+		{
+			let playerName = "Guest " + i;
+			humanNames.push(playerName);
+		}
+		window.pongGame(humanNames, 0, 'tournament', '#webglPongTournament', false, (tournament) => {
+				if (tournament.isOver) {
+					console.log('SAVE THE SCORES here');
+					console.log('Tournament is over', tournament.scores);
+				}
+			});
+
+	} else {
+		console.error('pongGame function not available.');
+	}
 
 	pongMenu.classList.add('d-none'); // TO MOVE - NOT THE RIGHT PLACE TO PUT IT
 	pongTournamentIG.classList.remove('d-none'); // TO MOVE - NOT THE RIGHT PLACE TO PUT IT

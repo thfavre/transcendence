@@ -111,7 +111,7 @@
 
 			<!-- Pong - Versus IG -->
 			<div id="pongVersusIG" class="container d-none">
-				<!-- <canvas class="rounded mx-auto d-block webgl-display" id="webgl"></canvas> -->
+				<canvas class="rounded mx-auto d-block webgl-display" id="webglPongVesus"></canvas>
 				<div class="d-flex justify-content-end">
 					<button id="backButtonPongVersus" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
 				</div>
@@ -119,7 +119,7 @@
 
 			<!-- Pong - Tournament IG -->
 			<div id="pongTournamentIG" class="container d-none">
-				<!-- <canvas class="rounded mx-auto d-block webgl-display" id="webgl"></canvas> -->
+				<canvas class="rounded mx-auto d-block webgl-display" id="webglPongTournament"></canvas>
 				<div class="d-flex justify-content-end">
 					<button id="backButtonPongTournament" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
 				</div>
@@ -184,7 +184,7 @@
 
 			<!-- Find the Exit - Solo IG -->
 			<div id="findExitSoloIG" class="container d-none">
-					<canvas class="rounded mx-auto d-block webgl-display" id="webgl"></canvas>
+					<canvas class="rounded mx-auto d-block webgl-display" id="webglExitSolo"></canvas>
 				<div class="d-flex justify-content-end">
 					<button id="backButtonFindExitSolo" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
 				</div>
@@ -192,7 +192,7 @@
 
 			<!-- Find the Exit - Versus IG -->
 			<div id="findExitVersusIG" class="container d-none">
-				<!-- <canvas class="rounded mx-auto d-block webgl-display" id="webgl"></canvas> -->
+				<canvas class="rounded mx-auto d-block webgl-display" id="webglExitVersus"></canvas>
 				<div class="d-flex justify-content-end">
 					<button id="backButtonFindExitVersus" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_btn"></button>
 				</div>
@@ -340,11 +340,12 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 	<script src="{% static '/scriptJS/effects.js' %}"></script>
 	<script src="{% static '/scriptJS/cursor.js' %}"></script>
-	<script src="{% static '/scriptJS/pongOptions.js' %}"></script>
 	<script src="{% static '/scriptJS/exitOptions.js' %}"></script>
+	<script src="{% static '/scriptJS/pongOptions.js' %}"></script>
 	<script src="{% static '/scriptJS/translation.js' %}"></script>
-	<script src="{% static '/scriptJS/exitGame.js' %}"></script>
-	<script src="{% static '/scriptJS/pongGame.js' %}"></script>
+	<!-- <script src="{% static '/scriptJS/pongGame.js' %}"></script> -->
+	<!-- <script src="{% static '/scriptJS/exitGame.js' %}"></script> -->
+	<script src="{% static '/scriptJS/games.js' %}"></script>
 	<script src="{% static '/scriptJS/login.js' %}"></script>
 	<script src="{% static '/scriptJS/history.js' %}"></script>
 </html>
