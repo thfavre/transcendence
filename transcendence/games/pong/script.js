@@ -59,23 +59,6 @@ export default function init(humanPlayersName, AIPlayerNb, gameMode="versus", se
 function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) {
 	// Canvas
 	const canvas = document.querySelector(selector);
-	// resize
-	// window.addEventListener( 'resize', onWindowResize, false );
-	// function onWindowResize(){
-	// 	const width = window.innerWidth;
-	// 	const height = window.innerHeight;
-	// 	console.log('resize', width, height, renderer);
-	// 	camera.aspect = width / height;
-	// 	camera.updateProjectionMatrix();
-	// 	renderer.setSize( width, height );
-	// 	composer.setSize(width, height);
-	// }
-
-	// Sizes
-	const sizes = {
-		width: 1000,
-		height: 800
-	}
 
 	// Scene
 	const scene = new THREE.Scene();
@@ -88,7 +71,7 @@ function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) 
 
 
 	// Camera
-	const camera = new THREE.PerspectiveCamera( 90, sizes.width / sizes.height, 0.1, 10000);
+	const camera = new THREE.PerspectiveCamera( 90, canvas.clientWidth / canvas.clientHeight, 0.1, 10000);
 	scene.add( camera );
 
 
@@ -107,7 +90,7 @@ function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) 
 	const composer = new EffectComposer(renderer);
 	composer.addPass(renderScene);
 	// bloom
-	const bloomPass = new UnrealBloomPass(new THREE.Vector2(sizes.width, sizes.height), 0.3, 0.08, 0.5);
+	const bloomPass = new UnrealBloomPass(new THREE.Vector2(canvas.clientWidth, canvas.clientHeight), 0.3, 0.08, 0.5);
 	composer.addPass(bloomPass);
 	// ouputPass
 	const outputPass = new OutputPass(scene, camera);
@@ -116,16 +99,25 @@ function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) 
 
 
 
-	// light
+	// resize
+	window.addEventListener("resize", onCanvasResize, false);
+  	function onCanvasResize() {
+		const width = canvas.clientWidth;
+		const height = canvas.clientHeight;
+		// update camera
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix();
+		// update bloom
+		bloomPass.setSize(width, height, false);
+		// update composer
+		composer.setSize(width, height);
+		// update outputPass
+		outputPass.setSize(width, height);
+		// update renderer
+		renderer.setSize(width, height, false);
+  	}
+  	onCanvasResize(); // call it once to set canvas size
 
-	// plane
-	// const planeGeometry = new THREE.BoxGeometry(FIELD_LENGTH, FIELD_WIDTH, 5, 1, 1, 1);
-	// const planeMaterial = new THREE.MeshPhongMaterial({ color: '#badc58' });
-	// const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-	// // plane.getVertexPosition(3, v);
-	// plane.translateY(0);
-	// scene.add(plane);
-	// plane.receiveShadow = true;
 
 
 

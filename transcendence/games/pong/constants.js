@@ -15,7 +15,7 @@ export const FIELD_DIAMETER = 130;
 
 export const SKIP_PLAYER_SELECTION = true; // HumanPlayers will move with w/s
 
-export const AI_VISION_DELAY =3; // The AI will see the ball every Xs
+export const AI_VISION_DELAY = 1; // The AI will see the ball every Xs
 
 export var DEBUG;
 export function setDebug(value) {
