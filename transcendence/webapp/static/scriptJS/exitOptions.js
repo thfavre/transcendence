@@ -49,7 +49,7 @@ function launchExitVersus()
 	if (window.exitGame) {  // Check if function exists (avoid errors)
 		const language = localStorage.getItem('language') || 'en';
 		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels in ", language, " language.");
- 		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', language, '#webglExitVersus', false, (tournament) => {
+ 		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', language, '#webglExitVersus', true, (tournament) => {
 				if (tournament.isOver) {
 					console.log('SAVE THE SCORES here');
 					console.log('Tournament is over', tournament.scores);

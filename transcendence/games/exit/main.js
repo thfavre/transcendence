@@ -113,11 +113,11 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, 
 	directionalLight.shadow.camera.far = 26;
 	directionalLight.shadow.camera.top = 40;
 	directionalLight.shadow.camera.bottom = -5;
-	directionalLight.shadow.camera.left = -2;
+	directionalLight.shadow.camera.left = -3;
 	directionalLight.shadow.camera.right = 60;
 	directionalLight.castShadow = true;
-	directionalLight.shadow.mapSize.width = 1024*2;
-	directionalLight.shadow.mapSize.height = 1024*2;
+	directionalLight.shadow.mapSize.width = 1024*1;
+	directionalLight.shadow.mapSize.height = 1024*1;
 	scene.add(directionalLight);
 	if (constants.DEBUG) {
 		scene.add(new THREE.CameraHelper(directionalLight.shadow.camera))

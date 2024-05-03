@@ -48,6 +48,9 @@ export default class Game {
 			powerup.delete();
 		}
 		this.particlesSystem.delete();
+		this.planeMesh.geometry.dispose();
+		this.planeMesh.material.dispose();
+		this.scene.remove(this.planeMesh);
 	}
 
 	defineCameraStartPos() {
@@ -73,7 +76,7 @@ export default class Game {
 
 		plane.receiveShadow = true;
 		this.scene.add(plane);
-
+		this.planeMesh = plane;
 	}
 
 	activateSpawnAnimation(duration=7) {
