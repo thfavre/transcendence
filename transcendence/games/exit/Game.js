@@ -11,7 +11,7 @@ import ParticlesSystem from './particles.js';
 
 
 export default class Game {
-	constructor(scene, camera, map, playersNb) {
+	constructor(scene, camera, map, playersNb, isPowerupsOn) {
 		this.scene = scene;
 		this.camera = camera;
 		this.mapData = new MapData(map.array);
@@ -22,6 +22,7 @@ export default class Game {
 		// this.activateSpawnAnimation();
 		this.createPlane(map.backgroundColor)
 		// powerups
+		this.isPowerupsOn = isPowerupsOn;
 		this.spawnPowerupsFrequency = 10; // seconds
 		this.spawnPowerupsTimer = 0;
 		this.allPowerups = [
@@ -219,6 +220,8 @@ export default class Game {
 	}
 
 	spawnPowerup() {
+		if (!this.isPowerupsOn)
+			return;
 		const pos = this.mapData.getRandomEmptyCell();
 		if (pos !== null) {
 			const PowerupClass = this.allPowerups[Math.floor(Math.random() * this.allPowerups.length)];

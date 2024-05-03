@@ -63,7 +63,13 @@ class PlayerCreator {
 	setText({text, font=this.font, x=0, y=0, z=0}) {
 		if (this.currentText == text)
 			return;
-		this.scene.remove(this.textObj);
+		if (this.textObj) {
+			this.textObj.traverse( function (child) {
+				if (child.geometry)
+					child.geometry.dispose();
+			} );
+			this.scene.remove(this.textObj);
+		}
 		this.textObj = createText({font: font, message: text});
 		this.textObj.position.x = x;
 		this.textObj.position.y = y;
@@ -78,8 +84,8 @@ class PlayerCreator {
 
 	askUpKey(keysJustPressed) {
 		this.setText({
-			text: "Player " + this.playerName + ", press a key to go UP",
-			x: 0, y: 22, z: 270
+			text: this.playerName + ", press a key to go UP",
+			x: 0, y: 22, z: 270,
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyDown && this.ifKeyValid(keysJustPressed[0]))
 		{
@@ -90,7 +96,7 @@ class PlayerCreator {
 
 	askDownKey(keysJustPressed) {
 		this.setText({
-			text: "Player " + this.playerName + ", press a key to go DOWN",
+			text: this.playerName + ", press a key to go DOWN",
 			x: 0, y: 22, z: 270
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyUp && this.ifKeyValid(keysJustPressed[0]))
@@ -103,7 +109,7 @@ class PlayerCreator {
 
 	askPaddleMaterial(keysJustPressed) {
 		this.setText({
-			text: "Player " + this.playerName +
+			text:this.playerName +
 					", choose your paddle color (" + String.fromCharCode(this.keyDown) + "/"+String.fromCharCode(this.keyUp) + ")",
 				x: 0, y: 26, z: 263});
 		// draw the previous and next paddle

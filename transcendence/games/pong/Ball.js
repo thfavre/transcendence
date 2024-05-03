@@ -5,7 +5,7 @@ import * as constants from './constants.js';
 
 
 export default class Ball {
-	constructor(scene, physicsWorld) {
+	constructor(scene, physicsWorld, startPositions) {
 		var radius = 4;
 		const geometry = new THREE.SphereGeometry(radius, 20, 14);
 		// no material
@@ -26,20 +26,23 @@ export default class Ball {
 		);
 
 
-		this.moveSpeed = 10000; //3000
+		this.moveSpeed = 3000; //3000
 		this.acceleration = 250;
-		this.maxMoveSpeed = 100000;
+		this.maxMoveSpeed = 10000;
 
 		this.movingAngle = 0; // will be updated in the move function // TODO! change method of doing this
 
 		// ---- Physics ----
+		if (!startPositions || startPositions.length == 0)
+			startPositions = [new THREE.Vector2(0, 1), new THREE.Vector2(0, -1), new THREE.Vector2(1, 0), new THREE.Vector2(-1, 0)];
+		var randomStartPosition = startPositions[Math.floor(Math.random()*startPositions.length)];
 		this.body = new CANNON.Body({
 			mass: 5,
 			shape: new CANNON.Sphere(radius),
 			position: new CANNON.Vec3(0, 0, radius),
 			// linearDamping: 0,
 			// angularDamping: .5,
-			velocity: new CANNON.Vec3(Math.random()-0.5, Math.random()-0.5, 0), // initial angle (will be set to a constant speed)
+			velocity: new CANNON.Vec3(randomStartPosition.x, randomStartPosition.y, 0), // initial angle (will be set to a constant speed)
 			material: new CANNON.Material({ friction: 1, restitution: 1 }),
 		});
 		physicsWorld.addBody(this.body);

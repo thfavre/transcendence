@@ -261,7 +261,13 @@ export default class Game {
 	}
 
 	createBall() {
-		return new Ball(this.scene, this.physicsWorld);
+		// will create the ball at the center of the field moving through one of the players
+		var playersPos = [];
+		this.players.forEach(player => {
+			if (player.health > 0)
+				playersPos.push(player.paddle.mesh.position);
+		});
+		return new Ball(this.scene, this.physicsWorld, playersPos);
 	}
 
 	deleteBall() {

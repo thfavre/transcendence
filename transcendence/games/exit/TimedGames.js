@@ -9,7 +9,7 @@ import { Menu } from './Menu.js';
 export var forceStopGame = false;
 
 export default class TimedGames {
-	constructor(scene, camera, font, gameToWin=2, playersNb=1) {
+	constructor(scene, camera, font, gameToWin=2, playersNb=1, isPowerupsOn=false) {
 		forceStopGame = false;
 		this.scene = scene;
 		this.clock = new THREE.Clock();
@@ -17,6 +17,7 @@ export default class TimedGames {
 		this.font = font;
 		this.playersNb = playersNb;
 		this.gameToWin = gameToWin; // number of games to win
+		this.isPowerupsOn = isPowerupsOn;
 		this.currentGameNb = 0;
 		this.isOver = false;
 		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb});
@@ -36,7 +37,7 @@ export default class TimedGames {
 			this.allMaps = maps.tournamentMap;
 		}
 		// randomTournamentMap = maps.speedySquare; // ! TODO remove
-		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb, this.font);
+		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb, this.isPowerupsOn);
 	}
 
 	destroyGame() {
