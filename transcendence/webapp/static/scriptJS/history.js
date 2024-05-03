@@ -18,20 +18,54 @@
 // 	});
 // });
 
-// Call update functions when the page loads
-window.onload = function() {
-    updatePongVersusHistory();
-    updatePongTournamentHistory();
-    updateExitSoloHistory();
-    updateExitVersusHistory();
-};
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Bind tab click events to update functions
-    document.getElementById('jeu1-tab').addEventListener('click', updatePongVersusHistory);
-    document.getElementById('jeu2-tab').addEventListener('click', updatePongTournamentHistory);
-    document.getElementById('jeu3-tab').addEventListener('click', updateExitSoloHistory);
-    document.getElementById('jeu4-tab').addEventListener('click', updateExitVersusHistory);
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Bind tab click events to update functions
+//     document.getElementById('jeu1-tab').addEventListener('click', updatePongVersusHistory);
+//     document.getElementById('jeu2-tab').addEventListener('click', updatePongTournamentHistory);
+//     document.getElementById('jeu3-tab').addEventListener('click', updateExitSoloHistory);
+//     document.getElementById('jeu4-tab').addEventListener('click', updateExitVersusHistory);
+// });
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Get all the tab buttons
+    const tabButtons = document.querySelectorAll('.nav-link');
+
+    // Loop through each tab button and add event listener
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Get the target tab pane ID
+            const targetId = this.getAttribute('data-bs-target');
+
+            // Call the corresponding update function based on the target ID
+            if (targetId === '#historyPongVersus') {
+                updatePongVersusHistory();
+            } else if (targetId === '#historyPongTournament') {
+                updatePongTournamentHistory();
+            } else if (targetId === '#historyExitSolo') {
+                updateExitSoloHistory();
+            } else if (targetId === '#historyExitVersus') {
+                updateExitVersusHistory();
+            }
+        });
+    });
+
+    // Add event listener for Bootstrap's tab show event
+    document.querySelectorAll('.nav-link').forEach(function(tab) {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            const targetId = e.target.getAttribute('data-bs-target');
+            if (targetId === '#historyPongVersus') {
+                updatePongVersusHistory();
+            } else if (targetId === '#historyPongTournament') {
+                updatePongTournamentHistory();
+            } else if (targetId === '#historyExitSolo') {
+                updateExitSoloHistory();
+            } else if (targetId === '#historyExitVersus') {
+                updateExitVersusHistory();
+            }
+        });
+    });
 });
 
 
@@ -47,29 +81,29 @@ document.addEventListener('DOMContentLoaded', function() {
 // 	})
 // }
 
-// function	updateHistoryTables(data)
-// {
-// 	const	gamesID = ['pongVersus', 'pongTournament', 'exitSolo', 'exitVersus']; // to adapt to the correct gameID
-// 	console.log("updateHistoryTables: ", data);
+function	updateHistoryTables(data)
+{
+	const	gamesID = ['pongVersus', 'pongTournament', 'exitSolo', 'exitVersus']; // to adapt to the correct gameID
+	console.log("updateHistoryTables: ", data);
 
-// 	gamesID.forEach(gameID => {
-// 		switch(gameID)
-// 		{
-// 			case 'PongVersus':
-// 				updatePongVersusHistory(data);
-// 				break;
-// 			case 'PongTournament':
-// 				updatePongTournamentHistory(data);
-// 				break;
-// 			case 'ExitSolo':
-// 				updateExitSoloHistory(data);
-// 				break;
-// 			case 'ExitVersus':
-// 				updateExitVersusHistory(data);
-// 				break;
-// 		}
-// 	});
-// }
+	gamesID.forEach(gameID => {
+		switch(gameID)
+		{
+			case 'PongVersus':
+				updatePongVersusHistory(data);
+				break;
+			case 'PongTournament':
+				updatePongTournamentHistory(data);
+				break;
+			case 'ExitSolo':
+				updateExitSoloHistory(data);
+				break;
+			case 'ExitVersus':
+				updateExitVersusHistory(data);
+				break;
+		}
+	});
+}
 
 
 // function updateTable(mode, data, columns)

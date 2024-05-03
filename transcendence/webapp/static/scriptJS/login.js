@@ -52,10 +52,7 @@ function	registerUsernameModal()
 		})
 		.then(response => {
 			if (response.ok) {
-				console.log("Username if response OK: ", username);
 				localStorage.setItem('userAlias', username);
-				getGameHistory(username, 'ES');
-				// getLastGame(username);
 				getDatabase();
 				usernameModal.hide();
 				usernameForm.removeEventListener('submit',handleFormSubmit);
