@@ -20,7 +20,6 @@ function	launchExitSolo()
 	window.exitGame(1, NumberLevels, false, 'solo', '#webglExitSolo', false, (tournement) => {
 		if (tournement.isOver)
 		{
-			console.log('SAVE THE SCORES here');
 			console.log('Solo game is over, time :', tournement.time);
 			let Result = {
 				username: localStorage.getItem('userAlias'),
@@ -42,21 +41,32 @@ function launchExitVersus()
 	let	playerSelect = document.getElementById("exitVersusPlayers");
 	let	levels = document.getElementById("exitVersusLevel");
 
-	let	NumberLevels = parseInt(levels.value);
+	let	FirstTo = parseInt(levels.value);
 	let	selectedPlayers = parseInt(playerSelect.value);
 
-	if (isNaN(NumberLevels) || isNaN(selectedPlayers))
+	// 1 if the players won, 0 if he lost
+	function isFirst(scores, FirstTo)
+	{
+		if (scores[0] === FirstTo)
+			return 1;
+		return 0;
+	}
+
+	if (isNaN(FirstTo) || isNaN(selectedPlayers))
 	{
 		updateModalMessage('exit_versus_modal');
 		return;
 	}
 	if (window.exitGame) {  // Check if function exists (avoid errors)
-		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels");
- 		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', '#webglExitVersus', false, (tournament) => {
-				if (tournament.isOver) {
-					console.log('SAVE THE SCORES here');
-					console.log('Tournament is over', tournament.scores);
+		console.log("Starting Versus game with ", selectedPlayers, " players and ", FirstTo, " levels");
+ 		window.exitGame(selectedPlayers, FirstTo, false, 'tournament', '#webglExitVersus', false, (tournament) => {
+				let Result = {
+					username: localStorage.getItem('userAlias'),
+					game_id: 'EV',
+					position: [isFirst(tournament.scores, FirstTo), FirstTo],
+					bo_type: FirstTo
 				}
+				sendGameData(Result);
 			});
 		findExitMenu.classList.add('d-none');
 		findExitVersusIG.classList.remove('d-none');

@@ -34601,7 +34601,7 @@ class Line2 extends LineSegments2 {
   }
 }
 const FIELD_DIAMETER = 130;
-const AI_VISION_DELAY = 3;
+const AI_VISION_DELAY = 1;
 var DEBUG;
 function setDebug(value) {
   DEBUG = value;
