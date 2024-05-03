@@ -34567,7 +34567,7 @@ class Line2 extends LineSegments2 {
   }
 }
 const FIELD_DIAMETER = 130;
-const AI_VISION_DELAY = 3;
+const AI_VISION_DELAY = 1;
 var DEBUG$1;
 function setDebug(value) {
   DEBUG$1 = value;
@@ -38434,17 +38434,13 @@ function init$1(humanPlayersName, AIPlayerNb, gameMode = "versus", selector, deb
 }
 function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) {
   const canvas = document.querySelector(selector);
-  const sizes = {
-    width: 1e3,
-    height: 800
-  };
   const scene = new Scene();
   scene.background = new Color("#000000");
   if (DEBUG$1) {
     const axesHelper = new AxesHelper(10);
     scene.add(axesHelper);
   }
-  const camera = new PerspectiveCamera(90, sizes.width / sizes.height, 0.1, 1e4);
+  const camera = new PerspectiveCamera(90, canvas.clientWidth / canvas.clientHeight, 0.1, 1e4);
   scene.add(camera);
   const renderer = new WebGLRenderer({ canvas, antialias: true });
   renderer.shadowMap.enabled = true;
@@ -38455,10 +38451,26 @@ function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback
   const renderScene = new RenderPass(scene, camera);
   const composer = new EffectComposer(renderer);
   composer.addPass(renderScene);
-  const bloomPass = new UnrealBloomPass(new Vector2(sizes.width, sizes.height), 0.3, 0.08, 0.5);
+  const bloomPass = new UnrealBloomPass(new Vector2(canvas.clientWidth, canvas.clientHeight), 0.3, 0.08, 0.5);
   composer.addPass(bloomPass);
   const outputPass = new OutputPass(scene, camera);
   composer.addPass(outputPass);
+  window.addEventListener("resize", onCanvasResize, false);
+  function onCanvasResize() {
+    var width = canvas.clientWidth;
+    var height = canvas.clientHeight;
+    if (width == 0 || height == 0) {
+      width = 1e3;
+      height = 800;
+    }
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    bloomPass.setSize(width, height, false);
+    composer.setSize(width, height);
+    outputPass.setSize(width, height);
+    renderer.setSize(width, height, false);
+  }
+  onCanvasResize();
   const physicsWorld = new World({
     gravity: new Vec3(0, 0, 0),
     frictionGravity: 0,
@@ -40245,17 +40257,13 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debu
     console.log("Debug mode");
   }
   const canvas = document.querySelector(selector);
-  const sizes = {
-    width: 1e3,
-    height: 800
-  };
   const scene = new Scene();
   scene.background = new Color("#444444");
   if (DEBUG) {
     const axesHelper = new AxesHelper(10);
     scene.add(axesHelper);
   }
-  const camera = new PerspectiveCamera(90, sizes.width / sizes.height, 0.1, 300);
+  const camera = new PerspectiveCamera(90, canvas.clientWidth / canvas.clientHeight, 0.1, 300);
   scene.add(camera);
   if (DEBUG)
     camera.position.z = 40;
@@ -40263,6 +40271,18 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debu
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = VSMShadowMap;
   renderer.setPixelRatio(window.devicePixelRatio);
+  function onCanvasResize() {
+    var width = canvas.clientWidth;
+    var height = canvas.clientHeight;
+    if (width == 0 || height == 0) {
+      width = 1e3;
+      height = 800;
+    }
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false);
+  }
+  onCanvasResize();
   const ambientLight = new AmbientLight(16777215, ambientLightIntensity);
   scene.add(ambientLight);
   var directionalLight = new DirectionalLight("#ffffff", directionalLightIntensity);

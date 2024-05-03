@@ -277,8 +277,8 @@ body
 
 .webgl-display
 {
-	max-width: 1000px;
-	max-height: 800px;
+	/* max-width: 1000px; */
+	/* max-height: 800px; */
 	width: 100%;
 	height: auto;
 	border: 3px solid #3CD6EB;

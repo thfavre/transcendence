@@ -29405,7 +29405,7 @@ function main(playersNb, gameToWin, gameMode, selector, font, debug, callback) {
     height: 800
   };
   const scene = new Scene();
-  scene.background = new Color("#444444");
+  scene.background = new Color("#ff00000");
   if (DEBUG) {
     const axesHelper = new AxesHelper(10);
     scene.add(axesHelper);
