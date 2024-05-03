@@ -17,8 +17,9 @@ function	launchExitSolo()
 	findExitSoloIG.classList.remove('d-none');
 
 	if (window.exitGame) {  // Check if function exists (avoid errors)
-		console.log("Starting SOLO game with " + NumberLevels + " levels");
- 		window.exitGame(1, NumberLevels, false, 'solo', '#webglExitSolo', false, (tournement) => {
+		const language = localStorage.getItem('language') || 'en';
+		console.log("Starting SOLO game with " + NumberLevels + " levels in " + language + " language.");
+ 		window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (tournement) => {
 				if (tournement.isOver)
 				{
 					console.log('SAVE THE SCORES here');
@@ -46,8 +47,9 @@ function launchExitVersus()
 		return;
 	}
 	if (window.exitGame) {  // Check if function exists (avoid errors)
-		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels");
- 		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', '#webglExitVersus', false, (tournament) => {
+		const language = localStorage.getItem('language') || 'en';
+		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels in ", language, " language.");
+ 		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', language, '#webglExitVersus', false, (tournament) => {
 				if (tournament.isOver) {
 					console.log('SAVE THE SCORES here');
 					console.log('Tournament is over', tournament.scores);

@@ -25,6 +25,11 @@ function	registerUsernameModal()
 
 function	disconnectUser()
 {
+    if (!forceStopGame)
+	{
+		forceStopGame = true;
+		console.log("The game has been stopped");
+	}
 	localStorage.removeItem('userAlias');
 	username = '';
 	route();

@@ -3,17 +3,19 @@ import * as constants from './constants.js';
 import createText from './createText.js';
 
 import {presets} from './Player.js';
+import translation from './languages.js';
 
 
 
 
 export class Menu {
-	constructor({scene, camera, renderer, font, playersNb=3}) {
+	constructor({scene, camera, renderer, font, playersNb=3, language='en'}) {
 		this.scene = scene;
 		this.camera = camera;
 		this.renderer = renderer;
 		this.playersNb = playersNb;
 		this.font = font;
+		this.language = language;
 		this.menu = new THREE.Object3D();
 		this.scene.add(this.menu);
 		this.yPos = -18;
@@ -25,7 +27,7 @@ export class Menu {
 		const title = createText({font: this.font, message: constants.NAME, size: 5, depth: 1, frontColor: '#ffffff', sideColor: '#000000'});
 		title.position.y = this.yPos;
 		this.menu.add(title);
-		const start = createText({font: this.font, message: 'Press Enter to start', size: 2, depth: 0.5, frontColor: '#ffffff', sideColor: '#000000'});
+		const start = createText({font: this.font, message: translation['enterToStart'][this.language], size: 1.7, depth: 0.5, frontColor: '#ffffff', sideColor: '#000000'});
 		start.position.x = -300;
 		this.menu.add(start);
 		var minYPos = this.createPlayersKeys();
@@ -35,7 +37,7 @@ export class Menu {
 
 	createPlayersKeys() {
 		var ySpace = 3;
-		var text = createText({font: this.font, message: 'Keys :', size: 2.2, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
+		var text = createText({font: this.font, message: translation['keys'][this.language], size: 2.2, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
 		text.position.y = this.yPos - 6;
 		text.position.x = -50;
 		this.menu.add(text);

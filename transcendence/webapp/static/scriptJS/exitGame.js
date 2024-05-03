@@ -15645,6 +15645,12 @@ class WebXRController {
     return this;
   }
   disconnect(inputSource) {
+    console.log("disconnect")
+    if (!forceStopGame)
+	{
+		forceStopGame = true;
+		console.log("The game has been stopped");
+	}
     this.dispatchEvent({ type: "disconnected", data: inputSource });
     if (this._targetRay !== null) {
       this._targetRay.visible = false;

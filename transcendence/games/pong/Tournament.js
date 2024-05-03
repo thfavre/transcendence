@@ -4,21 +4,23 @@ import HumanPlayer from './HumanPlayer.js';
 import createText from './createText.js';
 import * as constants from './constants.js';
 import Menu from './Menu.js';
+import translation from './languages.js';
+
 
 export var forceStopGame = false;
 
 export default class Tournament {
-	constructor(scene, physicsWorld, camera, font, humanPlayersName) {
+	constructor(scene, physicsWorld, camera, font, humanPlayersName, language) {
 		this.scene = scene;
 		this.physicsWorld = physicsWorld;
 		this.camera = camera;
 		this.realPlayersNb = humanPlayersName.length;
-
 		this.game = new Game(scene, physicsWorld, camera, humanPlayersName.length, 0);
 		// super(scene, physicsWorld, camera, humanPlayersName.length, 0);
 		forceStopGame = false;
 		this.font = font;
-		this.menu = new Menu(scene, camera, font, this.game, humanPlayersName, 0);
+		this.language = language;
+		this.menu = new Menu(scene, camera, font, this.game, humanPlayersName, 0, language);
 
 		this.betweenRoundTime = 5; // time between rounds [s]
 		// this.showText(null);
@@ -54,7 +56,7 @@ export default class Tournament {
 	}
 
 	createNewGame(excludePlayer) {
-		this.showText({text: excludePlayer.name + " is out!", y:constants.FIELD_DIAMETER/2+10});
+		this.showText({text: excludePlayer.name + translation['playerOut'][this.language], y:constants.FIELD_DIAMETER/2+10});
 		var players = this.game.players.filter((player) => player != excludePlayer);
 		this.realPlayersNb = players.length;
 		this.game.delete()
@@ -87,10 +89,10 @@ export default class Tournament {
 			var winner = this.game.players.filter((player) => player.health > 0)[0];
 			if (winner) {
 				this.winner = winner;
-				this.showText({text:winner.name + " wins! (Press Enter to finish)", size:8});
+				this.showText({text:winner.name + translation['winAndContinue'][this.language], size:8});
 			}
 			else
-				this.showText({text:"You lost against ... Nobody!? (Press Enter to finish)", size:6});
+				this.showText({text: translation['lostAgainstNobody'][this.language], size:6});
 
 			return
 		}

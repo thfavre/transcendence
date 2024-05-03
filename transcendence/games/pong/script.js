@@ -42,21 +42,21 @@ function loadFont(e) {
 }
 
 // load fonts and then start the game
-export default function init(humanPlayersName, AIPlayerNb, gameMode="versus", selector, debug=false, callback) {
+export default function init(humanPlayersName, AIPlayerNb, gameMode="versus", language='en', selector='#webgl', debug=false, callback) {
 	constants.setDebug(debug);
 	Promise.all([loadFont(), /* Load other assets here */])
   		.then((values) => {
     		const font = values[0]; // Access the loaded font
 
     		// Start your game logic here
-			main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback);
+			main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, callback);
   		})
   		.catch((error) => {
     		console.error('Error loading font or assets:', error);
 		});
 }
 
-function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) {
+function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, callback) {
 	// Canvas
 	const canvas = document.querySelector(selector);
 
@@ -168,9 +168,9 @@ function main(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) 
 
 	// ------- Creation
 	if (gameMode == 'versus')
-		var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
+		var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language);
 	else if (gameMode == 'tournament')
-		var pongGame = new Tournament(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
+		var pongGame = new Tournament(scene, physicsWorld, camera, font, humanPlayersName, language);
 	else
 		throw new Error('Unknown game mode: ' + gameMode, 'Available modes are: versus, tournament');
 	// 	menu = new Menu(scene, physicsWorld, camera, pongGame, font);

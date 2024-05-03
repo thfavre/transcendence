@@ -1,4 +1,4 @@
- import * as THREE from 'three';
+import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import AIPlayer from './AIPlayer.js';
 import Ball from './Ball.js';
@@ -262,12 +262,12 @@ export default class Game {
 
 	createBall() {
 		// will create the ball at the center of the field moving through one of the players
-		var playersPos = [];
+		var humamPlayersPos = [];
 		this.players.forEach(player => {
-			if (player.health > 0)
-				playersPos.push(player.paddle.mesh.position);
+			if (player.health > 0 && !(player instanceof AIPlayer))
+			humamPlayersPos.push(player.paddle.mesh.position);
 		});
-		return new Ball(this.scene, this.physicsWorld, playersPos);
+		return new Ball(this.scene, this.physicsWorld, humamPlayersPos);
 	}
 
 	deleteBall() {

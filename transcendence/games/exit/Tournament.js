@@ -4,22 +4,25 @@ import * as maps from './maps/maps.js';
 import * as constants from './constants.js';
 import createText from './createText.js';
 import { Menu } from './Menu.js';
+import translation from './languages.js';
+
 
 
 export var forceStopGame = false;
 
 export default class Tournament {
-	constructor(scene, camera, font, gameToWin=2, playersNb=3, isPowerupsOn=true) {
+	constructor(scene, camera, font, gameToWin=2, playersNb=3, isPowerupsOn=true, language='en') {
 		forceStopGame = false;
 		this.scene = scene;
 		this.clock = new THREE.Clock();
 		this.camera = camera;
 		this.font = font;
+		this.language = language;
 		this.playersNb = playersNb;
 		this.gameToWin = gameToWin; // number of games to win
 		this.isPowerupsOn = isPowerupsOn;
 		this.isOver = false;
-		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb});
+		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb, language: language});
 		this.allMaps = maps.tournamentMap;
 		// this.level = new Level(scene, mapArray, playersNb);
 		this.scores = []
@@ -116,7 +119,7 @@ export default class Tournament {
 		}
 	}
 
-	showContinueText(winner, text='Press Enter', zOffset=1.5) {
+	showContinueText(winner, text=translation['pressEnter'][this.language], zOffset=1.5) {
 		if (this.helperText) {
 			this.helperText.traverse( function (child) {
 				if (child.geometry)
@@ -134,7 +137,7 @@ export default class Tournament {
 	}
 
 	winScreen(dt) {
-		this.showContinueText(this.game.winner, 'Press Enter to finish', 2);
+		this.showContinueText(this.game.winner, translation['gameOver'][this.language], 2);
 		this.game.particlesSystem.update(dt);
 		for (let player of this.game.players) {
 			player.update(dt, [], this.game.mapData, this.game.powerups, false);

@@ -37,20 +37,20 @@ function loadFont(e) {
 
 
 // load fonts and then start the game
-export default function init(playersNb, gameToWin, isPowerupsOn=true, gameMode="tournament", selector, debug=false, callback) {
+export default function init(playersNb, gameToWin, isPowerupsOn=true, gameMode="tournament", language='en', selector='#webgl', debug=false, callback) {
 	Promise.all([loadFont(), /* Load other assets here */])
   		.then((values) => {
     		const font = values[0]; // Access the loaded font
 
     		// Start your game logic here
-			main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debug, callback);
+			main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, font, debug, callback);
   		})
   		.catch((error) => {
     		console.error('Error loading font or assets:', error);
 		});
 }
 
-function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debug, callback) {
+function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, font, debug, callback) {
 	constants.setDegub(debug);
 	if (constants.DEBUG) {
 		console.log('Debug mode');
@@ -140,9 +140,9 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debu
 	// Creation
 	var game;
 	if (gameMode == 'tournament') {
-		game = new Tournament(scene, camera, font, gameToWin, playersNb, isPowerupsOn);
+		game = new Tournament(scene, camera, font, gameToWin, playersNb, isPowerupsOn, language);
 	} else if (gameMode == 'solo') {
-		game = new TimedGames(scene, camera, font, gameToWin, 1, isPowerupsOn);
+		game = new TimedGames(scene, camera, font, gameToWin, 1, isPowerupsOn, language);
 	} else {
 		console.error('Unknown game mode', gameMode, 'Choose between "tournament" and "solo"');
 		return;

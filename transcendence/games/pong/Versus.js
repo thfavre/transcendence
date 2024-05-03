@@ -4,15 +4,18 @@ import HumanPlayer from './HumanPlayer.js';
 import createText from './createText.js';
 import * as constants from './constants.js';
 import Menu from './Menu.js';
+import translation from './languages.js';
+
 
 export var forceStopGame = false;
 
 export default class Versus extends Game {
-	constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb) {
+	constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language) {
 		forceStopGame = false;
 		super(scene, physicsWorld, camera, humanPlayersName.length, AIPlayerNb);
 		this.font = font;
-		this.menu = new Menu(scene, camera, font, this, humanPlayersName, AIPlayerNb);
+		this.language = language;
+		this.menu = new Menu(scene, camera, font, this, humanPlayersName, AIPlayerNb, language);
 		// this.createNewRound();
 		// camera.position.z = 100;
 	}
@@ -58,13 +61,13 @@ export default class Versus extends Game {
 			for (let player of this.players) {
 				if (player.health > 0) {
 					if (player instanceof AIPlayer) {
-						var text = "You lost against the AI...";
+						var text = translation['lostAgainstAI'][this.language];
 					} else
-						var text = player.name + " wins!";
+						var text = player.name + " " + translation['won'][this.language];
 					var winnerText = createText({font: this.font, message: text, size: 8, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
 					winnerText.position.z = 8;
 					this.scene.add(winnerText);
-					var continueText = createText({font: this.font, message: "Press Enter to continue", size: 6, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
+					var continueText = createText({font: this.font, message: translation['pressEnterToContinue'][this.language], size: 6, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
 					continueText.position.z = 8;
 					continueText.position.y = -16;
 					this.scene.add(continueText);

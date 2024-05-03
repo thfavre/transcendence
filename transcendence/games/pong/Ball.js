@@ -54,7 +54,6 @@ export default class Ball {
 		// var axe = new THREE.AxesHelper(10);
 		// axe.renderOrder = 2;
 		// this.mesh.add(axe);
-
 	}
 
 	drawMovingVector() {

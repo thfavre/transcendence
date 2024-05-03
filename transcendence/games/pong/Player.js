@@ -20,7 +20,7 @@ export default class Player {
 		this.isBallInGoal = {a: false}; // ! TODO find a better way to do this (pass by reference)
 		this.createGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, this.isBallInGoal);
 
-		this.health = 3;
+		this.health = 1;
 		this.createHealthMeshes();
 	}
 

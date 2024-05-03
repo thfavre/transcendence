@@ -57,14 +57,15 @@ function	launchPongVersus()
 		return;
 	}
 	if (window.pongGame) {  // Check if function exists (avoid errors)
-		console.log("Starting Versus Pong game with ", selectedPlayers, " players and ", selectedAI, " AI");
+		language = localStorage.getItem('language') || 'en';
+		console.log("Starting Versus Pong game with ", selectedPlayers, " players and ", selectedAI, " AI" + " in ", language, " language.");
 		var humanNames = []; // ! TODO get the main account name
 		for (let i = 1; i <= selectedPlayers; i++)
 		{
 			let playerName = "Guest " + i;
 			humanNames.push(playerName);
 		}
-		window.pongGame(humanNames, selectedAI, 'versus', '#webglPongVesus', false, (tournament) => {
+		window.pongGame(humanNames, selectedAI, 'versus', language, '#webglPongVesus', false, (tournament) => {
 				if (tournament.isOver) {
 					console.log('SAVE THE SCORES here');
 					console.log('Tournament is over', tournament.scores);
@@ -92,14 +93,15 @@ function	launchPongTournament()
 	}
 	// selectPlayersNames(selectedPlayers); // ! DO NOT WORK!!!!
 	if (window.pongGame) {  // Check if function exists (avoid errors)
-		console.log("Starting Tournament Pong game with ", selectedPlayers, " players");
+		language = localStorage.getItem('language') || 'en';
+		console.log("Starting Tournament Pong game with ", selectedPlayers, " players in ", language, " language.");
 		var humanNames = [];
 		for (let i = 1; i <= selectedPlayers; i++)
 		{
 			let playerName = "Guest " + i;
 			humanNames.push(playerName);
 		}
-		window.pongGame(humanNames, 0, 'tournament', '#webglPongTournament', false, (tournament) => {
+		window.pongGame(humanNames, 0, 'tournament', language, '#webglPongTournament', false, (tournament) => {
 				if (tournament.isOver) {
 					console.log('SAVE THE SCORES here');
 					console.log('Tournament is over', tournament.scores);

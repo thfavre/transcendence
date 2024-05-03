@@ -37324,7 +37324,7 @@ let Player$1 = class Player {
     this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
     this.isBallInGoal = { a: false };
     this.createGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, this.isBallInGoal);
-    this.health = 3;
+    this.health = 1;
     this.createHealthMeshes();
   }
   delete() {
@@ -37930,12 +37930,12 @@ let Game$1 = class Game {
     this.players.push(player);
   }
   createBall() {
-    var playersPos = [];
+    var humamPlayersPos = [];
     this.players.forEach((player) => {
-      if (player.health > 0)
-        playersPos.push(player.paddle.mesh.position);
+      if (player.health > 0 && !(player instanceof AIPlayer))
+        humamPlayersPos.push(player.paddle.mesh.position);
     });
-    return new Ball(this.scene, this.physicsWorld, playersPos);
+    return new Ball(this.scene, this.physicsWorld, humamPlayersPos);
   }
   deleteBall() {
     this.scene.remove(this.ball.mesh);
@@ -38076,13 +38076,82 @@ function createText$1({
   textGroup.add(mesh);
   return textGroup;
 }
+const translation$1 = {
+  // ------- Menu -------
+  // ask keys / paddle
+  "askKeyUp": {
+    "en": ", press the key to move up",
+    "fr": ", appuyez sur la touche pour monter",
+    "de": ", drücken Sie die Taste, um nach oben zu bewegen"
+  },
+  "askKeyDown": {
+    "en": ", press the key to move down",
+    "fr": ", appuyez sur la touche pour descendre",
+    "de": ", drücken Sie die Taste, um nach unten zu bewegen"
+  },
+  "askPaddleSkin": {
+    "en": ", choose your paddle",
+    "fr": ", choisissez votre raquette",
+    "de": ", wählen Sie Ihren Schläger"
+  },
+  // keys name
+  "directionalKeyUp": {
+    "en": "UP",
+    "fr": "HAUT",
+    "de": "OBEN"
+  },
+  "directionalKeyDown": {
+    "en": "DOWN",
+    "fr": "BAS",
+    "de": "UNTEN"
+  },
+  // ------- Versus -------
+  // lost
+  "lostAgainstAI": {
+    "en": "You lost against the AI...",
+    "fr": "Vous avez perdu contre l'IA...",
+    "de": "Sie haben gegen die KI verloren..."
+  },
+  // win
+  "won": {
+    "en": "wins!",
+    "fr": "gagne!",
+    "de": "gewinnt!"
+  },
+  //continue
+  "pressEnterToContinue": {
+    "en": "Press ENTER to continue",
+    "fr": "Appuyez sur ENTRER pour continuer",
+    "de": "Drücken Sie die Eingabetaste, um fortzufahren"
+  },
+  // ------- Tournament -------
+  "playerOut": {
+    "en": " is out!",
+    "fr": " est mort!",
+    "de": " ist raus!"
+  },
+  // ------- Versus & Tournament -------
+  // win
+  "winAndContinue": {
+    "en": " wins! (Press Enter to finish)",
+    "fr": " gagne! (Appuyez sur Entrer pour terminer)",
+    "de": " gewinnt! (Drücken Sie die Eingabetaste, um zu beenden)"
+  },
+  // easter egg lost
+  "lostAgainstNobody": {
+    "en": "You lost against ... Nobody!? (Press Enter to finish)",
+    "fr": "Vous avez perdu contre ... Personne!? (Appuyez sur Entrer pour terminer)",
+    "de": "Sie haben verloren gegen ... Niemand!? (Drücken Sie die Eingabetaste, um zu beenden)"
+  }
+};
 class PlayerCreator {
-  constructor(scene, camera, game, playerNb, playerName, font) {
+  constructor(scene, camera, game, playerNb, playerName, font, language) {
     this.scene = scene;
     this.camera = camera;
     this.game = game;
     this.playerName = playerName;
     this.font = font;
+    this.language = language;
     this.player = this.game.createHumanPlayer(playerNb, playerName);
     this.game.addPlayer(this.player);
     this.player.paddle.mesh.position.z = 230;
@@ -38111,7 +38180,7 @@ class PlayerCreator {
   }
   askUpKey(keysJustPressed) {
     this.setText({
-      text: this.playerName + ", press a key to go UP",
+      text: this.playerName + translation$1["askKeyUp"][this.language],
       x: 0,
       y: 22,
       z: 270
@@ -38123,7 +38192,7 @@ class PlayerCreator {
   }
   askDownKey(keysJustPressed) {
     this.setText({
-      text: this.playerName + ", press a key to go DOWN",
+      text: this.playerName + translation$1["askKeyDown"][this.language],
       x: 0,
       y: 22,
       z: 270
@@ -38134,8 +38203,10 @@ class PlayerCreator {
     }
   }
   askPaddleMaterial(keysJustPressed) {
+    const keyDownStr = this.keyDown == 40 ? translation$1["directionalKeyDown"][this.language] : String.fromCharCode(this.keyDown);
+    const keyUpStr = this.keyUp == 38 ? translation$1["directionalKeyUp"][this.language] : String.fromCharCode(this.keyUp);
     this.setText({
-      text: this.playerName + ", choose your paddle color (" + String.fromCharCode(this.keyDown) + "/" + String.fromCharCode(this.keyUp) + ")",
+      text: this.playerName + translation$1["askPaddleSkin"][this.language] + " (" + keyUpStr + "/" + keyDownStr + ")",
       x: 0,
       y: 26,
       z: 263
@@ -38173,11 +38244,12 @@ class PlayerCreator {
   }
 }
 let Menu$1 = class Menu {
-  constructor(scene, camera, font, game, humanPlayersName, AIPlayerNb) {
+  constructor(scene, camera, font, game, humanPlayersName, AIPlayerNb, language) {
     this.scene = scene;
     this.camera = camera;
     this.game = game;
     this.font = font;
+    this.language = language;
     this.humanPlayersName = humanPlayersName;
     this.humanPlayerNb = humanPlayersName.length;
     this.AIPlayerNb = AIPlayerNb;
@@ -38189,7 +38261,7 @@ let Menu$1 = class Menu {
     this.players = [];
     if (this.humanPlayerNb > 0) {
       var humanPlayerName = this.humanPlayersName.shift();
-      this.currentPlayerCreator = new PlayerCreator(scene, camera, game, this.currentPlayer, humanPlayerName, font);
+      this.currentPlayerCreator = new PlayerCreator(scene, camera, game, this.currentPlayer, humanPlayerName, font, language);
       this.humanPlayerNb--;
     } else {
       this.currentPlayer--;
@@ -38223,7 +38295,7 @@ let Menu$1 = class Menu {
             this.AIPlayerNb--;
           } else {
             var humanPlayerName = this.humanPlayersName.shift();
-            this.currentPlayerCreator = new PlayerCreator(this.scene, this.camera, this.game, this.currentPlayer, humanPlayerName, this.font);
+            this.currentPlayerCreator = new PlayerCreator(this.scene, this.camera, this.game, this.currentPlayer, humanPlayerName, this.font, this.language);
             this.humanPlayerNb--;
           }
         }
@@ -38238,11 +38310,12 @@ let Menu$1 = class Menu {
 };
 var forceStopGame$3 = false;
 class Versus extends Game$1 {
-  constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb) {
+  constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language) {
     forceStopGame$3 = false;
     super(scene, physicsWorld, camera, humanPlayersName.length, AIPlayerNb);
     this.font = font;
-    this.menu = new Menu$1(scene, camera, font, this, humanPlayersName, AIPlayerNb);
+    this.language = language;
+    this.menu = new Menu$1(scene, camera, font, this, humanPlayersName, AIPlayerNb, language);
   }
   // createPlayers() {
   // 	if (constants.SKIP_PLAYER_SELECTION) {
@@ -38281,13 +38354,13 @@ class Versus extends Game$1 {
       for (let player of this.players) {
         if (player.health > 0) {
           if (player instanceof AIPlayer) {
-            var text = "You lost against the AI...";
+            var text = translation$1["lostAgainstAI"][this.language];
           } else
-            var text = player.name + " wins!";
+            var text = player.name + " " + translation$1["won"][this.language];
           var winnerText = createText$1({ font: this.font, message: text, size: 8, sideColor: "#000000", fontColor: "#ffffff", shadow: true });
           winnerText.position.z = 8;
           this.scene.add(winnerText);
-          var continueText = createText$1({ font: this.font, message: "Press Enter to continue", size: 6, sideColor: "#000000", fontColor: "#ffffff", shadow: true });
+          var continueText = createText$1({ font: this.font, message: translation$1["pressEnterToContinue"][this.language], size: 6, sideColor: "#000000", fontColor: "#ffffff", shadow: true });
           continueText.position.z = 8;
           continueText.position.y = -16;
           this.scene.add(continueText);
@@ -38319,7 +38392,7 @@ class Versus extends Game$1 {
 }
 var forceStopGame$2 = false;
 let Tournament$1 = class Tournament {
-  constructor(scene, physicsWorld, camera, font, humanPlayersName) {
+  constructor(scene, physicsWorld, camera, font, humanPlayersName, language) {
     this.scene = scene;
     this.physicsWorld = physicsWorld;
     this.camera = camera;
@@ -38327,7 +38400,8 @@ let Tournament$1 = class Tournament {
     this.game = new Game$1(scene, physicsWorld, camera, humanPlayersName.length, 0);
     forceStopGame$2 = false;
     this.font = font;
-    this.menu = new Menu$1(scene, camera, font, this.game, humanPlayersName, 0);
+    this.language = language;
+    this.menu = new Menu$1(scene, camera, font, this.game, humanPlayersName, 0, language);
     this.betweenRoundTime = 5;
     this.winner = null;
   }
@@ -38355,7 +38429,7 @@ let Tournament$1 = class Tournament {
     newPlayer.paddle.mesh.material = player.paddle.mesh.material;
   }
   createNewGame(excludePlayer) {
-    this.showText({ text: excludePlayer.name + " is out!", y: FIELD_DIAMETER / 2 + 10 });
+    this.showText({ text: excludePlayer.name + translation$1["playerOut"][this.language], y: FIELD_DIAMETER / 2 + 10 });
     var players = this.game.players.filter((player2) => player2 != excludePlayer);
     this.realPlayersNb = players.length;
     this.game.delete();
@@ -38382,9 +38456,9 @@ let Tournament$1 = class Tournament {
       var winner = this.game.players.filter((player) => player.health > 0)[0];
       if (winner) {
         this.winner = winner;
-        this.showText({ text: winner.name + " wins! (Press Enter to finish)", size: 8 });
+        this.showText({ text: winner.name + translation$1["winAndContinue"][this.language], size: 8 });
       } else
-        this.showText({ text: "You lost against ... Nobody!? (Press Enter to finish)", size: 6 });
+        this.showText({ text: translation$1["lostAgainstNobody"][this.language], size: 6 });
       return;
     }
     this.createNewGame(goalPlayer);
@@ -38420,19 +38494,19 @@ function loadFont$1(e) {
     );
   });
 }
-function init$1(humanPlayersName, AIPlayerNb, gameMode = "versus", selector, debug = false, callback) {
+function init$1(humanPlayersName, AIPlayerNb, gameMode = "versus", language = "en", selector = "#webgl", debug = false, callback) {
   setDebug(debug);
   Promise.all([
     loadFont$1()
     /* Load other assets here */
   ]).then((values) => {
     const font = values[0];
-    main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback);
+    main$1(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, callback);
   }).catch((error) => {
     console.error("Error loading font or assets:", error);
   });
 }
-function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback) {
+function main$1(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, callback) {
   const canvas = document.querySelector(selector);
   const scene = new Scene();
   scene.background = new Color("#000000");
@@ -38494,9 +38568,9 @@ function main$1(humanPlayersName, AIPlayerNb, gameMode, selector, font, callback
     keysdown.splice(keysdown.indexOf(keyCode), 1);
   }
   if (gameMode == "versus")
-    var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
+    var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language);
   else if (gameMode == "tournament")
-    var pongGame = new Tournament$1(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb);
+    var pongGame = new Tournament$1(scene, physicsWorld, camera, font, humanPlayersName, language);
   else
     throw new Error("Unknown game mode: " + gameMode, "Available modes are: versus, tournament");
   const clock = new Clock();
@@ -39813,13 +39887,39 @@ function createText({
   textGroup.add(mesh);
   return textGroup;
 }
+const translation = {
+  // ------- Menu -------
+  "keys": {
+    "en": "Keys",
+    "fr": "Touches",
+    "de": "Tasten"
+  },
+  "enterToStart": {
+    "en": "Press Enter to start",
+    "fr": "Appuyez sur Entrer pour commencer",
+    "de": "Drücken Sie die Eingabetaste, um zu starten"
+  },
+  // ------- Game -------
+  "pressEnter": {
+    "en": "Press Enter",
+    "fr": "Appuyez sur Entrer",
+    "de": "Drücken Sie die Eingabetaste"
+  },
+  "gameOver": {
+    "en": "Press Enter to finish",
+    "fr": "Appuyez sur Entrer pour terminer",
+    "de": "Drücken Sie die Eingabetaste, um zu beenden"
+    // trop long raclure
+  }
+};
 class Menu2 {
-  constructor({ scene, camera, renderer, font, playersNb = 3 }) {
+  constructor({ scene, camera, renderer, font, playersNb = 3, language = "en" }) {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
     this.playersNb = playersNb;
     this.font = font;
+    this.language = language;
     this.menu = new Object3D();
     this.scene.add(this.menu);
     this.yPos = -18;
@@ -39830,7 +39930,7 @@ class Menu2 {
     const title = createText({ font: this.font, message: NAME, size: 5, depth: 1, frontColor: "#ffffff", sideColor: "#000000" });
     title.position.y = this.yPos;
     this.menu.add(title);
-    const start = createText({ font: this.font, message: "Press Enter to start", size: 2, depth: 0.5, frontColor: "#ffffff", sideColor: "#000000" });
+    const start = createText({ font: this.font, message: translation["enterToStart"][this.language], size: 1.7, depth: 0.5, frontColor: "#ffffff", sideColor: "#000000" });
     start.position.x = -300;
     this.menu.add(start);
     var minYPos = this.createPlayersKeys();
@@ -39838,7 +39938,7 @@ class Menu2 {
   }
   createPlayersKeys() {
     var ySpace = 3;
-    var text = createText({ font: this.font, message: "Keys :", size: 2.2, depth: 0.2, frontColor, sideColor: "#888888" });
+    var text = createText({ font: this.font, message: translation["keys"][this.language], size: 2.2, depth: 0.2, frontColor, sideColor: "#888888" });
     text.position.y = this.yPos - 6;
     text.position.x = -50;
     this.menu.add(text);
@@ -39899,17 +39999,18 @@ class Menu2 {
 }
 var forceStopGame$1 = false;
 class Tournament2 {
-  constructor(scene, camera, font, gameToWin = 2, playersNb = 3, isPowerupsOn = true) {
+  constructor(scene, camera, font, gameToWin = 2, playersNb = 3, isPowerupsOn = true, language = "en") {
     forceStopGame$1 = false;
     this.scene = scene;
     this.clock = new Clock();
     this.camera = camera;
     this.font = font;
+    this.language = language;
     this.playersNb = playersNb;
     this.gameToWin = gameToWin;
     this.isPowerupsOn = isPowerupsOn;
     this.isOver = false;
-    this.menu = new Menu2({ scene, camera, font, playersNb });
+    this.menu = new Menu2({ scene, camera, font, playersNb, language });
     this.allMaps = tournamentMap;
     this.scores = [];
     this.stop = false;
@@ -39993,7 +40094,7 @@ class Tournament2 {
       this.initNewGame();
     }
   }
-  showContinueText(winner, text = "Press Enter", zOffset = 1.5) {
+  showContinueText(winner, text = translation["pressEnter"][this.language], zOffset = 1.5) {
     if (this.helperText) {
       this.helperText.traverse(function(child) {
         if (child.geometry)
@@ -40009,7 +40110,7 @@ class Tournament2 {
     this.scene.add(this.helperText);
   }
   winScreen(dt) {
-    this.showContinueText(this.game.winner, "Press Enter to finish", 2);
+    this.showContinueText(this.game.winner, translation["gameOver"][this.language], 2);
     this.game.particlesSystem.update(dt);
     for (let player2 of this.game.players) {
       player2.update(dt, [], this.game.mapData, this.game.powerups, false);
@@ -40074,18 +40175,19 @@ class Tournament2 {
 }
 var forceStopGame = false;
 class TimedGames {
-  constructor(scene, camera, font, gameToWin = 2, playersNb = 1, isPowerupsOn = false) {
+  constructor(scene, camera, font, gameToWin = 2, playersNb = 1, isPowerupsOn = false, language = "en") {
     forceStopGame = false;
     this.scene = scene;
     this.clock = new Clock();
     this.camera = camera;
     this.font = font;
+    this.language = language;
     this.playersNb = playersNb;
     this.gameToWin = gameToWin;
     this.isPowerupsOn = isPowerupsOn;
     this.currentGameNb = 0;
     this.isOver = false;
-    this.menu = new Menu2({ scene, camera, font, playersNb });
+    this.menu = new Menu2({ scene, camera, font, playersNb, language });
     this.allMaps = tournamentMap;
     this.time = 0;
     this.stop = false;
@@ -40142,7 +40244,7 @@ class TimedGames {
       this.initNewGame();
     }
   }
-  showContinueText(winner, text = "Press Enter", zOffset = 1.5) {
+  showContinueText(winner, text = translation["pressEnter"][this.language], zOffset = 1.5) {
     if (this.helperText) {
       this.helperText.traverse(function(child) {
         if (child.geometry)
@@ -40158,7 +40260,8 @@ class TimedGames {
     this.scene.add(this.helperText);
   }
   winScreen(dt) {
-    this.showContinueText(this.game.winner, "Press Enter to finish", 2);
+    const text = "[" + Math.floor(this.time) + "s] " + translation["gameOver"][this.language];
+    this.showContinueText(this.game.winner, text, 2);
     this.game.particlesSystem.update(dt);
     for (let player2 of this.game.players) {
       player2.update(dt, [], this.game.mapData, this.game.powerups, false);
@@ -40240,18 +40343,18 @@ function loadFont(e) {
     );
   });
 }
-function init(playersNb, gameToWin, isPowerupsOn = true, gameMode = "tournament", selector, debug = false, callback) {
+function init(playersNb, gameToWin, isPowerupsOn = true, gameMode = "tournament", language = "en", selector = "#webgl", debug = false, callback) {
   Promise.all([
     loadFont()
     /* Load other assets here */
   ]).then((values) => {
     const font = values[0];
-    main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debug, callback);
+    main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, font, debug, callback);
   }).catch((error) => {
     console.error("Error loading font or assets:", error);
   });
 }
-function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debug, callback) {
+function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, font, debug, callback) {
   setDegub(debug);
   if (DEBUG) {
     console.log("Debug mode");
@@ -40311,9 +40414,9 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, selector, font, debu
   }
   var game;
   if (gameMode == "tournament") {
-    game = new Tournament2(scene, camera, font, gameToWin, playersNb, isPowerupsOn);
+    game = new Tournament2(scene, camera, font, gameToWin, playersNb, isPowerupsOn, language);
   } else if (gameMode == "solo") {
-    game = new TimedGames(scene, camera, font, gameToWin, 1, isPowerupsOn);
+    game = new TimedGames(scene, camera, font, gameToWin, 1, isPowerupsOn, language);
   } else {
     console.error("Unknown game mode", gameMode, 'Choose between "tournament" and "solo"');
     return;

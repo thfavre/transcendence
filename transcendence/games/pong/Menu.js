@@ -8,16 +8,16 @@ import Player from './Player.js';
 import HumanPlayer from './HumanPlayer.js';
 import createText from './createText.js';
 import * as constants from './constants.js';
-
-
+import translation from './languages.js';
 
 class PlayerCreator {
-	constructor(scene, camera, game, playerNb, playerName, font) {
+	constructor(scene, camera, game, playerNb, playerName, font, language) {
 		this.scene = scene;
 		this.camera = camera;
 		this.game = game;
 		this.playerName = playerName;
 		this.font = font;
+		this.language = language;
 		this.player = this.game.createHumanPlayer(playerNb, playerName);
 		this.game.addPlayer(this.player);
 		this.player.paddle.mesh.position.z = 230; // 230
@@ -84,7 +84,7 @@ class PlayerCreator {
 
 	askUpKey(keysJustPressed) {
 		this.setText({
-			text: this.playerName + ", press a key to go UP",
+			text: this.playerName + translation['askKeyUp'][this.language],
 			x: 0, y: 22, z: 270,
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyDown && this.ifKeyValid(keysJustPressed[0]))
@@ -96,7 +96,7 @@ class PlayerCreator {
 
 	askDownKey(keysJustPressed) {
 		this.setText({
-			text: this.playerName + ", press a key to go DOWN",
+			text: this.playerName + translation['askKeyDown'][this.language],
 			x: 0, y: 22, z: 270
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyUp && this.ifKeyValid(keysJustPressed[0]))
@@ -108,9 +108,12 @@ class PlayerCreator {
 	}
 
 	askPaddleMaterial(keysJustPressed) {
+		const keyDownStr = this.keyDown == 40 ?  translation['directionalKeyDown'][this.language] : String.fromCharCode(this.keyDown);
+		const keyUpStr = this.keyUp == 38 ?  translation['directionalKeyUp'][this.language] : String.fromCharCode(this.keyUp);
+
 		this.setText({
-			text:this.playerName +
-					", choose your paddle color (" + String.fromCharCode(this.keyDown) + "/"+String.fromCharCode(this.keyUp) + ")",
+			text:this.playerName + translation['askPaddleSkin'][this.language] +
+					" (" + keyUpStr + "/"+ keyDownStr + ")",
 				x: 0, y: 26, z: 263});
 		// draw the previous and next paddle
 		// if (!this.nextPaddleMesh || this.nextPaddleMesh.material != this.player.paddle.getNextMaterial())
@@ -165,11 +168,12 @@ class PlayerCreator {
 }
 
 export default class Menu {
-	constructor(scene, camera, font, game , humanPlayersName, AIPlayerNb) {
+	constructor(scene, camera, font, game , humanPlayersName, AIPlayerNb, language) {
 		this.scene = scene;
 		this.camera = camera;
 		this.game = game;
 		this.font = font;
+		this.language = language;
 		this.humanPlayersName = humanPlayersName;
 		this.humanPlayerNb = humanPlayersName.length;
 		this.AIPlayerNb = AIPlayerNb;
@@ -191,7 +195,7 @@ export default class Menu {
 		// if (!constants.SKIP_PLAYER_SELECTION)
 		if (this.humanPlayerNb > 0) {
 			var humanPlayerName = this.humanPlayersName.shift();
-			this.currentPlayerCreator = new PlayerCreator(scene, camera, game, this.currentPlayer, humanPlayerName, font);
+			this.currentPlayerCreator = new PlayerCreator(scene, camera, game, this.currentPlayer, humanPlayerName, font, language);
 			this.humanPlayerNb--;
 		} else {
 			this.currentPlayer--;
@@ -249,7 +253,7 @@ export default class Menu {
 						this.AIPlayerNb--;
 					} else {
 						var humanPlayerName = this.humanPlayersName.shift();
-						this.currentPlayerCreator = new PlayerCreator(this.scene, this.camera, this.game, this.currentPlayer, humanPlayerName, this.font);
+						this.currentPlayerCreator = new PlayerCreator(this.scene, this.camera, this.game, this.currentPlayer, humanPlayerName, this.font, this.language);
 						this.humanPlayerNb--;
 					}
 				}
