@@ -79,6 +79,7 @@ function	launchPongVersus()
 					position: [hasWon(tournament.players[0]), selectedPlayers + selectedAI]
 				}
 				sendGameData(Result);
+				backToMain();
 			});
 	} else {
 		console.error('pongGame function not available.');
@@ -95,41 +96,14 @@ function	launchPongTournament()
 	let	playerSelect = document.getElementById("pongTournamentPlayer");
 	let	selectedPlayers = parseInt(playerSelect.value);
 
-	function hasWon(username, winnerName) {
-		if (username === winnerName)
-			return 1;
-		return 0;
-	}
-
 	if (isNaN(selectedPlayers))
 	{
 		updateModalMessage('pong_tournament_modal');
 		return;
 	}
-	// selectPlayersNames(selectedPlayers); // ! DO NOT WORK!!!!
-	if (window.pongGame) {  // Check if function exists (avoid errors)
-		language = localStorage.getItem('language') || 'en';
-		console.log("Starting Tournament Pong game with ", selectedPlayers, " players in ", language, " language.");
-		var humanNames = [];
-		for (let i = 1; i <= selectedPlayers; i++)
-		{
-			let playerName = "Guest " + i;
-			humanNames.push(playerName);
-		}
-		window.pongGame(humanNames, 0, 'tournament', '#webglPongTournament', false, (tournament) => {
-				if (tournament.isOver) {
-					console.log('SAVE THE SCORES here');
-					console.log('Tournament is over', tournament.scores);
-				}
-				sendGameData(Result);
-			});
+	selectPlayersNames(selectedPlayers); // ! DO NOT WORK!!!!
+	// STOP fonction
 
-	} else {
-		console.error('pongGame function not available.');
-	}
-
-	pongMenu.classList.add('d-none'); // TO MOVE - NOT THE RIGHT PLACE TO PUT IT
-	pongTournamentIG.classList.remove('d-none'); // TO MOVE - NOT THE RIGHT PLACE TO PUT IT
 }
 
 // Select the players names for the Pong Tournament
@@ -166,4 +140,54 @@ async function	selectPlayersNames(selectedPlayers)
 		backdrop: 'static'
 	});
 	playerNamesModal.show();
+}
+
+// submitPlayerNames sending the players names to the server and check if the names are valid
+function	submitPlayerNames()
+{
+	console.log('submitPlayerNames');
+	let form = document.getElementById("playerNamesForm");
+	let playerNames = [];
+	let players = form.elements;
+	let playersCount = players.length;
+	let	playerSelect = document.getElementById("pongTournamentPlayer");
+	let	selectedPlayers = parseInt(playerSelect.value);
+	const username = localStorage.getItem('userAlias');
+	playerNames.push(username);
+
+	function hasWon(username, winnerName) {
+		if (username === winnerName)
+			return 1;
+		return 0;
+	}
+
+	for (let i = 0; i < playersCount; i++) {
+		if (players[i].nodeName === 'INPUT') {
+			playerNames.push(players[i].value);
+		}
+	}
+	console.log('Player Names:', playerNames);
+	if (window.pongGame) {  // Check if function exist
+		language = localStorage.getItem('language') || 'en';
+		console.log("Starting Tournament Pong game with ", selectedPlayers, " players in ", language, " language.");
+		window.pongGame(playerNames, 0, 'tournament', language, '#webglPongTournament', false, (tournament) => {
+				console.log('SAVE THE SCORES here');
+				let Result = {
+					username: localStorage.getItem('userAlias'),
+					game_id: 'PT',
+					position: [hasWon(username, tournament.winner.name), selectedPlayers]
+				}
+				sendGameData(Result);
+				backToMain();
+			});
+
+	} else {
+		console.error('pongGame function not available.');
+	}
+
+	pongMenu.classList.add('d-none');
+	pongTournamentIG.classList.remove('d-none');
+
+	let playerNamesModal = bootstrap.Modal.getInstance(document.getElementById('tournamentModal'));
+	playerNamesModal.hide();
 }

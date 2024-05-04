@@ -28,6 +28,7 @@ function	launchExitSolo()
 				position: [tournement.time, NumberLevels]
 			}
 			sendGameData(Result);
+			backToMain();
 		}
 			});
 	} else {
@@ -59,13 +60,17 @@ function launchExitVersus()
 		return;
 	}
 	if (window.exitGame) {  // Check if function exists (avoid errors)
-		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels");
- 		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', '#webglExitVersus', false, (tournament) => {
-				if (tournament.isOver) {
-					console.log('SAVE THE SCORES here');
-					console.log('Tournament is over', tournament.scores);
+		const language = localStorage.getItem('language') || 'en';
+		console.log("Starting Versus game with ", selectedPlayers, " players and ", FirstTo, " levels in ", language, " language.");
+ 		window.exitGame(selectedPlayers, FirstTo, false, 'tournament', language, '#webglExitVersus', false, (tournament) => {
+				let Result = {
+					username: localStorage.getItem('userAlias'),
+					game_id: 'EV',
+					position: [isFirst(tournament.scores, FirstTo), FirstTo],
+					bo_type: FirstTo
 				}
 				sendGameData(Result);
+				backToMain();
 			});
 		findExitMenu.classList.add('d-none');
 		findExitVersusIG.classList.remove('d-none');
