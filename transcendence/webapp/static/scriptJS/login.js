@@ -81,4 +81,5 @@ function	disconnectUser()
 	localStorage.removeItem('userAlias');
 	username = '';
 	route();
+	changeLanguageDropdown()
 }

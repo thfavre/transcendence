@@ -61,3 +61,39 @@ async function	updateModalTournament()
 	const	player = langData['player'];
 	return (player);
 }
+
+// Activates or deactivates the drop-down menu
+
+function	disableDropdown()
+{
+	const	dropdown = document.getElementById('dropdownLang');
+	if (dropdown)
+		dropdown.disabled = true;
+}
+
+function	enableDropdown()
+{
+	const	dropdown = document.getElementById('dropdownLang');
+	if (dropdown)
+		dropdown.disabled = false;
+}
+
+function	languageRestriction()
+{
+	const	menuToCheck = document.querySelectorAll('#pongVersusIG, #pongTournamentIG, #findExitSoloIG, #findExitVersusIG');
+	let		acceptChange = true;
+	menuToCheck.forEach(function(element)
+	{
+		if (!element.classList.contains('d-none'))
+			acceptChange = false;
+	});
+	return (acceptChange);
+}
+
+function	changeLanguageDropdown()
+{
+	if (languageRestriction())
+		enableDropdown();
+	else
+		disableDropdown();
+}

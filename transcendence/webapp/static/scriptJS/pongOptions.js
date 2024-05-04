@@ -86,6 +86,7 @@ function	launchPongVersus()
 
 	pongMenu.classList.add('d-none');
 	pongVersusIG.classList.remove('d-none');
+	changeLanguageDropdown()
 }
 
 // Start Pong Tournament after checking that the conditions are OK
@@ -130,6 +131,7 @@ function	launchPongTournament()
 
 	pongMenu.classList.add('d-none'); // TO MOVE - NOT THE RIGHT PLACE TO PUT IT
 	pongTournamentIG.classList.remove('d-none'); // TO MOVE - NOT THE RIGHT PLACE TO PUT IT
+	changeLanguageDropdown();
 }
 
 // Select the players names for the Pong Tournament

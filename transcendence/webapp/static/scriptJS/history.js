@@ -1,31 +1,9 @@
-// Fetches the history data from the server when the page is loaded
-// document.addEventListener('DOMContentLoaded', function()
+// function	showHistory()
 // {
-// 	fetchHistoryData();
-// });
 
-// document.addEventListener('DOMContentLoaded', function() {
-// 	// Add event listeners to all history tabs buttons
-// 	const historyTabButtons = document.querySelectorAll('.nav-link');
-// 	historyTabButtons.forEach(button => {
-// 		button.addEventListener('click', function() {
-// 			// Get the game ID from the button's data attribute
-// 			const gameId = this.getAttribute('data-bs-target').substring(1); // Remove the '#'
-
-// 			// Call the updateHistoryTables function with the gameId
-// 			updateHistoryTables(gameId);
-// 		});
-// 	});
-// });
+// }
 
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     // Bind tab click events to update functions
-//     document.getElementById('jeu1-tab').addEventListener('click', updatePongVersusHistory);
-//     document.getElementById('jeu2-tab').addEventListener('click', updatePongTournamentHistory);
-//     document.getElementById('jeu3-tab').addEventListener('click', updateExitSoloHistory);
-//     document.getElementById('jeu4-tab').addEventListener('click', updateExitVersusHistory);
-// });
 
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -71,208 +49,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-// // Updates the history tables with the data from the server
-// function	fetchHistoryData()
-// {
-// 	fetch('/api/history/') // Correct URL ? Check with Fgrasset
-// 	.then(response => response.json())
-// 	.then(data => {
-// 		updateHistoryTables(data);
-// 	})
-// }
-
-function	updateHistoryTables(data)
-{
-	const	gamesID = ['pongVersus', 'pongTournament', 'exitSolo', 'exitVersus']; // to adapt to the correct gameID
-	console.log("updateHistoryTables: ", data);
-
-	gamesID.forEach(gameID => {
-		switch(gameID)
-		{
-			case 'PongVersus':
-				updatePongVersusHistory(data);
-				break;
-			case 'PongTournament':
-				updatePongTournamentHistory(data);
-				break;
-			case 'ExitSolo':
-				updateExitSoloHistory(data);
-				break;
-			case 'ExitVersus':
-				updateExitVersusHistory(data);
-				break;
-		}
-	});
-}
 
 
-// function updateTable(mode, data, columns)
-// {
-// 	const modeData = data[mode.toLowerCase()];
-// 	const tableId = `history${mode}`;
-// 	const tableContainer = document.getElementById(tableId);
-
-// 	if (modeData && modeData.length) {
-// 		let tableHTML = `<table class="table table-striped"><thead><tr>`;
-// 		columns.forEach(column => {
-// 			tableHTML += `<th>${translate(column)}</th>`;
-// 		});
-// 		tableHTML += `</tr></thead><tbody>`;
-// 		modeData.slice(0, 10).forEach(game => {
-// 			tableHTML += '<tr>';
-// 			columns.forEach(column => {
-// 				tableHTML += `<td>${game[column]}</td>`;
-// 			});
-// 			tableHTML += '</tr>';
-// 		});
-// 		tableHTML += '</tbody></table>';
-// 		tableContainer.innerHTML = tableHTML;
-// 	} else {
-// 		tableContainer.innerHTML = `<p>${translate('no_games')}</p>`;
-// 	}
-// }
-
-
-// // Adapt the history for Pong Versus
-// function	updatePongVersusHistory()
-// {
-// 	const	lang = localStorage.getItem('language') || 'en';
-// 	let	columns;
-
-// 	if (lang === 'fr')
-// 		columns = ['Joueur', 'Victoire', 'Date'];
-// 	else if (lang === 'de')
-// 		columns = ['Spieler', 'Sieg', 'Datum'];
-// 	else
-// 		columns = ['Player', 'Win', 'Date'];
-// 	updateTable('PongVersus', columns);
-// }
-
-// // Adapt the history for Pong Tournament
-// function	updatePongTournamentHistory()
-// {
-// 	const	lang = localStorage.getItem('language') || 'en';
-// 	let	columns;
-
-// 	if (lang === 'fr')
-// 		columns = ['Joueur', 'Place', 'Nombre de joueurs', 'Date'];
-// 	else if (lang === 'de')
-// 		columns = ['Spieler', 'Platz', 'Anzahl der Spieler', 'Datum'];
-// 	else
-// 		columns = ['Player', 'Rank', 'Number of players', 'Date'];
-
-// 	updateTable('PongTournament', columns);
-// }
-
-// // Adapt the history for Find the Exit Solo
-// function	updateExitSoloHistory()
-// {
-// 	const	lang = localStorage.getItem('language') || 'en';
-// 	let	columns;
-// 	const username = localStorage.getItem('userAlias')
-
-// 	if (lang === 'fr')
-// 		columns = ['Joueur', 'Nombre de niveaux', 'Temps', 'Date'];
-// 	else if (lang === 'de')
-// 		columns = ['Spieler', 'Anzahl der Ebenen', 'Zeit', 'Datum'];
-// 	else
-// 		columns = ['Player', 'Number of levels', 'Time', 'Date'];
-// 	getGameHistory(username, 'ES').then(data => {
-// 		console.log(data);
-// 		updateTable('ExitSolo', data, ['game_id', 'position', 'date']);
-// 	});
-// 	// updateTable('ExitSolo', data, columns);
-// }
-
-// // Adapt the history for Find the Exit Versus
-// function	updateExitVersusHistory()
-// {
-// 	const	lang = localStorage.getItem('language') || 'en';
-// 	let	columns;
-
-// 	if (lang === 'fr')
-// 		columns = ['Joueur', 'Place', 'Meilleur des X victoires', 'Date'];
-// 	else if (lang === 'de')
-// 		columns = ['Spieler', 'Platz', 'Beste von X Siegen', 'Datum'];
-// 	else
-// 		columns = ['Player', 'Rank', 'Best of X wins', 'Date'];
-
-// 	updateTable('ExitVersus', columns);
-// }
-
-
-
-// function updateTable(mode, columns, game_id) {
-//     getGameHistory(localStorage.getItem('userAlias'), game_id)
-//         .then(data => {
-//             const modeData = data[mode.toLowerCase()];
-//             const tableId = `history${mode}`;
-//             const tableContainer = document.getElementById(tableId);
-
-//             if (modeData && modeData.length) {
-//                 let tableHTML = `<table class="table table-striped"><thead><tr>`;
-//                 columns.forEach(column => {
-//                     tableHTML += `<th>${column}</th>`;
-//                 });
-//                 tableHTML += `</tr></thead><tbody>`;
-//                 modeData.slice(0, 10).forEach(game => {
-//                     tableHTML += '<tr>';
-//                     columns.forEach(column => {
-//                         tableHTML += `<td>${game[column]}</td>`;
-//                     });
-//                     tableHTML += '</tr>';
-//                 });
-//                 tableHTML += '</tbody></table>';
-//                 tableContainer.innerHTML = tableHTML;
-//             } else {
-//                 tableContainer.innerHTML = `<p>No games</p>`;
-//             }
-//         })
-//         .catch(error => console.error('Error getting game history:', error));
-// }
-
-// function updateTable(mode, columns, game_id) {
-//     const userAlias = localStorage.getItem('userAlias');
-//     if (!userAlias) {
-//         console.error('No user alias found in local storage');
-//         return;
-//     }
-
-//     getGameHistory(userAlias, game_id)
-//         .then(data => {
-//             if (!data || !data.length) {
-//                 console.error('No games data found');
-//                 return;
-//             }
-
-//             const tableId = `history${mode}`;
-//             const tableContainer = document.getElementById(tableId);
-//             if (!tableContainer) {
-//                 console.error(`No element found with id "${tableId}"`);
-//                 return;
-//             }
-
-//             let tableHTML = `<table class="table table-striped"><thead><tr>`;
-//             columns.forEach(column => {
-//                 tableHTML += `<th>${column}</th>`;
-//             });
-//             tableHTML += `</tr></thead><tbody>`;
-//             data.forEach(game => {
-//                 tableHTML += '<tr>';
-//                 columns.forEach(column => {
-//                     const cellData = game[column];
-//                     if (cellData === undefined) {
-//                         console.warn(`No value found for column "${column}" in game data`);
-//                     }
-//                     tableHTML += `<td>${cellData}</td>`;
-//                 });
-//                 tableHTML += '</tr>';
-//             });
-//             tableHTML += '</tbody></table>';
-//             tableContainer.innerHTML = tableHTML;
-//         })
-//         .catch(error => console.error('Error getting game history:', error));
-// }
 function updateTable(tableContainerId, mode, game_id) {
     console.log("updateTable: ", mode, game_id);
     const userAlias = localStorage.getItem('userAlias');
@@ -368,7 +146,7 @@ function updateExitVersusHistory() {
     updateTable('historyExitVersusTableContainer', 'ExitVersus', 'EV');
 }
 
-
+// NO TOUCH
 
 function sendGameData(gameHistory) {
     // Make sure gameData is a JavaScript object containing the necessary data

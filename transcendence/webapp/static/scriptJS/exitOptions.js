@@ -14,6 +14,7 @@ function	launchExitSolo()
 
 	findExitMenu.classList.add('d-none');
 	findExitSoloIG.classList.remove('d-none');
+	changeLanguageDropdown()
 
 	if (window.exitGame) {  // Check if function exists (avoid errors)
 		const language = localStorage.getItem('language') || 'en';
@@ -69,6 +70,7 @@ function launchExitVersus()
 			});
 		findExitMenu.classList.add('d-none');
 		findExitVersusIG.classList.remove('d-none');
+		changeLanguageDropdown()
 	} else {
 		console.error('exitGame function not available.');
 	}

@@ -6,7 +6,7 @@
 		<link rel="shortcut icon" href="{% static 'media/favicon.ico' %}" type="image/ico">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 		<link href="{% static 'css/custom.css' %}" rel="stylesheet">
 		<title>Transcendence</title>
 	</head>
@@ -217,35 +217,23 @@
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane fade show active" id="historyPongVersus">
-						<h2 data-i18n="pong_versus_history"></h2>
 						<div id="historyPongVersusTableContainer">
-							<table class="table" id="historyPongVersusTable">
 								<!-- Table content will be dynamically generated here -->
-							</table>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="historyPongTournament">
-						<h2 data-i18n="pong_tournament_history"></h2>
 						<div id="historyPongTournamentTableContainer">
-							<table class="table" id="historyPongTournamentTable">
 								<!-- Table content will be dynamically generated here -->
-							</table>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="historyExitSolo">
-						<h2 data-i18n="exit_solo_history"></h2>
 						<div id="historyExitSoloTableContainer">
-							<table class="table" id="historyExitSoloTable">
 								<!-- Table content will be dynamically generated here -->
-							</table>
 						</div>
 					</div>
 					<div class="tab-pane fade" id="historyExitVersus">
-						<h2 data-i18n="exit_versus_history"></h2>
 						<div id="historyExitVersusTableContainer">
-							<table class="table" id="historyExitVersusTable">
 								<!-- Table content will be dynamically generated here -->
-							</table>
 						</div>
 					</div>
 				</div>
@@ -253,40 +241,6 @@
 					<button id="backButtonHistory" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
 				</div>
 			</div>
-			<!-- <div id="historyMenu" class="container d-none">
-				<h2 class="mt-5 custom-h2" data-i18n="history_game"></h2>
-				<ul class="nav nav-tabs">
-					<li class="nav-item">
-						<button class="nav-link active" id="jeu1-tab" data-bs-toggle="tab" data-bs-target="#historyPongVersus" type="button" data-i18n="pong_versus_history"></button>
-					</li>
-					<li class="nav-item">
-						<button class="nav-link" id="jeu2-tab" data-bs-toggle="tab" data-bs-target="#historyPongTournament" type="button" data-i18n="pong_tournament_history"></button>
-					</li>
-					<li class="nav-item">
-						<button class="nav-link" id="jeu3-tab" data-bs-toggle="tab" data-bs-target="#historyExitSolo" type="button" data-i18n="exit_solo_history"></button>
-					</li>
-					<li class="nav-item">
-						<button class="nav-link" id="jeu4-tab" data-bs-toggle="tab" data-bs-target="#historyExitVersus" type="button" data-i18n="exit_versus_history"></button>
-					</li>
-				</ul>
-				<div class="tab-content">
-					<div class="tab-pane fade show active" id="historyPongVersus">
-						<h2>Jeu 1</h2>
-					</div>
-					<div class="tab-pane fade" id="historyPongTournament">
-						<h2>Jeu 2</h2>
-					</div>
-					<div class="tab-pane fade" id="historyExitSolo">
-						<h2>Jeu 3</h2>
-					</div>
-					<div class="tab-pane fade" id="historyExitVersus">
-						<h2>Jeu 4</h2>
-					</div>
-				</div>
-				<div class="d-flex justify-content-end">
-					<button id="backButtonHistory" class="btn btn-link custom-btn-back tracking-in-expand" data-i18n="back_menu_btn"></button>
-				</div>
-			</div> -->
 
 			<!-- Credits block -->
 			<div id="creditsMenu" class="container d-none">
@@ -326,7 +280,7 @@
 						</div>
 						<div class="modal-body" id="errorMessage">Default message.</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" data-i18n="modal_btn"></button>
+							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" onclick="closeModal()" data-i18n="modal_btn"></button>
 						</div>
 					</div>
 				</div>
@@ -343,7 +297,7 @@
 							<form id="playerNamesForm"></form>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" data-i18n="close_btn"></button>
+							<button type="button" class="btn btn-outline-info" data-bs-dismiss="modal" onclick="closeModal()" data-i18n="close_btn"></button>
 							<button type="button" class="btn btn-outline-info" onclick="submitPlayerNames()" data-i18n="start_btn"></button>
 						</div>
 					</div>
@@ -374,11 +328,10 @@
 
 			<!-- Footer block -->
 			<footer class="footer text-center py-3 mt-auto">
-				<!-- <canvas class="webgl"></canvas> -->
 				<div class="container d-flex justify-content-between align-items-center">
 					<div class="dropdown">
 						<div>
-							<select class="form-select custom-select" onchange="changeLanguage(this.value)">
+							<select id="dropdownLang" class="form-select custom-select" onchange="changeLanguage(this.value)">
 								<option value="en">English</option>
 								<option value="fr">Français</option>
 								<option value="de">Deutsch</option>
@@ -391,7 +344,7 @@
 			</footer>
 		</div>
 	</body>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 	<script src="{% static '/scriptJS/effects.js' %}"></script>
 	<script src="{% static '/scriptJS/cursor.js' %}"></script>
 	<script src="{% static '/scriptJS/exitOptions.js' %}"></script>
