@@ -38308,7 +38308,7 @@ let Menu$1 = class Menu {
     return true;
   }
 };
-var forceStopGame$3 = false;
+var forceStopGame$3 = null;
 class Versus extends Game$1 {
   constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language) {
     forceStopGame$3 = false;
@@ -38390,7 +38390,7 @@ class Versus extends Game$1 {
     return true;
   }
 }
-var forceStopGame$2 = false;
+var forceStopGame$2 = null;
 let Tournament$1 = class Tournament {
   constructor(scene, physicsWorld, camera, font, humanPlayersName, language) {
     this.scene = scene;
@@ -39997,7 +39997,7 @@ class Menu2 {
     return true;
   }
 }
-var forceStopGame$1 = false;
+var forceStopGame$1 = null;
 class Tournament2 {
   constructor(scene, camera, font, gameToWin = 2, playersNb = 3, isPowerupsOn = true, language = "en") {
     forceStopGame$1 = false;
@@ -40173,7 +40173,7 @@ class Tournament2 {
     return true;
   }
 }
-var forceStopGame = false;
+var forceStopGame = null;
 class TimedGames {
   constructor(scene, camera, font, gameToWin = 2, playersNb = 1, isPowerupsOn = false, language = "en") {
     forceStopGame = false;
@@ -40319,6 +40319,7 @@ class TimedGames {
         }
       }
     }
+    console.log(this.time);
     if (this.stop || forceStopGame) {
       this.delete();
       return false;

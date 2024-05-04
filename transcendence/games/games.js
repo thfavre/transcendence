@@ -11,6 +11,6 @@ window.exitGame = exitGame;
 // 	game.time;
 // });
 
-exitGame(4, 2, false, "solo", 'fr', '#webgl1', true, (tournament) => {
+exitGame(4, 2, true, "solo", 'fr', '#webgl1', false, (tournament) => {
 		console.log('Tournament is over', tournament.scores);
 });

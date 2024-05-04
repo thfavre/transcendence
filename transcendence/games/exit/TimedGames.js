@@ -7,7 +7,7 @@ import { Menu } from './Menu.js';
 import translation from './languages.js';
 
 
-export var forceStopGame = false;
+export var forceStopGame = null;
 
 export default class TimedGames {
 	constructor(scene, camera, font, gameToWin=2, playersNb=1, isPowerupsOn=false, language='en') {
@@ -25,7 +25,6 @@ export default class TimedGames {
 		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb, language: language});
 		this.allMaps = maps.tournamentMap;
 		this.time = 0;
-		this.stop = false;
 		// this.level = new Level(scene, mapArray, playersNb);
 
 		// this.initNewGame();
@@ -185,7 +184,7 @@ export default class TimedGames {
 				}
 			}
 		}
-		if (this.stop || forceStopGame) {
+		if (forceStopGame) {
 			this.delete();
 			return false;
 		}

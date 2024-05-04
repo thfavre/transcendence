@@ -1,10 +1,16 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+
 
 import * as constants from './constants.js';
 import Tournament from './Tournament.js';
 import TimedGames from './TimedGames.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { SSAOPass } from 'three/examples/jsm/Addons.js';
 // import Game from './Game.js';
 
 // const loader = new FontLoader();
@@ -88,6 +94,22 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, 
 	// renderer.toneMappingExposure = 1.5;
 	renderer.setPixelRatio(window.devicePixelRatio);
 
+	// // postprocessing
+	// const renderScene = new RenderPass(scene, camera);
+	// const composer = new EffectComposer(renderer);
+	// composer.addPass(renderScene);
+	// // ssao
+	// const ssaoPass = new SSAOPass(scene, camera, canvas.clientWidth, canvas.clientHeight);
+	// ssaoPass.kernelRadius = 32;
+	// ssaoPass.minDistance = 0.1;
+	// ssaoPass.maxDistance = 100;
+	// composer.addPass(ssaoPass);
+
+	// // ouputPass
+	// const outputPass = new OutputPass(scene, camera);
+	// composer.addPass(outputPass);
+
+
 	// resize
 	// window.addEventListener("resize", onCanvasResize, false);
   	function onCanvasResize() {
@@ -158,6 +180,7 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, 
 			return;
 		}
 		renderer.render(scene, camera);
+		// composer.render();
 		keysJustPressed = [];
 		window.requestAnimationFrame(gameLoop);
 	}

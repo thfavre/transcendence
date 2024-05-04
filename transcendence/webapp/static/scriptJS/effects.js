@@ -27,6 +27,25 @@ const	pongVersusIG = document.getElementById("pongVersusIG");
 const	pongTournamentIG = document.getElementById("pongTournamentIG");
 const	allMenus = [menuButtons, newGameMenu, historyMenu, creditsMenu, notFoundMenu, pongMenu,findExitMenu, findExitSoloIG, findExitVersusIG, pongVersusIG, pongTournamentIG];
 
+// close running game
+function closeGame()
+{
+	if (forceStopGame === false)
+		forceStopGame = true;
+	else if (forceStopGame$1 === false)
+		forceStopGame$1 = true;
+	else if (forceStopGame$2 === false)
+		forceStopGame$2 = true;
+	else if (forceStopGame$3 === false)
+		forceStopGame$3 = true;
+	else
+		return;
+	console.log("The game has been stopped");
+
+
+}
+
+
 // Hide the video and show the menu
 
 function	hideVideo()
@@ -46,12 +65,7 @@ setTimeout(hideVideo, 1000);
 function	switchMenu(menuToShow, menuToRemove, url)
 {
 	console.log("Switching menu to", menuToShow.id);
-	// close running game
-	if (!forceStopGame)
-	{
-		forceStopGame = true;
-		console.log("The game has been stopped");
-	}
+	closeGame();
 	menuToShow.classList.remove("d-none");
 	menuToRemove.classList.add("d-none");
 	changeLanguageDropdown();
@@ -80,11 +94,7 @@ notFoundMenu.addEventListener("click", () => switchMenu(menuButtons, notFoundMen
 window.addEventListener("popstate", function(event)
 {
 	console.log("Historique modifié :")
-	if (!forceStopGame)
-	{
-		forceStopGame = true;
-		console.log("The game has been stopped");
-	}
+	closeGame();
 	hideAllMenus();
 	if (event.state !== null)
 	{

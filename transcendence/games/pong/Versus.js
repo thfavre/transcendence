@@ -7,7 +7,7 @@ import Menu from './Menu.js';
 import translation from './languages.js';
 
 
-export var forceStopGame = false;
+export var forceStopGame = null;
 
 export default class Versus extends Game {
 	constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language) {
@@ -94,7 +94,7 @@ export default class Versus extends Game {
 				return false;
 			}
 		}
-		if (this.stop || forceStopGame) {// ? TODO this.stop is not needed anymore
+		if (forceStopGame) {
 			// TODO free
 			return false;
 		}
