@@ -40319,7 +40319,6 @@ class TimedGames {
         }
       }
     }
-    console.log(this.time);
     if (this.stop || forceStopGame) {
       this.delete();
       return false;
