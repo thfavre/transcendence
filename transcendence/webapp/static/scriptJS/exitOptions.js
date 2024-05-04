@@ -19,13 +19,15 @@ function	launchExitSolo()
 	if (window.exitGame) {  // Check if function exists (avoid errors)
 		const language = localStorage.getItem('language') || 'en';
 		console.log("Starting SOLO game with " + NumberLevels + " levels in " + language + " language.");
- 		window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (tournement) => {
-				if (tournement.isOver)
-				{
-					console.log('SAVE THE SCORES here');
-					console.log('Solo game is over, time :', tournement.time);
-				}
-			});
+		window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (tournement) => {
+			console.log('Solo game is over, time :', tournement.time);
+			let Result = {
+				username: localStorage.getItem('userAlias'),
+				game_id: 'ES',
+				position: [tournement.time, NumberLevels]
+			}
+			sendGameData(Result);
+		});
 	} else {
 		console.error('exitGame function not available.');
 	}
@@ -40,6 +42,14 @@ function launchExitVersus()
 
 	let	NumberLevels = parseInt(levels.value);
 	let	selectedPlayers = parseInt(playerSelect.value);
+
+	// 1 if the players won, 0 if he lost
+	function isFirst(scores, NumberLevels)
+	{
+		if (scores[0] === NumberLevels)
+			return 1;
+		return 0;
+	}
 
 	if (isNaN(NumberLevels) || isNaN(selectedPlayers))
 	{
