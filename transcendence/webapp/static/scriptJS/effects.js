@@ -151,7 +151,7 @@ function	route()
 function createBackgroundSpots()
 {
 	const spotsCount = 100;
-	const animations = ['floatAnimation1', 'floatAnimation2', 'floatAnimation3']; // Les noms des animations
+	const animations = ['floatAnimation1', 'floatAnimation2', 'floatAnimation3'];
 	const fragment = document.createDocumentFragment();
 	for (let i = 0; i < spotsCount; i++)
 	{
