@@ -117,9 +117,11 @@ function	launchPongTournament()
 			humanNames.push(playerName);
 		}
 		window.pongGame(humanNames, 0, 'tournament', '#webglPongTournament', false, (tournament) => {
-				if (tournament.isOver) {
-					console.log('SAVE THE SCORES here');
-					console.log('Tournament is over', tournament.scores);
+				console.log('SAVE THE SCORES here');
+				Result = {
+					username: localStorage.getItem('userAlias'),
+					game_id: 'PT',
+					position: [hasWon(localStorage.getItem('userAlias'), tournament.winner), selectedPlayers]
 				}
 				sendGameData(Result);
 			});

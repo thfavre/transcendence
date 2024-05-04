@@ -18,9 +18,7 @@ function	launchExitSolo()
 	if (window.exitGame) {  // Check if function exists (avoid errors)
 		const language = localStorage.getItem('language') || 'en';
 		console.log("Starting SOLO game with " + NumberLevels + " levels in " + language + " language.");
-	window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (tournement) => {
-		if (tournement.isOver)
-		{
+		window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (tournement) => {
 			console.log('Solo game is over, time :', tournement.time);
 			let Result = {
 				username: localStorage.getItem('userAlias'),
@@ -28,8 +26,7 @@ function	launchExitSolo()
 				position: [tournement.time, NumberLevels]
 			}
 			sendGameData(Result);
-		}
-			});
+		});
 	} else {
 		console.error('exitGame function not available.');
 	}
@@ -42,31 +39,34 @@ function launchExitVersus()
 	let	playerSelect = document.getElementById("exitVersusPlayers");
 	let	levels = document.getElementById("exitVersusLevel");
 
-	let	FirstTo = parseInt(levels.value);
+	let	NumberLevels = parseInt(levels.value);
 	let	selectedPlayers = parseInt(playerSelect.value);
 
 	// 1 if the players won, 0 if he lost
-	function isFirst(scores, FirstTo)
+	function isFirst(scores, NumberLevels)
 	{
-		if (scores[0] === FirstTo)
+		if (scores[0] === NumberLevels)
 			return 1;
 		return 0;
 	}
 
-	if (isNaN(FirstTo) || isNaN(selectedPlayers))
+	if (isNaN(NumberLevels) || isNaN(selectedPlayers))
 	{
 		updateModalMessage('exit_versus_modal');
 		return;
 	}
 	if (window.exitGame) {  // Check if function exists (avoid errors)
-		console.log("Starting Versus game with ", selectedPlayers, " players and ", NumberLevels, " levels");
- 		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', '#webglExitVersus', false, (tournament) => {
-				if (tournament.isOver) {
-					console.log('SAVE THE SCORES here');
-					console.log('Tournament is over', tournament.scores);
-				}
-				sendGameData(Result);
-			});
+		const language = localStorage.getItem('language') || 'en';
+		console.log("Starting Versus game with ", selectedPlayers, " players and ", levels, " levels");
+		window.exitGame(selectedPlayers, NumberLevels, isSwitchOn, 'tournament', language, '#webglExitVersus', true, (tournament) => {
+			console.log('SAVE THE SCORES here');
+			let Result = {
+				username: localStorage.getItem('userAlias'),
+				game_id: 'EV',
+				position: [isFirst(tournament.scores, NumberLevels), selectedPlayers]
+			}
+			sendGameData(Result);
+		});
 		findExitMenu.classList.add('d-none');
 		findExitVersusIG.classList.remove('d-none');
 	} else {
