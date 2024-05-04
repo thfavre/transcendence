@@ -176,4 +176,11 @@ function	backToMain()
 	hideAllMenus();
 	menuButtons.classList.remove("d-none");
 	history.pushState({menu: "menuButtons"}, "", "/");
+	//close game
+	console.log(forceStopGame);
+	if (!forceStopGame)
+	{
+		forceStopGame = true;
+		console.log("The game has been stopped");
+	}
 }

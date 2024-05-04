@@ -28,6 +28,7 @@ function	launchExitSolo()
 				position: [tournement.time, NumberLevels]
 			}
 			sendGameData(Result);
+			backToMain();
 		}
 			});
 	} else {
@@ -69,6 +70,7 @@ function launchExitVersus()
 					bo_type: FirstTo
 				}
 				sendGameData(Result);
+				backToMain();
 			});
 		findExitMenu.classList.add('d-none');
 		findExitVersusIG.classList.remove('d-none');
