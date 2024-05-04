@@ -82,10 +82,15 @@ WSGI_APPLICATION = 'transcendence.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',  # Matches the database name in docker-compose
+        'USER': 'postgres',     # Matches the username in docker-compose
+        'PASSWORD': 'postgres', # Matches the password in docker-compose
+        'HOST': 'db',           # Hostname to reach your db container from web container
+        'PORT': '5432',         # Default PostgreSQL port
     }
 }
+
 
 
 # Password validation
@@ -112,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 

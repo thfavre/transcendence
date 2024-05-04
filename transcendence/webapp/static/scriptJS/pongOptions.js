@@ -51,6 +51,12 @@ function	launchPongVersus()
 
 	let	totalParticipants = selectedPlayers + selectedAI;
 
+	function hasWon(player){
+		if (player.health != 0)
+			return 1;
+		return 0;
+	}
+
 	if (totalParticipants < 2 || selectedPlayers < 1)
 	{
 		updateModalMessage('pong_versus_modal');
@@ -66,10 +72,13 @@ function	launchPongVersus()
 			humanNames.push(playerName);
 		}
 		window.pongGame(humanNames, selectedAI, 'versus', language, '#webglPongVesus', false, (tournament) => {
-				if (tournament.isOver) {
-					console.log('SAVE THE SCORES here');
-					console.log('Tournament is over', tournament.scores);
+				console.log('SAVE THE SCORES here');
+				let Result = {
+					username: localStorage.getItem('userAlias'),
+					game_id: 'PV',
+					position: [hasWon(tournament.players[0]), selectedPlayers + selectedAI]
 				}
+				sendGameData(Result);
 			});
 	} else {
 		console.error('pongGame function not available.');
@@ -85,6 +94,12 @@ function	launchPongTournament()
 {
 	let	playerSelect = document.getElementById("pongTournamentPlayer");
 	let	selectedPlayers = parseInt(playerSelect.value);
+
+	function hasWon(username, winnerName) {
+		if (username === winnerName)
+			return 1;
+		return 0;
+	}
 
 	if (isNaN(selectedPlayers))
 	{
@@ -102,10 +117,13 @@ function	launchPongTournament()
 			humanNames.push(playerName);
 		}
 		window.pongGame(humanNames, 0, 'tournament', language, '#webglPongTournament', false, (tournament) => {
-				if (tournament.isOver) {
-					console.log('SAVE THE SCORES here');
-					console.log('Tournament is over', tournament.scores);
+				console.log('SAVE THE SCORES here');
+				let Result = {
+					username: localStorage.getItem('userAlias'),
+					game_id: 'PT',
+					position: [hasWon(username, tournament.winner.name), selectedPlayers]
 				}
+				sendGameData(Result);
 			});
 
 	} else {

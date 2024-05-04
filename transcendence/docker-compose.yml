@@ -28,5 +28,12 @@ services:
       - web
     restart: on-failure  # Ensures NGINX retries if it fails to start the first time
 
+  migrations:
+    build: .
+    command: sh -c "python manage.py makemigrations && python manage.py migrate"
+    depends_on:
+      - db
+
+
 volumes:
   postgres_data:
