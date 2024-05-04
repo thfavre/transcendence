@@ -238,6 +238,11 @@ body
 	background-color: transparent;
 }
 
+#dropdownLang:disabled
+{
+	background-color: transparent;
+}
+
 /* Modal for tournament */
 
 .custom-input

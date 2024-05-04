@@ -54,6 +54,7 @@ function	switchMenu(menuToShow, menuToRemove, url)
 	}
 	menuToShow.classList.remove("d-none");
 	menuToRemove.classList.add("d-none");
+	changeLanguageDropdown();
 	history.pushState({menu: menuToShow.id}, "", url);
 
 }
@@ -93,6 +94,7 @@ window.addEventListener("popstate", function(event)
 	}
 	else
 		menuButtons.classList.remove("d-none");
+	changeLanguageDropdown()
 });
 
 function	hideAllMenus()
@@ -144,6 +146,7 @@ function	route()
 			notFoundMenu.classList.remove('d-none');
 			break;
 	}
+	changeLanguageDropdown()
 }
 
 // Background effect with floating dots
@@ -183,4 +186,15 @@ function	backToMain()
 		forceStopGame = true;
 		console.log("The game has been stopped");
 	}
+}
+
+// Close all modal
+
+function	closeModal()
+{
+	document.querySelectorAll('.modal.show').forEach(modalElement => {
+		let	modalInstance = bootstrap.Modal.getInstance(modalElement);
+		if (modalInstance)
+			modalInstance.hide();
+	});
 }

@@ -87,6 +87,7 @@ function	launchPongVersus()
 
 	pongMenu.classList.add('d-none');
 	pongVersusIG.classList.remove('d-none');
+	changeLanguageDropdown()
 }
 
 // Start Pong Tournament after checking that the conditions are OK
