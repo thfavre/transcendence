@@ -57,6 +57,12 @@ function	launchPongVersus()
 		return 0;
 	}
 
+	function hasWon(player){
+		if (player.health != 0)
+			return 1;
+		return 0;
+	}
+
 	if (totalParticipants < 2 || selectedPlayers < 1)
 	{
 		updateModalMessage('pong_versus_modal');
