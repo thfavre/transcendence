@@ -188,6 +188,7 @@ function	submitPlayerNames()
 
 	pongMenu.classList.add('d-none');
 	pongTournamentIG.classList.remove('d-none');
+	changeLanguageDropdown()
 
 	let playerNamesModal = bootstrap.Modal.getInstance(document.getElementById('tournamentModal'));
 	playerNamesModal.hide();
