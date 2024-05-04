@@ -8,7 +8,7 @@ import translation from './languages.js';
 
 
 
-export var forceStopGame = false;
+export var forceStopGame = null;
 
 export default class Tournament {
 	constructor(scene, camera, font, gameToWin=2, playersNb=3, isPowerupsOn=true, language='en') {
@@ -26,7 +26,6 @@ export default class Tournament {
 		this.allMaps = maps.tournamentMap;
 		// this.level = new Level(scene, mapArray, playersNb);
 		this.scores = []
-		this.stop = false;
 		for (let i = 0; i < playersNb; i++) {
 			this.scores.push(0);
 		}
@@ -209,7 +208,7 @@ export default class Tournament {
 				}
 			}
 		}
-		if (this.stop || forceStopGame) {
+		if (forceStopGame) {
 			this.delete();
 			return false;
 		}
