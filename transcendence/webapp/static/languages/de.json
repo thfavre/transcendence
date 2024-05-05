@@ -56,8 +56,14 @@
 	"modal_login": "Wählen Sie einen Alias",
 	"register": "Registrieren",
 	"username": "Geben Sie Ihren Nicknamen ein",
-	"pong_versus_history": "Pong - Versus",
-	"pong_tournament_history": "Pong - Turnier",
-	"exit_solo_history": "Find the Exit - Solo",
-	"exit_versus_history": "Find the Exit - Versus"
+	"historyPongVersus": "Pong - Versus",
+	"historyPongTournament": "Pong - Turnier",
+	"historyExitSolo": "Find the Exit - Solo",
+	"historyExitVersus": "Find the Exit - Versus",
+	"player_username": "Spieler",
+	"rank": "Results",
+	"participants": "Teilnehmer",
+	"date": "Datum",
+	"no_game": "Keine Spiele gespielt"
+
 }

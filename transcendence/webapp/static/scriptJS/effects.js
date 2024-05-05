@@ -67,6 +67,8 @@ function	switchMenu(menuToShow, menuToRemove, url)
 	console.log("Switching menu to", menuToShow.id);
 	closeGame();
 	menuToShow.classList.remove("d-none");
+	if (menuToShow === historyMenu)
+		showHistory();
 	menuToRemove.classList.add("d-none");
 	changeLanguageDropdown();
 	history.pushState({menu: menuToShow.id}, "", url);
@@ -125,7 +127,6 @@ function	route()
 {
 	const	path = window.location.pathname.toLowerCase();
 	hideAllMenus();
-	// username = '';
 	if (!username)
 	{
 		registerUsernameModal();
@@ -139,6 +140,7 @@ function	route()
 			break;
 		case '/history/':
 			historyMenu.classList.remove('d-none');
+			showHistory();
 			break;
 		case '/credits/':
 			creditsMenu.classList.remove('d-none');

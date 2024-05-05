@@ -127,7 +127,7 @@ body
 	left: 0;
 	transform: translate(-50%, -50%);
 	border-radius: 50%;
-	z-index: 999999;
+	z-index: 9999;
 	pointer-events: none;
 }
 
@@ -220,6 +220,8 @@ body
 {
 	background: transparent;
 	border: none;
+	cursor : none;
+	border: none;
 	color : rgb(60, 214, 235, 0.3) !important;
 	font-size : calc(0.5rem + 0.5vw);
 }
@@ -270,7 +272,7 @@ body
 .nav-link
 {
 	color: #3CD6EB;
-	font-size: calc(0.5rem + 0.5vw);
+	font-size: calc(0.7rem + 0.7vw);
 }
 
 .nav-link:hover
@@ -278,14 +280,31 @@ body
 	color: #fff;
 }
 
+.nav-item .nav-link
+{
+	cursor: none !important;
+}
+
 /* Custom game display */
 
 .webgl-display
 {
-	/* max-width: 1000px; */
-	/* max-height: 800px; */
 	width: 100%;
 	height: auto;
 	border: 3px solid #3CD6EB;
 	aspect-ratio: 125 / 100;
+}
+
+/* Custom display for game history */
+
+.custom-p
+{
+	font-size: calc(0.6rem + 0.6vw);
+	text-align: center;
+}
+
+.alert-info
+{
+	background-color: rgb(60, 214, 235, 0.5);
+	color: #ffffff;
 }

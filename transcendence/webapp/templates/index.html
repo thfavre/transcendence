@@ -203,38 +203,74 @@
 				<h2 class="mt-5 custom-h2" data-i18n="history_game"></h2>
 				<ul class="nav nav-tabs">
 					<li class="nav-item">
-						<button class="nav-link active" id="jeu1-tab" data-bs-toggle="tab" data-bs-target="#historyPongVersus" type="button" data-i18n="pong_versus_history"></button>
+						<button class="nav-link active" type="button" data-i18n="historyPongVersus"></button>
 					</li>
 					<li class="nav-item">
-						<button class="nav-link" id="jeu2-tab" data-bs-toggle="tab" data-bs-target="#historyPongTournament" type="button" data-i18n="pong_tournament_history"></button>
+						<button class="nav-link" type="button" data-i18n="historyPongTournament"></button>
 					</li>
 					<li class="nav-item">
-						<button class="nav-link" id="jeu3-tab" data-bs-toggle="tab" data-bs-target="#historyExitSolo" type="button" data-i18n="exit_solo_history"></button>
+						<button class="nav-link" type="button" data-i18n="historyExitSolo"></button>
 					</li>
 					<li class="nav-item">
-						<button class="nav-link" id="jeu4-tab" data-bs-toggle="tab" data-bs-target="#historyExitVersus" type="button" data-i18n="exit_versus_history"></button>
+						<button class="nav-link" type="button" data-i18n="historyExitVersus"></button>
 					</li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane fade show active" id="historyPongVersus">
-						<div id="historyPongVersusTableContainer">
-								<!-- Table content will be dynamically generated here -->
-						</div>
+						<table class ="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col" data-i18n="player_username"></th>
+									<th scope="col" data-i18n="rank"></th>
+									<th scope="col" data-i18n="participants"></th>
+									<th scope="col" data-i18n="date"></th>
+								</tr>
+							</thead>
+							<tbody id="historyPongVersusTableContainer">
+							</tbody>
+						</table>
 					</div>
 					<div class="tab-pane fade" id="historyPongTournament">
-						<div id="historyPongTournamentTableContainer">
-								<!-- Table content will be dynamically generated here -->
-						</div>
+						<table class ="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col" data-i18n="player_username"></th>
+									<th scope="col" data-i18n="rank"></th>
+									<th scope="col" data-i18n="participants"></th>
+									<th scope="col" data-i18n="date"></th>
+								</tr>
+							</thead>
+							<tbody id="historyPongTournamentTableContainer">
+							</tbody>
+						</table>
 					</div>
 					<div class="tab-pane fade" id="historyExitSolo">
-						<div id="historyExitSoloTableContainer">
-								<!-- Table content will be dynamically generated here -->
-						</div>
+						<table class ="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col" data-i18n="player_username"></th>
+									<th scope="col" data-i18n="rank"></th>
+									<th scope="col" data-i18n="participants"></th>
+									<th scope="col" data-i18n="date"></th>
+								</tr>
+							</thead>
+							<tbody id="historyExitSoloTableContainer">
+							</tbody>
+						</table>
 					</div>
 					<div class="tab-pane fade" id="historyExitVersus">
-						<div id="historyExitVersusTableContainer">
-								<!-- Table content will be dynamically generated here -->
-						</div>
+						<table class ="table table-striped">
+							<thead>
+								<tr>
+									<th scope="col" data-i18n="player_username"></th>
+									<th scope="col" data-i18n="rank"></th>
+									<th scope="col" data-i18n="participants"></th>
+									<th scope="col" data-i18n="date"></th>
+								</tr>
+							</thead>
+							<tbody id="historyExitVersusTableContainer">
+							</tbody>
+						</table>
 					</div>
 				</div>
 				<div class="d-flex justify-content-end">
@@ -350,9 +386,7 @@
 	<script src="{% static '/scriptJS/exitOptions.js' %}"></script>
 	<script src="{% static '/scriptJS/pongOptions.js' %}"></script>
 	<script src="{% static '/scriptJS/translation.js' %}"></script>
-	<!-- <script src="{% static '/scriptJS/pongGame.js' %}"></script> -->
-	<!-- <script src="{% static '/scriptJS/exitGame.js' %}"></script> -->
-	<script src="{% static '/scriptJS/games.js' %}"></script>
 	<script src="{% static '/scriptJS/login.js' %}"></script>
 	<script src="{% static '/scriptJS/history.js' %}"></script>
+	<script src="{% static '/scriptJS/games.js' %}"></script>
 </html>
