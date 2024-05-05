@@ -40374,6 +40374,7 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, 
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = VSMShadowMap;
   renderer.setPixelRatio(window.devicePixelRatio);
+  window.addEventListener("resize", onCanvasResize, false);
   function onCanvasResize() {
     var width = canvas.clientWidth;
     var height = canvas.clientHeight;

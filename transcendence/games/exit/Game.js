@@ -1,13 +1,12 @@
 import * as THREE from 'three';
+
+import * as constants from './constants.js';
 import * as maps from './maps/maps.js';
+import * as powerups from './powerups.js';
 import Cube from './Cube.js';
 import Player from './Player.js';
-
 import MapData from './MapData.js';
-import * as powerups from './powerups.js';
-import * as constants from './constants.js';
 import ParticlesSystem from './particles.js';
-
 
 
 export default class Game {
@@ -19,7 +18,7 @@ export default class Game {
 		this.particlesSystem = new ParticlesSystem(scene);
 		[this.walls, this.players, this.powerups] = this.loadMap(this.mapData, playersNb);
 
-		// this.activateSpawnAnimation();
+		this.activateSpawnAnimation();
 		this.createPlane(map.backgroundColor)
 		// powerups
 		this.isPowerupsOn = isPowerupsOn;
@@ -79,7 +78,7 @@ export default class Game {
 		this.planeMesh = plane;
 	}
 
-	activateSpawnAnimation(duration=7) {
+	activateSpawnAnimation(duration=4) {
 		this.spawnAnimationFallHeight = 8;
 		for (let i = 0; i < this.walls.length; i++) {
 			let wall = this.walls[i];
@@ -106,7 +105,7 @@ export default class Game {
 	spawnAnimation(dt) {
 		if (!this.showSpawnAnimation)
 			return false;
-		var haveAllWallsFallen = true;
+		this.haveAllWallsFallen = true;
 		// make walls fall
 		for (let i = 0; i < this.walls.length; i++) {
 			if (this.currentSpawnAnimationTime < i/this.walls.length*this.spawnAnimationDuration)
@@ -118,11 +117,11 @@ export default class Game {
 			wall.mesh.material.opacity = 1 - wall.mesh.position.z/this.spawnAnimationFallHeight;
 
 			if (wall.mesh.position.z > 0)
-				haveAllWallsFallen = false;
+				this.haveAllWallsFallen = false;
 		}
 		// check if the spawn animation is over
 		if (this.currentSpawnAnimationTime > this.spawnAnimationDuration) {
-			if (haveAllWallsFallen)
+			if (this.haveAllWallsFallen)
 				this.desactivateSpawnAnimation();
 		} else { // make walls appear
 			this.currentSpawnAnimationTime += dt;
@@ -254,7 +253,7 @@ export default class Game {
 		if (constants.DEBUG)
 		return;
 	// move the camera to Z target
-	this.camera.position.z += (this.cameraZTarget - this.camera.position.z) * dt * moveSpeed;
+	this.camera.position.z += (this.cameraZTarget - this.camera.position.z) * dt * moveSpeed/2;
 	var mapCenterX = this.mapData.getWidth()/2;
 	var mapCenterY = this.mapData.getHeight()/2;
 	if (!x || !y) {
@@ -280,20 +279,19 @@ export default class Game {
 update(keysJustPressed) {
 	var dt = this.clock.getDelta();
 	this.particlesSystem.update(dt);
-
-		if (!this.spawnAnimation(dt)) {
-			for (let player of this.players) {
-				player.update(dt, keysJustPressed, this.mapData, this.powerups, this.winner==null);
-				if (player.hasWin) {
-						this.winner = player;
-						this.updateCamera(dt, {x: player.position.x, y: player.position.y, maxDistFromCenter: 8, moveSpeed: 3});
-				}
+	if (!this.spawnAnimation(dt)) {
+		for (let player of this.players) {
+			player.update(dt, keysJustPressed, this.mapData, this.powerups, this.winner==null);
+			if (player.hasWin) {
+				this.winner = player;
+				this.updateCamera(dt, {x: player.position.x, y: player.position.y, maxDistFromCenter: 8.5, moveSpeed: 2});
 			}
 		}
+	}
 		this.stackPlayers(dt);
 
 		this.updatePowerups(dt);
-		this.updateCamera(dt, {maxDistFromCenter: 2, moveSpeed: .4});
+		this.updateCamera(dt, {maxDistFromCenter: 1.5, moveSpeed: .6});
 
 
 	}

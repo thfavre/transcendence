@@ -3,7 +3,7 @@ import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 
-export default function createLine({points, color='#FFFFFF', lineWidth=0.001, zOffset=0}) {
+export default function createLine({points, color='#FFFFFF', lineWidth=0.002, zOffset=0}) {
 	const geometry = new LineGeometry();
 	geometry.setPositions(points);
 	geometry.translate(0, 0, zOffset);

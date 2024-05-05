@@ -48,23 +48,23 @@ export default class Paddle {
 		new THREE.MeshStandardMaterial({ color: "#0000ff", roughness:0}), // or should it be defined somewhere else?
 		new THREE.MeshStandardMaterial(
 			{
-				map: constants.textureCratesBaseColor,
+				// map: constants.textureCratesBaseColor,
 			}
 		),
-		new THREE.MeshStandardMaterial(
-			{
-				map: constants.textureMetalBaseColor,
-				normalMap: constants.textureMetalNormalMap,
-				displacementMap: constants.textureMetalHeightMap,
-				displacementScale: 0.07,
-				roughnessMap: constants.textureMetalRoughnessMap,
-				roughness: 0.5,
-				aoMap: constants.textureMetalAmbientOcclusionMap,
-				aoMapIntensity: 1,
-				// metalnessMap: constants.textureMetallic,
-				// metalness: 1,
-			}
-		),
+		// new THREE.MeshStandardMaterial(
+		// 	{
+		// 		map: constants.textureMetalBaseColor,
+		// 		normalMap: constants.textureMetalNormalMap,
+		// 		displacementMap: constants.textureMetalHeightMap,
+		// 		displacementScale: 0.07,
+		// 		roughnessMap: constants.textureMetalRoughnessMap,
+		// 		roughness: 0.5,
+		// 		aoMap: constants.textureMetalAmbientOcclusionMap,
+		// 		aoMapIntensity: 1,
+		// 		// metalnessMap: constants.textureMetallic,
+		// 		// metalness: 1,
+		// 	}
+		// ),
 	];
 
 
@@ -99,7 +99,7 @@ export default class Paddle {
 		// geometry.ed
 		const edgesGeometry = new THREE.EdgesGeometry(geometry);
 		for (var i = 0; i < edgesGeometry.attributes.position.array.length; i++) {
-			if (i >= 21 && i <30)
+			if (i >= 24 && i <30)
 				continue;
 			edgePoints.push(edgesGeometry.attributes.position.array[i]);
 			// if (i==2)

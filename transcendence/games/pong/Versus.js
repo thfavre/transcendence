@@ -64,7 +64,7 @@ export default class Versus extends Game {
 						var text = translation['lostAgainstAI'][this.language];
 					} else
 						var text = player.name + " " + translation['won'][this.language];
-					var winnerText = createText({font: this.font, message: text, size: 8, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
+					var winnerText = createText({font: this.font, message: text, size: 8, shadow: true});
 					winnerText.position.z = 8;
 					this.scene.add(winnerText);
 					var continueText = createText({font: this.font, message: translation['pressEnterToContinue'][this.language], size: 6, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
@@ -95,7 +95,7 @@ export default class Versus extends Game {
 			}
 		}
 		if (forceStopGame) {
-			// TODO free
+			// ? TODO free
 			return false;
 		}
 		return true;

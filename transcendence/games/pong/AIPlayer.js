@@ -1,10 +1,6 @@
 import * as THREE from 'three';
-import * as CANNON from 'cannon-es';
-import { Vec3 } from 'cannon-es';
+
 import Player from './Player';
-import { OBB } from 'three/addons/math/OBB.js';
-import * as constants from './constants.js';
-// import { PointLightShadow } from 'three';
 
 export default class AIPlayer extends Player {
 	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, ball, fieldVertices, playersNb) {

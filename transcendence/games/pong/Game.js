@@ -46,8 +46,8 @@ export default class Game {
 			this.physicsWorld.removeBody(body);
 		});
 		this.scene.remove(this.directionalLightBallTargeted);
-		if (this.directionalLightBallTargetedShadowHelper)
-			this.scene.remove(this.directionalLightBallTargetedShadowHelper);
+		if (this.spotLightBallTargetedShadowHelper)
+			this.scene.remove(this.spotLightBallTargetedShadowHelper);
 		this.scene.remove(this.hemisphereLight);
 	}
 
@@ -81,59 +81,17 @@ export default class Game {
 		spotLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
 		spotLight.shadow.camera.near = 45;
 		spotLight.shadow.camera.far = 100;
-		//shadowHelper
-		// var shadowHelper = new THREE.CameraHelper( spotLight.shadow.camera );
 
 		// helper
 		if (constants.DEBUG) {
-			if (this.directionalLightBallTargetedShadowHelper)
-				this.scene.remove(this.directionalLightBallTargetedShadowHelper);
-			this.directionalLightBallTargetedShadowHelper = new THREE.CameraHelper( spotLight.shadow.camera );
-			this.scene.add( this.directionalLightBallTargetedShadowHelper );
+			if (this.spotLightBallTargetedShadowHelper)
+				this.scene.remove(this.spotLightBallTargetedShadowHelper);
+			this.spotLightBallTargetedShadowHelper = new THREE.CameraHelper( spotLight.shadow.camera );
+			this.scene.add( this.spotLightBallTargetedShadowHelper );
 		}
-
-		// var directionalLight = new THREE.DirectionalLight( '#ffffff', 0.5);
-		// directionalLight.position.set(x, y, z);
-
-		// // directionalLight.target.position.set(0, 0, 0);
-		// directionalLight.target = this.ball.mesh;
-		// directionalLight.castShadow = true;
-		// directionalLight.shadow.camera.top = constants.FIELD_DIAMETER/2;
-		// directionalLight.shadow.camera.bottom = -constants.FIELD_DIAMETER/2;
-		// directionalLight.shadow.camera.left = -constants.FIELD_DIAMETER/2;
-		// directionalLight.shadow.camera.right = constants.FIELD_DIAMETER/2;
-		// directionalLight.shadow.camera.near = 0.1;
-		// directionalLight.shadow.camera.far = 500;
-		// // directionalLight.shadow.mapSize.width = 1024;
-		// if (constants.DEBUG) {
-		// 	var helper = new THREE.DirectionalLightHelper( directionalLight, 3 );
-		// 	this.scene.add( helper );
-		// }
 		this.scene.add(spotLight);
 		return spotLight;
 	}
-
-	// createDirectionalLightsTargetedOnBall() {
-	// 	if (this.directionalLights) { // erease the previous lights
-	// 		this.directionalLights.forEach((light) => {
-	// 			this.scene.remove(light);
-	// 		});
-	// 	}
-	// 	this.directionalLights = [];
-	// 	for (var i = 1; i < this.fieldVertices.length; i++) {
-	// 		var vertex = this.fieldVertices[i];
-	// 		// draw a circle with three js
-	// 		// vector going from the center of the field to the vertex
-
-	// 		var centerToVertex = new THREE.Vector3(vertex.x, vertex.y, 0);
-	// 		// centerToVertex.multiplyScalar(1.1);
-	// 		// centerToVertex
-	// 		centerToVertex.z = 30;
-	// 		var directionalLight = this.createDirectionalLightTargetedOnBall(centerToVertex.x, centerToVertex.y, centerToVertex.z);
-	// 		this.directionalLights.push(directionalLight);
-	// 	}
-
-	// }
 
 
 	createLights() {
@@ -146,14 +104,7 @@ export default class Game {
 			this.scene.add( helper );
 		}
 
-		// sun light, cast shadow
-		// this.createDirectionalLights();
-		// helper
-
-
-
-		var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
-
+		// var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
 		// this.scene.add( ambientLight );
 	}
 
@@ -177,7 +128,7 @@ export default class Game {
 		var fieldVertices = this.getFieldVertices(field);
 
 		// draw the center of the field
-		const centerGeometry = new THREE.CircleGeometry( 2, segmentsNb );
+		const centerGeometry = new THREE.CircleGeometry( 3, segmentsNb );
 		const centerMaterial = new THREE.MeshBasicMaterial( { color: '#C2F988' } );
 		const centerMesh = new THREE.Mesh( centerGeometry, centerMaterial );
 		centerMesh.position.set(0, 0, 1);
@@ -344,8 +295,8 @@ export default class Game {
 	}
 
 	update(dt, keysdown) {
-		if (this.directionalLightBallTargetedShadowHelper)
-			this.directionalLightBallTargetedShadowHelper.update();
+		if (this.spotLightBallTargetedShadowHelper)
+			this.spotLightBallTargetedShadowHelper.update();
 		this.background.update();
 		// this.makeBallPOV()
 		if (this.newRoundTimer())

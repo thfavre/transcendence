@@ -10,7 +10,7 @@ const translation = {
 	'enterToStart' : {
 		'en': 'Press Enter to start',
 		'fr': 'Appuyez sur Entrer pour commencer',
-		'de': 'Drücken Sie die Eingabetaste, um zu starten',
+		'de': 'Drücken Sie die Eingabetaste',
 	},
 	// ------- Game -------
 	'pressEnter' : {
@@ -20,8 +20,8 @@ const translation = {
 	},
 	'gameOver' : {
 		'en': 'Press Enter to finish',
-		'fr': 'Appuyez sur Entrer pour terminer',
-		'de': 'Drücken Sie die Eingabetaste, um zu beenden', // trop long raclure
+		'fr': 'Appuyez sur Entrer',
+		'de': 'Eingabetaste zu beenden',
 	},
 }
 

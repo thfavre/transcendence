@@ -7,7 +7,6 @@ import { Menu } from './Menu.js';
 import translation from './languages.js';
 
 
-
 export var forceStopGame = null;
 
 export default class Tournament {
@@ -24,12 +23,10 @@ export default class Tournament {
 		this.isOver = false;
 		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb, language: language});
 		this.allMaps = maps.tournamentMap;
-		// this.level = new Level(scene, mapArray, playersNb);
 		this.scores = []
 		for (let i = 0; i < playersNb; i++) {
 			this.scores.push(0);
 		}
-		// this.initNewGame();
 	}
 
 	createScoresTexts(showGameToWin=true) {
@@ -50,7 +47,6 @@ export default class Tournament {
 			this.scene.add(text);
 			this.scoresTexts.push(text);
 		}
-		// add / nbGames to win
 		if (showGameToWin) {
 			var text = createText({font: this.font, message: '/'+this.gameToWin.toString(), size: 2, depth: 0.2, frontColor: '#ffffff', sideColor: '#888888'});
 			text.position.x = (this.scores.length+.4)*space;
@@ -61,22 +57,13 @@ export default class Tournament {
 		}
 	}
 
-	// drawScores() {
-	// 	if (!this.scoresTexts)
-	// 		return;
-	// 	for (let i = 0; i < this.scores.length; i++) {
-	// 		// this.scoresTexts[i].position.x = i*2;
-	// 		// this.scoresTexts[i].position.y = 5;
-	// 	}
-	// }
-
 	initNewGame() {
 		var randomTournamentMap = this.allMaps[Math.floor(Math.random()*this.allMaps.length)];
 		this.allMaps = this.allMaps.filter(map => map !== randomTournamentMap);
 		if (this.allMaps.length == 0) { // all maps have been played
 			this.allMaps = maps.tournamentMap;
 		}
-		// randomTournamentMap = maps.speedySquare; // ! TODO remove
+		// randomTournamentMap = maps.speedySquare; // To choose a specific map
 		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb, this.isPowerupsOn);
 		this.createScoresTexts();
 	}
@@ -107,7 +94,6 @@ export default class Tournament {
 		}
 		this.scores[winner.playerNb]++;
 		if (this.scores[winner.playerNb] >= this.gameToWin) {
-			// this.playersMeshes = this.game.getPlayersMeshesCopy();
 			this.isOver = true;
 			this.createScoresTexts(false);
 			if (!constants.DEBUG)
@@ -154,32 +140,22 @@ export default class Tournament {
 				player.spotLight.intensity = player.spotLightIntensity/2;
 
 			}
-			// this.game.players[i].mesh.position.z = 2;
 		}
-		// this.game.updateCamera(dt, {maxDistFromCenter: 10, moveSpeed: .3});
 		if (!constants.DEBUG) {
 			this.camera.position.z = 5;
 			if (this.camera.position.x < this.game.winner.mesh.position.x)
 				this.camera.position.x += 3 * dt;
 			this.camera.position.y = this.game.winner.mesh.position.y-3;
-			// this.camera.lookAt(this.game.winner.mesh.position);
+			this.camera.lookAt(this.game.winner.mesh.position);
 			this.camera.rotation.x = .7;
 			this.camera.rotation.y = 0;
 			this.camera.rotation.z = 0;
 		}
-
-	// 	console.log('Tournament over, winner is player ', winner, winner.mesh.position.z);
-	// 	// winner.mesh.position.z = 2;
-	// 	winner.mesh.position.x = -2;
-	// 	winner.mesh.position.y = -2;
-	// 	winner.position.x = -2;
-	// 	winner.position.y = -2;
 	}
 
 	getScores() {
 		return this.scores;
 	}
-
 
 	update(keysJustPressed) {
 		var dt = this.clock.getDelta();

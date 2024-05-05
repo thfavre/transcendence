@@ -89,14 +89,13 @@ export default class Tournament {
 			var winner = this.game.players.filter((player) => player.health > 0)[0];
 			if (winner) {
 				this.winner = winner;
-				this.showText({text:winner.name + translation['winAndContinue'][this.language], size:8});
+				this.showText({text:winner.name + translation['winAndContinue'][this.language], size:7});
 			}
 			else
 				this.showText({text: translation['lostAgainstNobody'][this.language], size:6});
 
 			return
 		}
-
 		this.createNewGame(goalPlayer);
 	}
 
@@ -112,7 +111,7 @@ export default class Tournament {
 		}
 
 		if (forceStopGame) {
-			// TODO free
+			// ? TODO free ?
 			return false;
 		}
 		return true;

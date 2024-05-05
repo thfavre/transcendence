@@ -6,11 +6,11 @@ window.pongGame = pongGame;
 window.exitGame = exitGame;
 
 
-// pongGame(['Thom','Bob', 'Jo'], 2, 'tournament', 'en', '#webgl1', false, (game) => {
-// 	console.log('Game is over', game);
-// 	game.time;
-// });
-
-exitGame(4, 2, true, "solo", 'fr', '#webgl1', false, (tournament) => {
-		console.log('Tournament is over', tournament.scores);
+pongGame(['Bob', 'BigName2001'], 2, 'tournament', 'en', '#webgl1', false, (game) => {
+	console.log('Game is over', game);
+	game.time;
 });
+
+// exitGame(4, 2, true, "tournament", 'fr', '#webgl1', false, (tournament) => {
+// 		console.log('Game is over', tournament.scores);
+// });

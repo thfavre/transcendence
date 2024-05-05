@@ -71,7 +71,7 @@ function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, 
 
 
 	// Camera
-	const camera = new THREE.PerspectiveCamera( 90, canvas.clientWidth / canvas.clientHeight, 0.1, 10000);
+	const camera = new THREE.PerspectiveCamera( 90, canvas.clientWidth / canvas.clientHeight, 0.1, 3000);
 	scene.add( camera );
 
 
@@ -186,10 +186,12 @@ function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, 
 
 		if (!pongGame.update(dt, keysdown, keysJustPressed)){
 			callback(pongGame);
+			//dispose ?
+			// renderer.renderLists.dispose();
+			// renderer.dispose();
+
 			return;
 		}
-
-
 
 		renderer.render( scene, camera );
 		composer.render();

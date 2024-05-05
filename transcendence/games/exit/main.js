@@ -1,23 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
-
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 
 import * as constants from './constants.js';
 import Tournament from './Tournament.js';
 import TimedGames from './TimedGames.js';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { SSAOPass } from 'three/examples/jsm/Addons.js';
-// import Game from './Game.js';
-
-// const loader = new FontLoader();
-// loader.load( 'assets/fonts/Gugi_Regular.json', ( font ) => {
-// 	console.log("Font loaded", font);
-// 	FONT = font;
-// });
 
 
 const fontLoader = new FontLoader();
@@ -48,7 +35,6 @@ export default function init(playersNb, gameToWin, isPowerupsOn=true, gameMode="
   		.then((values) => {
     		const font = values[0]; // Access the loaded font
 
-    		// Start your game logic here
 			main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, font, debug, callback);
   		})
   		.catch((error) => {
@@ -68,8 +54,6 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, 
 	// Scene
 	const scene = new THREE.Scene();
 	scene.background = new THREE.Color('#444444');
-	// const textureLoader = new THREE.TextureLoader();
-	// scene.background = textureLoader.load("assets/face.jpg");
 	if (constants.DEBUG) {
 		const axesHelper = new THREE.AxesHelper(10);
 		scene.add(axesHelper);
@@ -82,36 +66,17 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, 
 	if (constants.DEBUG)
 		camera.position.z = 40;
 
-	// camera.rotation.z = Math.PI;
-
 	// Renderer
 	const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
-	// renderer.setSize( sizes.width, sizes.height );
-	// document.body.appendChild( renderer.domElement );
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.VSMShadowMap;
 	// renderer.toneMapping = THREE.CineonToneMapping; // ReinhardToneMapping
 	// renderer.toneMappingExposure = 1.5;
 	renderer.setPixelRatio(window.devicePixelRatio);
 
-	// // postprocessing
-	// const renderScene = new RenderPass(scene, camera);
-	// const composer = new EffectComposer(renderer);
-	// composer.addPass(renderScene);
-	// // ssao
-	// const ssaoPass = new SSAOPass(scene, camera, canvas.clientWidth, canvas.clientHeight);
-	// ssaoPass.kernelRadius = 32;
-	// ssaoPass.minDistance = 0.1;
-	// ssaoPass.maxDistance = 100;
-	// composer.addPass(ssaoPass);
-
-	// // ouputPass
-	// const outputPass = new OutputPass(scene, camera);
-	// composer.addPass(outputPass);
-
 
 	// resize
-	// window.addEventListener("resize", onCanvasResize, false);
+	window.addEventListener("resize", onCanvasResize, false); // ! TODO why was it commented?
   	function onCanvasResize() {
 		var width = canvas.clientWidth;
 		var height = canvas.clientHeight;
@@ -180,7 +145,6 @@ function main(playersNb, gameToWin, isPowerupsOn, gameMode, language, selector, 
 			return;
 		}
 		renderer.render(scene, camera);
-		// composer.render();
 		keysJustPressed = [];
 		window.requestAnimationFrame(gameLoop);
 	}

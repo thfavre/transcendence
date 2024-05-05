@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import Game from './Game.js';
-import * as maps from './maps/maps.js';
+
 import * as constants from './constants.js';
+import * as maps from './maps/maps.js';
+import Game from './Game.js';
 import createText from './createText.js';
-import { Menu } from './Menu.js';
 import translation from './languages.js';
+import { Menu } from './Menu.js';
 
 
 export var forceStopGame = null;
@@ -25,11 +26,7 @@ export default class TimedGames {
 		this.menu = new Menu({scene: scene, camera: camera, font: font, playersNb: playersNb, language: language});
 		this.allMaps = maps.tournamentMap;
 		this.time = 0;
-		// this.level = new Level(scene, mapArray, playersNb);
-
-		// this.initNewGame();
 	}
-
 
 	initNewGame() {
 		var randomTournamentMap = this.allMaps[Math.floor(Math.random()*this.allMaps.length)];
@@ -37,7 +34,7 @@ export default class TimedGames {
 		if (this.allMaps.length == 0) { // all maps have been played
 			this.allMaps = maps.tournamentMap;
 		}
-		// randomTournamentMap = maps.speedySquare; // ! TODO remove
+		// randomTournamentMap = maps.speedySquare; // To test a specific map
 		this.game = new Game(this.scene, this.camera, randomTournamentMap, this.playersNb, this.isPowerupsOn);
 	}
 
@@ -64,7 +61,6 @@ export default class TimedGames {
 		this.timerText.position.y = -2.3;
 		this.timerText.position.z = -.5;
 		this.scene.add(this.timerText);
-
 	}
 
 	delete() {
@@ -83,7 +79,6 @@ export default class TimedGames {
 			this.helperText = null;
 		}
 		if (this.currentGameNb >= this.gameToWin) {
-			// this.playersMeshes = this.game.getPlayersMeshesCopy();
 			this.isOver = true;
 			if (!constants.DEBUG)
 				this.camera.position.x = 0;
@@ -130,32 +125,21 @@ export default class TimedGames {
 				player.spotLight.intensity = player.spotLightIntensity/2;
 
 			}
-			// this.game.players[i].mesh.position.z = 2;
 		}
-		// this.game.updateCamera(dt, {maxDistFromCenter: 10, moveSpeed: .3});
 		if (!constants.DEBUG) {
 			this.camera.position.z = 5;
 			if (this.camera.position.x < this.game.winner.mesh.position.x)
 				this.camera.position.x += 3 * dt;
 			this.camera.position.y = this.game.winner.mesh.position.y-3;
-			// this.camera.lookAt(this.game.winner.mesh.position);
 			this.camera.rotation.x = .7;
 			this.camera.rotation.y = 0;
 			this.camera.rotation.z = 0;
 		}
-
-	// 	console.log('Tournement over, winner is player ', winner, winner.mesh.position.z);
-	// 	// winner.mesh.position.z = 2;
-	// 	winner.mesh.position.x = -2;
-	// 	winner.mesh.position.y = -2;
-	// 	winner.position.x = -2;
-	// 	winner.position.y = -2;
 	}
 
 	getScores() {
 		return this.scores;
 	}
-
 
 	update(keysJustPressed) {
 		var dt = this.clock.getDelta();
@@ -174,7 +158,7 @@ export default class TimedGames {
 					this.showContinueText(this.game.winner);
 					if (keysJustPressed.includes(13))
 						this.onGameOver(this.game.winner);
-				} else
+				} else if (this.game.haveAllWallsFallen)
 					this.time += dt;
 			} else if (this.isOver) {
 				this.winScreen(dt);
