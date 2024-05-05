@@ -42,7 +42,8 @@ async function updateTable(tableContainerId, game_id) {
     getGameHistory(userAlias, game_id)
         .then(data => {
             const tableContainer = document.getElementById(tableContainerId);
-            if (!tableContainer) {
+            tableContainer.innerHTML = '';
+			if (!tableContainer) {
                 console.error(`No element found with id "${tableContainerId}"`);
                 return;
             }
