@@ -29,5 +29,9 @@ urlpatterns = [
     path('get_last_game', views.get_last_game, name='get_last_game'),
     path('print_all_records/', print_all_records, name='print_all_records'),
     path('get_game_history/', get_game_history, name='get_game_history'),
-    re_path(r'^.*/$', index, name='app'), # catch all urls
+    re_path(r'^(?!/static/).*$', index, name='app'),
 ]
+
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
