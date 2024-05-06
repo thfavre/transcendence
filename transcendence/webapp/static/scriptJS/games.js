@@ -38567,8 +38567,11 @@ class Versus extends Game$1 {
         if (player.health > 0) {
           if (player instanceof AIPlayer) {
             var text = translation$1["lostAgainstAI"][this.language];
-          } else
-            var text = player.name + " " + translation$1["won"][this.language];
+          } else {
+              if (!this.winner)
+                this.winner = player;
+              var text = player.name + " " + translation$1["won"][this.language];
+          }
           var winnerText = createText$1({ font: this.font, message: text, size: 8, shadow: true });
           winnerText.position.z = 8;
           this.scene.add(winnerText);
