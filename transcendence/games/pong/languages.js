@@ -46,7 +46,7 @@ const translation = {
 	'pressEnterToContinue' : {
 		'en': 'Press ENTER to continue',
 		'fr': 'Appuyez sur ENTRER pour continuer',
-		'de': 'Drücken Sie die Eingabetaste, um fortzufahren',
+		'de': 'Drücken Sie die Eingabetaste',
 	},
 	// ------- Tournament -------
 	'playerOut' : {
@@ -64,9 +64,9 @@ const translation = {
 	},
 	// easter egg lost
 	'lostAgainstNobody' : {
-		'en': 'You lost against ... Nobody!? (Press Enter)',
-		'fr': 'Vous avez perdu contre ... Personne!? (Appuyez sur Entrer)',
-		'de': 'Sie haben verloren gegen ... Niemand!? (Eingabetaste)',
+		'en': 'You lost against ... Nobody!?',
+		'fr': 'Vous avez perdu contre ... Personne!?',
+		'de': 'Sie haben verloren gegen ... Niemand!?',
 	},
 
 
