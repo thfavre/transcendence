@@ -19,7 +19,7 @@ function	launchExitSolo()
 	if (window.exitGame) {  // Check if function exists (avoid errors)
 		const language = localStorage.getItem('language') || 'en';
 		console.log("Starting SOLO game with " + NumberLevels + " levels in " + language + " language.");
-	window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (tournement) => {
+		window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (tournement) => {
 		if (tournement.isOver)
 		{
 			console.log('Solo game is over, time :', tournement.time);
@@ -62,8 +62,9 @@ function launchExitVersus()
 	}
 	if (window.exitGame) {  // Check if function exists (avoid errors)
 		const language = localStorage.getItem('language') || 'en';
-		console.log("Starting Versus game with ", selectedPlayers, " players and ", FirstTo, " levels in ", language, " language.");
- 		window.exitGame(selectedPlayers, FirstTo, false, 'tournament', language, '#webglExitVersus', false, (tournament) => {
+		const powerUps = isSwitchOn;
+		console.log("Starting Versus game with ", selectedPlayers, " players and ", FirstTo, " levels with powerups " + powerUps + " in ", language, " language.");
+ 		window.exitGame(selectedPlayers, FirstTo, powerUps, 'tournament', language, '#webglExitVersus', false, (tournament) => {
 				let Result = {
 					username: localStorage.getItem('userAlias'),
 					game_id: 'EV',

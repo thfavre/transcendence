@@ -14,6 +14,8 @@ export default class Paddle {
 
 	static wallSkin = {'line': new LineMaterial({color: '#3CD6EB', linewidth: 0.002}), 'material': new THREE.MeshStandardMaterial({color: "#3CD6EB"})};
 
+	static aiSkin = {'line': new LineMaterial({color: '#ff0000', linewidth: 0.010}), 'material': new THREE.MeshStandardMaterial({color: "#2c3e50"})};
+
 	static skins = [
 		// red
 		{

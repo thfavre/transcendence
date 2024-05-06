@@ -52,7 +52,7 @@ export default class Tournament {
 	}
 
 	createNewGame(excludePlayer) {
-		this.showText({text: excludePlayer.name + translation['playerOut'][this.language], y:constants.FIELD_DIAMETER/2+10});
+		this.showText({text: excludePlayer.name + translation['playerOut'][this.language], y:constants.FIELD_DIAMETER/2+6});
 		var players = this.game.players.filter((player) => player != excludePlayer);
 		this.realPlayersNb = players.length;
 		this.game.delete()
@@ -82,10 +82,10 @@ export default class Tournament {
 			var winner = this.game.players.filter((player) => player.health > 0)[0];
 			if (winner) {
 				this.winner = winner;
-				this.showText({text:winner.name + translation['winAndContinue'][this.language], size:7});
+				this.showText({text:winner.name + translation['winAndContinue'][this.language], size:5});
 			}
 			else
-				this.showText({text: translation['lostAgainstNobody'][this.language], size:6});
+				this.showText({text: translation['lostAgainstNobody'][this.language], size:4});
 
 			return
 		}

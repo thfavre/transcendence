@@ -41,10 +41,7 @@ function closeGame()
 	else
 		return;
 	console.log("The game has been stopped");
-
-
 }
-
 
 // Hide the video and show the menu
 
@@ -189,15 +186,9 @@ function	backToMain()
 {
 	console.log("Back to main menu");
 	hideAllMenus();
+	closeGame();
 	menuButtons.classList.remove("d-none");
 	history.pushState({menu: "menuButtons"}, "", "/");
-	//close game
-	console.log(forceStopGame);
-	if (!forceStopGame)
-	{
-		forceStopGame = true;
-		console.log("The game has been stopped");
-	}
 }
 
 // Close all modal

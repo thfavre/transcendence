@@ -48,7 +48,7 @@ class PlayerCreator {
 	askUpKey(keysJustPressed) {
 		this.setText({
 			text: this.playerName + translation['askKeyUp'][this.language],
-			x: 0, y: 30, z: 262,
+			x: 0, y: 30, z: 250,
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyDown && this.ifKeyValid(keysJustPressed[0]))
 		{
@@ -60,7 +60,7 @@ class PlayerCreator {
 	askDownKey(keysJustPressed) {
 		this.setText({
 			text: this.playerName + translation['askKeyDown'][this.language],
-			x: 0, y: 30, z: 262
+			x: 0, y: 30, z: 250
 		});
 		if (keysJustPressed.length > 0 && keysJustPressed[0] != this.keyUp && this.ifKeyValid(keysJustPressed[0]))
 		{
@@ -77,7 +77,7 @@ class PlayerCreator {
 		this.setText({
 			text:this.playerName + translation['askPaddleSkin'][this.language] +
 					" (" + keyUpStr + "/"+ keyDownStr + ")",
-				x: 0, y: 30, z: 262});
+				x: 0, y: 30, z: 253});
 
 		if (keysJustPressed.length > 0)
 		{
@@ -185,7 +185,7 @@ export default class Menu {
 				}
 			}
 		}
-		else if (this.zoomTo(dt, 100))
+		else if (this.zoomTo(dt, 86))
 			{
 				this.game.createNewRound();
 				this.isDesactivated = true;

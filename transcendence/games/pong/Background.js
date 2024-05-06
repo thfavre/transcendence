@@ -168,7 +168,7 @@ export default class Background {
 		this.stars = []
 
 		if (Math.random() > 0.82) { // special background !
-			this.stars.push(...this.createMovingObject(MovingBox, {number: 150, maxSpawnDistance: 200, spawnUnderField: true}));
+			this.stars.push(...this.createMovingObject(MovingBox, {number: 200, maxSpawnDistance: 250, spawnUnderField: true}));
 		} else if (Math.random() > 0.94) { // special background !
 			this.stars.push(...this.createMovingObject(RotatingIcosahedro, {number: 200, maxSpawnDistance: 400, spawnUnderField: true, safeZoneAroundFieldBorder: 100}));
 		} else { // default background

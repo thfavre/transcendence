@@ -10,7 +10,6 @@ export default class ParticlesSystem {
 	delete() {
 		for (let particle of this._particles) {
 			particle.delete();
-			console.log('deleting particle');
 		}
 	}
 
@@ -26,12 +25,10 @@ export default class ParticlesSystem {
 	}
 
 	addParticle(x, y, z, type) {
-		// console.log('adding particle', type.name);
 		this._particles.push(new type({scene: this.scene, x: x, y: y, z: z}));
 	}
 
 	update(dt) {
-		// console.log('updating particles');
 		for (var particle of this._particles) {
 			if (particle.shouldRemove()) {
 				particle.delete();

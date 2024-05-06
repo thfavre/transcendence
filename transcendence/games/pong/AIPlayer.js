@@ -1,11 +1,13 @@
 import * as THREE from 'three';
 
 import Player from './Player';
+import Paddle from './Paddle';
 
 export default class AIPlayer extends Player {
 	constructor(scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, ball, fieldVertices, playersNb) {
 		super (scene, physicsWorld, playerNb, startPos, endPos, fieldEdgeDiameter, playersNb);
-
+		// set the ai paddle skin
+		this.paddle.setSkin(Paddle.aiSkin);
 		this.physicsWorld = physicsWorld;
 		this.ball = ball;
 		this.targetPosition = this.goalHitboxBody.position;
