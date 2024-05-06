@@ -7,6 +7,7 @@ import HumanPlayer from './HumanPlayer.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import createLine from './createLine.js';
 import Background from './Background.js';
+import Paddle from './Paddle.js';
 
 export default class Game {
 	constructor(scene, physicsWorld, camera, humanPlayerNb, AIPlayerNb) {
@@ -56,11 +57,11 @@ export default class Game {
 		wall1.health = 0;
 		wall1.closeGoal(0, true);
 		this.addPlayer(wall1);
-		wall1.paddle.mesh.material.color.set('#3CD6EB');
+		wall1.paddle.setSkin(Paddle.wallSkin);
 
 		var wall2 = this.createHumanPlayer(3);
 		wall2.health = 0;
-		wall2.paddle.mesh.material.color.set('#3CD6EB');
+		wall2.paddle.setSkin(Paddle.wallSkin);
 		wall2.closeGoal(0, true);
 		this.addPlayer(wall2);
 	}
@@ -215,8 +216,12 @@ export default class Game {
 		// will create the ball at the center of the field moving through one of the players
 		var humamPlayersPos = [];
 		this.players.forEach(player => {
-			if (player.health > 0 && !(player instanceof AIPlayer))
-			humamPlayersPos.push(player.paddle.mesh.position);
+			if (player.health > 0 && !(player instanceof AIPlayer)) {
+				var pos = player.paddle.mesh.position;
+				pos.x += Math.random() * 8;
+				pos.y += Math.random() * 8;
+				humamPlayersPos.push(pos);
+			}
 		});
 		return new Ball(this.scene, this.physicsWorld, humamPlayersPos);
 	}
@@ -238,14 +243,6 @@ export default class Game {
 
 		this.camera.rotation.x = Math.PI/2;
 		this.camera.rotation.y =ballAngle + Math.PI/2 + Math.PI;
-	}
-
-	makeTopDownPOV() {
-		// this.camera.position.x = 0;
-		// this.camera.position.y = 0;
-		// this.camera.position.z = 100;
-		// this.camera.rotation.x = Math.PI/2;
-		// vecotr from the center of the field to the ball
 	}
 
 	newRoundTimer() {

@@ -74,7 +74,7 @@ class RotatingIcosahedro extends OrbitMovement {
 		// const torusTube = THREE.MathUtils.randFloat(torusRadius-2, torusRadius-1)
 		// const geometry = new THREE.TorusGeometry(torusRadius, torusTube, 12, 48);
 		const geometry = new THREE.IcosahedronGeometry(radius);
-		const colors = ['#F9F871', '#C2F988', '#8CF5A6', '#5AEEC4']
+		const colors = ['#F9F871', '#C2F988', '#8CF5A6', '#5AEEC4', '#5AEEC4']
 
 		const material = new THREE.MeshBasicMaterial({ color: colors[Math.floor(Math.random()*colors.length)], wireframe: false, transparent: true, opacity: .8, });
 		const mesh = new THREE.Mesh(geometry, material);
@@ -167,9 +167,9 @@ export default class Background {
 		this.scene = scene;
 		this.stars = []
 
-		if (Math.random() > 0.9) { // special background !
+		if (Math.random() > 0.82) { // special background !
 			this.stars.push(...this.createMovingObject(MovingBox, {number: 150, maxSpawnDistance: 200, spawnUnderField: true}));
-		} else if (Math.random() > 0.93) { // special background !
+		} else if (Math.random() > 0.94) { // special background !
 			this.stars.push(...this.createMovingObject(RotatingIcosahedro, {number: 200, maxSpawnDistance: 400, spawnUnderField: true, safeZoneAroundFieldBorder: 100}));
 		} else { // default background
 			this.stars.push(...this.createMovingObject(MovingSphere, {number: 100, maxSpawnDistance: 200, spawnUnderField: true}));

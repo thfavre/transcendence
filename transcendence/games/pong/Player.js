@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import Paddle from './Paddle.js';
-import * as constants from './constants.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 
@@ -13,7 +12,7 @@ export default class Player {
 		this.startPos = startPos;
 		this.endPos = endPos;
 
-		this.axeAngle = 2*Math.PI/(playersNb*2) +  2*Math.PI/playersNb*(playerNb);  // TODO simplify the formula
+		this.axeAngle = 2*Math.PI/(playersNb*2) +  2*Math.PI/playersNb*(playerNb);
 
 		this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
 
@@ -28,9 +27,6 @@ export default class Player {
 		this.physicsWorld.removeBody(this.goalHitboxBody);
 		if (this.closedGoalBody)
 			this.physicsWorld.removeBody(this.closedGoalBody);
-		// this.healthMeshes.forEach((healthMesh) => {
-		// 	this.paddle.mesh.remove(healthMesh);
-		// });
 		this.paddle.delete();
 	}
 
@@ -44,14 +40,20 @@ export default class Player {
 			const paddleSize = this.paddle.mesh.geometry.parameters.height;
 			model.scale.set(3, 3, 3);
 			model.rotation.set(0, 0, -Math.PI/2);
+			// make the model more bright
+			model.traverse((child) => {
+				if (child.isMesh) {
+					child.material.color.setHex(0xff5511);
+				}
+			});
+			// create the health meshes
 			for (var i = 0; i < this.health; i++) {
 				var modelInstance = model.clone();
 				modelInstance.position.set(0.4, -paddleSize/2+paddleSize/(this.health+1)*(i+1), 1.5);
 				this.healthMeshes.push(modelInstance);
 				this.paddle.mesh.add(modelInstance);
 			}
-		}
-		);
+		});
 	}
 
 	createClosedGoalBody() {
@@ -85,7 +87,6 @@ export default class Player {
 		} else if (this.paddle.mesh.scale.y < 1 / this.paddle.percentLengthSize) {
 			this.paddle.scale(4*dt)
 		}
-
 	}
 
 	createGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, isBallInGoal) {
@@ -97,8 +98,7 @@ export default class Player {
 		centerPos.x += fieldEdgeDiameter/2*Math.cos(this.axeAngle);
 		centerPos.y += fieldEdgeDiameter/2*Math.sin(this.axeAngle);
 
-
-		this.goalHitboxBody = new CANNON.Body({ // Todo rename to make it more explicit ?
+		this.goalHitboxBody = new CANNON.Body({
 			mass: 0,
 			shape: new CANNON.Box(new CANNON.Vec3(.2, goalLength/2, 5)),
 			position: centerPos,
@@ -132,13 +132,6 @@ export default class Player {
 		this.movePaddle(dt, keysdown)
 		this.paddle.update();
 		if (this.isBallInGoal.a)
-		{
 			this.loseHealth();
-
-			// console.log("Ball is in player", this.playerNb, "goal");
-			// this.isBallInGoal.a = false;
-			// reset the ball position
-		}
-
 	}
 }

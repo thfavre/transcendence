@@ -15,6 +15,9 @@ class PlayerCreator {
 		this.player = this.game.createHumanPlayer(playerNb, playerName);
 		this.game.addPlayer(this.player);
 		this.player.paddle.mesh.position.z = 240;
+		// this.player.paddle.mesh.position.z = 285;
+		// this.player.paddle.mesh.position.x -=24;
+		// this.player.paddle.mesh.position.y -=24;
 
 		this.fallSpeed = 0;
 		this.gravity = 400;
@@ -79,9 +82,9 @@ class PlayerCreator {
 		if (keysJustPressed.length > 0)
 		{
 			if (keysJustPressed.includes(this.keyUp))
-				this.player.paddle.changeMaterial(1);
+				this.player.paddle.changeSkin(1);
 			else if (keysJustPressed.includes(this.keyDown))
-				this.player.paddle.changeMaterial(-1);
+				this.player.paddle.changeSkin(-1);
 			else if (keysJustPressed[0] == 13)
 			{
 				this.color = true;
