@@ -67,7 +67,6 @@ function	launchPongVersus()
 		language = localStorage.getItem('language') || 'en';
 		console.log("Starting Versus Pong game with ", selectedPlayers, " players and ", selectedAI, " AI" + " in ", language, " language.");
 		const username = localStorage.getItem('userAlias');
-		console.log('username:', username);
 		var humanNames = [username]; // ! TODO get the main account name
 		for (let i = 1; i < selectedPlayers; i++)
 		{
@@ -75,7 +74,6 @@ function	launchPongVersus()
 			humanNames.push(playerName);
 		}
 		window.pongGame(humanNames, selectedAI, 'versus', language, '#webglPongVesus', false, (tournament) => {
-				console.log('SAVE THE SCORES here');
 				let Result = {
 					username: username,
 					game_id: 'PV',
