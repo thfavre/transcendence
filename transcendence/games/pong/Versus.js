@@ -50,8 +50,8 @@ export default class Versus extends Game {
 					if (player instanceof AIPlayer) {
 						var text = translation['lostAgainstAI'][this.language];
 					} else {
-						if (!this.winner)
-							this.winner = player;
+						if (!this.winnerName)
+							this.winnerName = player.name;
 						var text = player.name + " " + translation['won'][this.language];
 					}
 					var winnerText = createText({font: this.font, message: text, size: 8, shadow: true});

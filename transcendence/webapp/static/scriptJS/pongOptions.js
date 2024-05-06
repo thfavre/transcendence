@@ -52,7 +52,6 @@ function	launchPongVersus()
 	let	totalParticipants = selectedPlayers + selectedAI;
 
 	function hasWon(username, winnerName) {
-		console.log('username:', username, 'winnerName:', winnerName);
 		if (username === winnerName)
 			return 1;
 		return 0;
@@ -77,7 +76,7 @@ function	launchPongVersus()
 				let Result = {
 					username: username,
 					game_id: 'PV',
-					position: [hasWon(username, tournament.winner.name), selectedPlayers + selectedAI]
+					position: [hasWon(username, tournament.winnerName), selectedPlayers + selectedAI]
 				}
 				sendGameData(Result);
 				backToMain();
