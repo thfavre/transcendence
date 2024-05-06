@@ -34851,7 +34851,7 @@ __publicField(_Paddle, "skins", [
   },
   // purple
   {
-    "line": new LineMaterial({ color: "#a498ff", linewidth: 9e-3 }),
+    "line": new LineMaterial({ color: "#FFA4B8", linewidth: 9e-3 }),
     "material": new MeshStandardMaterial(
       {
         color: "#857BCE"
@@ -34874,10 +34874,10 @@ __publicField(_Paddle, "skins", [
   // ---- Specials ----
   // dazzle
   {
-    "line": new LineMaterial({ color: "#ffffff", linewidth: 0.028 }),
+    "line": new LineMaterial({ color: "#00f0f0", linewidth: 0.012 }),
     "material": new MeshBasicMaterial(
       {
-        color: "#000000"
+        color: "#ffffff"
       }
     )
   },

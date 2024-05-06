@@ -82,10 +82,10 @@ export default class Paddle {
 		// ---- Specials ----
 		// dazzle
 		{
-			'line': new LineMaterial({color: '#ffffff', linewidth: 0.028}),
+			'line': new LineMaterial({color: '#00f0f0', linewidth: 0.028}),
 			'material': new THREE.MeshBasicMaterial(
 				{
-					color: "#000000",
+					color: "#ffffff",
 				}
 			),
 		},
