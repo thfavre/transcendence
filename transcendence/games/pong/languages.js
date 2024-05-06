@@ -6,12 +6,12 @@ const translation = {
 	'askKeyUp' : {
 		'en': ', press the key to move up',
 		'fr': ', appuyez sur la touche pour monter',
-		'de': ', drücken Sie die Taste, um nach oben zu bewegen',
+		'de': ', drücken Sie um oben zu bewegen',
 	},
 	'askKeyDown' : {
 		'en': ', press the key to move down',
 		'fr': ', appuyez sur la touche pour descendre',
-		'de': ', drücken Sie die Taste, um nach unten zu bewegen',
+		'de': ', drücken Sie um unten zu bewegen',
 	},
 	'askPaddleSkin' : {
 		'en': ', choose your paddle',
@@ -46,7 +46,7 @@ const translation = {
 	'pressEnterToContinue' : {
 		'en': 'Press ENTER to continue',
 		'fr': 'Appuyez sur ENTRER pour continuer',
-		'de': 'Drücken Sie die Eingabetaste, um fortzufahren',
+		'de': 'Drücken Sie die Eingabetaste',
 	},
 	// ------- Tournament -------
 	'playerOut' : {
@@ -60,13 +60,13 @@ const translation = {
 	'winAndContinue' : {
 		'en': ' wins! (Press Enter to finish)',
 		'fr': ' gagne! (Appuyez sur Entrer pour terminer)',
-		'de': ' gewinnt! (Drücken Sie die Eingabetaste, um zu beenden)',
+		'de': ' gewinnt! (Drücken Sie die Eingabetaste)',
 	},
 	// easter egg lost
 	'lostAgainstNobody' : {
-		'en': 'You lost against ... Nobody!? (Press Enter to finish)',
-		'fr': 'Vous avez perdu contre ... Personne!? (Appuyez sur Entrer pour terminer)',
-		'de': 'Sie haben verloren gegen ... Niemand!? (Drücken Sie die Eingabetaste, um zu beenden)',
+		'en': 'You lost against ... Nobody!?',
+		'fr': 'Vous avez perdu contre ... Personne!?',
+		'de': 'Sie haben verloren gegen ... Niemand!?',
 	},
 
 

@@ -62,19 +62,21 @@ class MovingSphere extends OrbitMovement {
 	}
 }
 
-class MovingTorus extends OrbitMovement {
+class RotatingIcosahedro extends OrbitMovement {
 	constructor(x, y, z) {
-		super(new THREE.Vector3(x, y, z), 10);
+		super(new THREE.Vector3(x, y, z), 4);
 		this.mesh = this.createTorusMesh(x, y, z);
-		this.rotateSpeed = [THREE.MathUtils.randFloat(0.001, 0.01), THREE.MathUtils.randFloat(0.001, 0.01), THREE.MathUtils.randFloat(0.001, 0.01)];
+		this.rotateSpeed = [THREE.MathUtils.randFloat(0.001, 0.001), THREE.MathUtils.randFloat(0.001, 0.001), THREE.MathUtils.randFloat(0.001, 0.001)];
 	}
 
 	createTorusMesh(x, y, z) {
-		const torusRadius = THREE.MathUtils.randFloat(3, 6)
-		const torusTube = THREE.MathUtils.randFloat(torusRadius-2, torusRadius-1)
+		const radius = THREE.MathUtils.randFloat(6, 33)
+		// const torusTube = THREE.MathUtils.randFloat(torusRadius-2, torusRadius-1)
 		// const geometry = new THREE.TorusGeometry(torusRadius, torusTube, 12, 48);
-		const geometry = new THREE.IcosahedronGeometry(torusRadius);
-		const material = new THREE.MeshStandardMaterial({ color: '#80d0d9' });
+		const geometry = new THREE.IcosahedronGeometry(radius);
+		const colors = ['#F9F871', '#C2F988', '#8CF5A6', '#5AEEC4', '#5AEEC4']
+
+		const material = new THREE.MeshBasicMaterial({ color: colors[Math.floor(Math.random()*colors.length)], wireframe: false, transparent: true, opacity: .8, });
 		const mesh = new THREE.Mesh(geometry, material);
 		mesh.position.set(x, y, z);
 		return mesh;
@@ -87,7 +89,7 @@ class MovingTorus extends OrbitMovement {
 	}
 
 	update() {
-		// this.mesh.position.copy(this.getUpdatedPos());
+		this.mesh.position.copy(this.getUpdatedPos());
 		this.rotate();
 	}
 
@@ -127,6 +129,7 @@ class MovingBox extends OrbitMovement {
 	}
 }
 
+
 class FallingBox {
 	constructor(x, y) {
 		this.minZ = -constants.FIELD_DIAMETER * 3; // will be teleported to the top when it reaches this point
@@ -163,17 +166,20 @@ export default class Background {
 	constructor(scene) {
 		this.scene = scene;
 		this.stars = []
-		this.stars.push(...this.createMovingObject(MovingSphere, {number: 100, maxSpawnDistance: 200, spawnUnderField: true}));
-		// this.stars.push(...this.createMovingObject(MovingTorus, {number: 100, maxSpawnDistance: 200, spawnUnderField: true}));
-		// this.stars.push(...this.createMovingObject(MovingBox, {number: 150, maxSpawnDistance: 100, spawnUnderField: true}));
-		// this.stars.push(...this.createMovingObject(FallingBox, {number: 100, maxSpawnDistance: 200, spawnUnderField: false}));
-		this.stars.push(...this.createMovingObject(FallingBox, {number: 150, maxSpawnDistance: 300, spawnUnderField: false}));
+
+		if (Math.random() > 0.82) { // special background !
+			this.stars.push(...this.createMovingObject(MovingBox, {number: 200, maxSpawnDistance: 250, spawnUnderField: true}));
+		} else if (Math.random() > 0.94) { // special background !
+			this.stars.push(...this.createMovingObject(RotatingIcosahedro, {number: 200, maxSpawnDistance: 400, spawnUnderField: true, safeZoneAroundFieldBorder: 100}));
+		} else { // default background
+			this.stars.push(...this.createMovingObject(MovingSphere, {number: 100, maxSpawnDistance: 200, spawnUnderField: true}));
+			this.stars.push(...this.createMovingObject(FallingBox, {number: 100, maxSpawnDistance: 200, spawnUnderField: false}));
+		}
 	}
 
 	delete() {
 		this.stars.forEach(star => this.scene.remove(star.mesh));
 	}
-
 
 	createMovingObject(movingObjectClass, {number=100, maxSpawnDistance=200, safeZoneAroundFieldBorder=30, spawnUnderField=false}) {
 		const objects = [];

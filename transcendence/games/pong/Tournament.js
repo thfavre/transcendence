@@ -1,9 +1,7 @@
-import AIPlayer from './AIPlayer.js';
-import Game from './Game'
-import HumanPlayer from './HumanPlayer.js';
-import createText from './createText.js';
 import * as constants from './constants.js';
+import Game from './Game'
 import Menu from './Menu.js';
+import createText from './createText.js';
 import translation from './languages.js';
 
 
@@ -16,14 +14,12 @@ export default class Tournament {
 		this.camera = camera;
 		this.realPlayersNb = humanPlayersName.length;
 		this.game = new Game(scene, physicsWorld, camera, humanPlayersName.length, 0);
-		// super(scene, physicsWorld, camera, humanPlayersName.length, 0);
 		forceStopGame = false;
 		this.font = font;
 		this.language = language;
 		this.menu = new Menu(scene, camera, font, this.game, humanPlayersName, 0, language);
 
 		this.betweenRoundTime = 5; // time between rounds [s]
-		// this.showText(null);
 		this.winner = null;
 	}
 
@@ -56,7 +52,7 @@ export default class Tournament {
 	}
 
 	createNewGame(excludePlayer) {
-		this.showText({text: excludePlayer.name + translation['playerOut'][this.language], y:constants.FIELD_DIAMETER/2+10});
+		this.showText({text: excludePlayer.name + translation['playerOut'][this.language], y:constants.FIELD_DIAMETER/2+6});
 		var players = this.game.players.filter((player) => player != excludePlayer);
 		this.realPlayersNb = players.length;
 		this.game.delete()
@@ -68,12 +64,9 @@ export default class Tournament {
 			var player = this.game.createHumanPlayer(playerNb, players[i].name);
 			this.copyPlayerAttributes(players[i], player);
 			this.game.addPlayer(player);
-
 		}
 
 		this.game.createNewRound();
-		// this.createNewRound();
-		// camera.position.z = 100;
 	}
 
 	manageGoal() {
@@ -89,14 +82,13 @@ export default class Tournament {
 			var winner = this.game.players.filter((player) => player.health > 0)[0];
 			if (winner) {
 				this.winner = winner;
-				this.showText({text:winner.name + translation['winAndContinue'][this.language], size:8});
+				this.showText({text:winner.name + translation['winAndContinue'][this.language], size:5});
 			}
 			else
-				this.showText({text: translation['lostAgainstNobody'][this.language], size:6});
+				this.showText({text: translation['lostAgainstNobody'][this.language], size:4});
 
 			return
 		}
-
 		this.createNewGame(goalPlayer);
 	}
 
@@ -110,9 +102,8 @@ export default class Tournament {
 		if (this.winner && keysdown.includes(13)) {
 			return false;
 		}
-
 		if (forceStopGame) {
-			// TODO free
+			// ? TODO free ?
 			return false;
 		}
 		return true;

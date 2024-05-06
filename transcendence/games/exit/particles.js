@@ -1,7 +1,4 @@
 import * as THREE from 'three';
-import * as constants from './constants.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-
 
 
 export default class ParticlesSystem {
@@ -13,7 +10,6 @@ export default class ParticlesSystem {
 	delete() {
 		for (let particle of this._particles) {
 			particle.delete();
-			console.log('deleting particle');
 		}
 	}
 
@@ -29,12 +25,10 @@ export default class ParticlesSystem {
 	}
 
 	addParticle(x, y, z, type) {
-		// console.log('adding particle', type.name);
 		this._particles.push(new type({scene: this.scene, x: x, y: y, z: z}));
 	}
 
 	update(dt) {
-		// console.log('updating particles');
 		for (var particle of this._particles) {
 			if (particle.shouldRemove()) {
 				particle.delete();
@@ -45,6 +39,7 @@ export default class ParticlesSystem {
 		}
 	}
 }
+
 
 class Particle {
 	constructor({scene, x, y, z}) {
@@ -60,7 +55,6 @@ class Particle {
 		this.mesh.material.dispose();
 		this.scene.remove(this.mesh);
 		delete this.mesh;
-
 	}
 
 	update(dt) {
@@ -68,24 +62,10 @@ class Particle {
 	}
 }
 
+
 export class SnowParticle extends Particle {
-	// static model = null;
-
-	// static async loadModel() {
-	// 	const loader = new GLTFLoader(); // Assuming you're using GLTFLoader
-	// 	loader.load('assets/models/Snowflake.glb', (gltf) => {
-	// 		SnowParticle.model = gltf.scene;
-	// 		SnowParticle.model.scale.set(0.4, 0.4, 0.4);
-	// 		// add some lights
-
-	// 	});
-	// 	// this.model.scene.scale.set(21, 21, 21);
-	// 	console.log('model loaded');
-	//   }
 
 	constructor({scene, x, y, z}) {
-		// if (!SnowParticle.model)
-		// 	SnowParticle.loadModel();
 		var randomOffsetX = Math.random() - 0.5;
 		var randomOffsetY = Math.random() - 0.5;
 		super({scene: scene, x: x+randomOffsetX, y: y+randomOffsetY, z: z});
@@ -97,14 +77,8 @@ export class SnowParticle extends Particle {
 		this.mesh.position.copy(this.position);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
-		// var clone = SnowParticle.model.clone();
-		// // rotation
-		// clone.rotation.x = Math.random() * Math.PI;
-		// clone.rotation.y = Math.random() * Math.PI;
-		// clone.rotation.z = Math.random() * Math.PI;
-		// this.mesh.add(clone);
-
 	}
+
 	shouldRemove() {
 		return this.position.z <= -0.5;
 	}
@@ -123,7 +97,6 @@ export class SnowParticle extends Particle {
 	}
 
 }
-// SnowParticle.loadModel();
 
 
 export class LightAbsorbedParticle extends Particle {
@@ -143,16 +116,9 @@ export class LightAbsorbedParticle extends Particle {
 		this.maxBlackDots = 40;
 		this.currentBlackDots = 0;
 	}
+
 	shouldRemove() {
 		return this.mesh.scale.x <= 0.1;
-	}
-
-	decreaseLightIntensity(dt) {
-	// change progressivly the color to black
-	// console.log(this.mesh.material.color.getRGB())
-	// var currentColor = this.mesh.material.color.getRGB();
-	// this.mesh.material.color = newColor;
-	// this.mesh.material.color = this.mesh.material.color.getHex() - 0x010101;
 	}
 
 	decreaseRadius(dt) {
@@ -176,16 +142,8 @@ export class LightAbsorbedParticle extends Particle {
 
 	}
 
-
-	move(dt) {
-		// this.position.add(this.velocity.clone().multiplyScalar(dt));
-		// this.mesh.position.copy(this.position);
-	}
-
 	update(dt) {
-		this.decreaseLightIntensity(dt);
 		this.decreaseRadius(dt);
-		this.move(dt);
 		this.spawnBlackDots(dt);
 
 	}
@@ -227,6 +185,7 @@ export class DazedParticle extends Particle {
 		this.mesh = this.sprite;
 
 	}
+
 	shouldRemove() {
 		return this.time >= this.lifeTime;
 	}

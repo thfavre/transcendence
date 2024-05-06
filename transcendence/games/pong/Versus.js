@@ -1,8 +1,6 @@
 import AIPlayer from './AIPlayer.js';
 import Game from './Game'
-import HumanPlayer from './HumanPlayer.js';
 import createText from './createText.js';
-import * as constants from './constants.js';
 import Menu from './Menu.js';
 import translation from './languages.js';
 
@@ -16,18 +14,7 @@ export default class Versus extends Game {
 		this.font = font;
 		this.language = language;
 		this.menu = new Menu(scene, camera, font, this, humanPlayersName, AIPlayerNb, language);
-		// this.createNewRound();
-		// camera.position.z = 100;
 	}
-
-	// createPlayers() {
-	// 	if (constants.SKIP_PLAYER_SELECTION) {
-	// 		for (var i = 0; i < constants.SEGMENTS-1; i++) {
-	// 			this.addPlayer(this.createAiPlayer(i));
-	// 		}
-	// 	}
-	// 	this.addPlayer(this.createHumanPlayer(constants.SEGMENTS-1));
-	// }
 
 	closeDeadPlayersGoal(dt) {
 		this.players.forEach((player) => {
@@ -62,9 +49,12 @@ export default class Versus extends Game {
 				if (player.health > 0) {
 					if (player instanceof AIPlayer) {
 						var text = translation['lostAgainstAI'][this.language];
-					} else
+					} else {
+						if (!this.winnerName)
+							this.winnerName = player.name;
 						var text = player.name + " " + translation['won'][this.language];
-					var winnerText = createText({font: this.font, message: text, size: 8, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
+					}
+					var winnerText = createText({font: this.font, message: text, size: 8, shadow: true});
 					winnerText.position.z = 8;
 					this.scene.add(winnerText);
 					var continueText = createText({font: this.font, message: translation['pressEnterToContinue'][this.language], size: 6, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
@@ -95,7 +85,7 @@ export default class Versus extends Game {
 			}
 		}
 		if (forceStopGame) {
-			// TODO free
+			// ? TODO free
 			return false;
 		}
 		return true;

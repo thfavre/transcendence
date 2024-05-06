@@ -51,8 +51,8 @@ function	launchPongVersus()
 
 	let	totalParticipants = selectedPlayers + selectedAI;
 
-	function hasWon(player){
-		if (player.health != 0)
+	function hasWon(username, winnerName) {
+		if (username === winnerName)
 			return 1;
 		return 0;
 	}
@@ -65,18 +65,18 @@ function	launchPongVersus()
 	if (window.pongGame) {  // Check if function exists (avoid errors)
 		language = localStorage.getItem('language') || 'en';
 		console.log("Starting Versus Pong game with ", selectedPlayers, " players and ", selectedAI, " AI" + " in ", language, " language.");
-		var humanNames = []; // ! TODO get the main account name
-		for (let i = 1; i <= selectedPlayers; i++)
+		const username = localStorage.getItem('userAlias');
+		var humanNames = [username]; // ! TODO get the main account name
+		for (let i = 1; i < selectedPlayers; i++)
 		{
 			let playerName = "Guest " + i;
 			humanNames.push(playerName);
 		}
 		window.pongGame(humanNames, selectedAI, 'versus', language, '#webglPongVesus', false, (tournament) => {
-				console.log('SAVE THE SCORES here');
 				let Result = {
-					username: localStorage.getItem('userAlias'),
+					username: username,
 					game_id: 'PV',
-					position: [hasWon(tournament.players[0]), selectedPlayers + selectedAI]
+					position: [hasWon(username, tournament.winnerName), selectedPlayers + selectedAI]
 				}
 				sendGameData(Result);
 				backToMain();

@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export const NAME = 'Find The Exit ';
 
-export var DEBUG = false; // need to be changed in main.js...
+export var DEBUG; // need to be changed in games.js...
 export function setDegub(debug) {
 	DEBUG = debug;
 }

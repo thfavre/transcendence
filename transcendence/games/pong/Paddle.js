@@ -1,11 +1,9 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-import { Line2 } from 'three/examples/jsm/lines/Line2.js';
-import * as constants from './constants.js';
 
 import createLine from './createLine.js';
+
 
 export default class Paddle {
 	// Mesh materials
@@ -14,57 +12,124 @@ export default class Paddle {
 	// Phong : shiny material (specular color, shininess)
 	// Standard : combination of Lambert and Phong (metalness, roughness)
 
-	// Line materials
+	static wallSkin = {'line': new LineMaterial({color: '#3CD6EB', linewidth: 0.002}), 'material': new THREE.MeshStandardMaterial({color: "#3CD6EB"})};
 
-	// Points materials
+	static aiSkin = {'line': new LineMaterial({color: '#ff0000', linewidth: 0.010}), 'material': new THREE.MeshStandardMaterial({color: "#2c3e50"})};
 
-	static materials = [
-		new THREE.MeshBasicMaterial(
-			{
-				color: "#ffffff",
-				// emissive: "#ff0f00",
-				// emissiveIntensity: .7,
+	static skins = [
+		// red
+		{
+			'line': new LineMaterial({color: '#ffaaaa', linewidth: 0.009}),
+			'material': new THREE.MeshStandardMaterial(
+				{
+					color: "#c0392b",
+				}
+			),
+		},
+		// yellow
+		{
+			'line': new LineMaterial({color: '#C2F988', linewidth: 0.009}),
+			'material': new THREE.MeshStandardMaterial(
+				{
+					color: "#F9F871",
+					emissive: "#ff0f00",
+					emissiveIntensity: .1,
 
-			}
-		),
-		new THREE.MeshPhongMaterial({ color: "#ff0000" }),
-		new THREE.MeshPhysicalMaterial(
-			{
-				// map: constants.textureLoader.load("assets/textures/crate.gif")
-				color: "#ffcfff",
-				transmission: 1,
-				roughness: 0.3,
-				ior: 1.7,
-				thickness: 0.5,
-				specularIntensity: 1,
-				clearcoat: 1,
-				sheen: 1,
-				sheenColor: new THREE.Color(0xff0000),
+				}
+			),
+		},
+		// green
+		{
+			'line': new LineMaterial({color: '#beff5f', linewidth: 0.009}),
+			'material': new THREE.MeshStandardMaterial(
+				{
+					color: "#57C05A",
+				}
+			),
+		},
+		// blue
+		{
+			'line': new LineMaterial({color: '#9BDEAC', linewidth: 0.009}),
+			'material': new THREE.MeshStandardMaterial(
+				{
+					color: "#2980b9",
+				}
+			),
+		},
 
-			}
-		),
-
-		new THREE.MeshPhongMaterial({ color: "#00ff00", shininess: 200}),
-		new THREE.MeshStandardMaterial({ color: "#0000ff", roughness:0}), // or should it be defined somewhere else?
-		new THREE.MeshStandardMaterial(
-			{
-				map: constants.textureCratesBaseColor,
-			}
-		),
-		new THREE.MeshStandardMaterial(
-			{
-				map: constants.textureMetalBaseColor,
-				normalMap: constants.textureMetalNormalMap,
-				displacementMap: constants.textureMetalHeightMap,
-				displacementScale: 0.07,
-				roughnessMap: constants.textureMetalRoughnessMap,
-				roughness: 0.5,
-				aoMap: constants.textureMetalAmbientOcclusionMap,
-				aoMapIntensity: 1,
-				// metalnessMap: constants.textureMetallic,
-				// metalness: 1,
-			}
-		),
+		// purple
+		{
+			'line': new LineMaterial({color: '#a498ff', linewidth: 0.009}),
+			'material': new THREE.MeshStandardMaterial(
+				{
+					color: "#857BCE",
+					// emissive: "#ff0f00",
+					// emissiveIntensity: .7,
+				}
+			),
+		},
+		// pink
+		{
+			'line': new LineMaterial({color: '#FFE3EF', linewidth: 0.008}),
+			'material': new THREE.MeshStandardMaterial(
+				{
+					color: "#FF84A8",
+					// emissive: "#ff0f00",
+					// emissiveIntensity: .7,
+				}
+			),
+		},
+		// ---- Specials ----
+		// dazzle
+		{
+			'line': new LineMaterial({color: '#ffffff', linewidth: 0.028}),
+			'material': new THREE.MeshBasicMaterial(
+				{
+					color: "#000000",
+				}
+			),
+		},
+		// gray
+		// {
+		// 	'line': new LineMaterial({color: '#dddddd', linewidth: 0.019}),
+		// 	'material': new THREE.MeshStandardMaterial(
+		// 		{
+		// 			color: "#95B0B5",
+		// 			emissive: "#ff0f00",
+		// 			emissiveIntensity: .01,
+		// 			roughness: 0.1,
+		// 			metalness: .4,
+		// 		}
+		// 	),
+		// },
+		// transparent purple
+		{
+			'line': new LineMaterial({color: '#eeeeee', linewidth: 0.004}),
+			'material': new THREE.MeshPhysicalMaterial(
+				{
+					color: "#9b59b6",
+					transmission: .8,
+					roughness: 0.3,
+					ior: 1.7,
+					thickness: .5,
+					specularIntensity: 1,
+				}
+			),
+		},
+		// transparent
+		{
+			'line': new LineMaterial({color: '#aaaaaa', linewidth: 0.0002}),
+			'material': new THREE.MeshPhysicalMaterial(
+				{
+					color: "#ffffff",
+					transmission: 1,
+					roughness: 0.2,
+					ior: 1.7,
+					thickness: .5,
+					specularIntensity: 1,
+				}
+			),
+		},
 	];
 
 
@@ -87,10 +152,10 @@ export default class Paddle {
 		this.moveSpeed = this.maxMovingDistance * 2 / goalDeplacementTime;
 
 		// ---- Mesh ----
+		this.skin = Paddle.skins[Math.floor(Math.random() * 6)]; // select a one of the 6 first skins
 		const geometry = new THREE.BoxGeometry(width, height, depth);
 		geometry.attributes.uv2 = geometry.attributes.uv; // for the aoMap
-		const material = Paddle.materials[Math.floor(Math.random() * Paddle.materials.length)].clone();// choose a random material
-		this.mesh = new THREE.Mesh(geometry, material);
+		this.mesh = new THREE.Mesh(geometry, this.skin.material);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
 
@@ -99,33 +164,19 @@ export default class Paddle {
 		// geometry.ed
 		const edgesGeometry = new THREE.EdgesGeometry(geometry);
 		for (var i = 0; i < edgesGeometry.attributes.position.array.length; i++) {
-			if (i >= 21 && i <30)
+			if (i >= 24 && i <30)
 				continue;
 			edgePoints.push(edgesGeometry.attributes.position.array[i]);
 			// if (i==2)
 			// 	break
 		}
 
-
-		this.mesh.add(createLine({points: edgePoints})); // edgesGeometry.attributes.position.array
-		// const lineGeometry = new LineGeometry();
-		// lineGeometry.setPositions(edgesGeometry.attributes.position.array);
-		// // const edgesGeometry = new LineGeometry();
-		// // edgesGeometry.setPositions(geometry.attributes.position.array);
-
-		// const edgesMaterial = new LineMaterial({
-		// 	color: '#3CD6EB',
-		// 	linewidth: 0.005, // in pixels
-		// });
-
-		// const edgeLine = new Line2(lineGeometry, edgesMaterial);
-		// this.mesh.add(edgeLine);
-
-
-
+		this.line = createLine({points: edgePoints})
+		this.line.material = this.skin.line;
+		this.mesh.add(this.line); // edgesGeometry.attributes.position.array
 
 		// ---- Physics ----
-		this.centerPos = new THREE.Vector3(startPos.x + (endPos.x - startPos.x)/2, startPos.y + (endPos.y - startPos.y)/2, depth/2);
+		this.centerPos = new THREE.Vector3(startPos.x + (endPos.x - startPos.x)/2, startPos.y + (endPos.y - startPos.y)/2, depth/2+.7);
 		this.body = new CANNON.Body({
 			mass: 0,
 			shape: new CANNON.Box(new CANNON.Vec3(width/2, height/2, depth/2)),
@@ -145,35 +196,42 @@ export default class Paddle {
 		this.physicsWorld.removeBody(this.body);
 	}
 
-	getNextMaterial() {
-		var matIndex = Paddle.materials.indexOf(this.mesh.material);
-		if (matIndex == -1)
-			matIndex = 0;
+	getNextSkin() {
+		var skinIndex = Paddle.skins.indexOf(this.skin);
+		if (skinIndex == -1)
+			skinIndex = 0;
 		else
-			matIndex = (matIndex + 1) % Paddle.materials.length;
-		return Paddle.materials[matIndex]; // ? TODO clone needed?
+			skinIndex = (skinIndex + 1) % Paddle.skins.length;
+		return Paddle.skins[skinIndex]; // ? TODO clone needed?
 	}
 
-	getPreviousMaterial() {
-		var matIndex = Paddle.materials.indexOf(this.mesh.material);
-		if (matIndex == -1)
-			matIndex = 0;
+	getPreviousSkin() {
+		var skinIndex = Paddle.skins.indexOf(this.skin);
+		if (skinIndex == -1)
+			skinIndex = 0;
 		else
 		{
-			matIndex = matIndex - 1;
-			if (matIndex < 0)
-				matIndex = Paddle.materials.length - 1;
+			skinIndex = skinIndex - 1;
+			if (skinIndex < 0)
+				skinIndex = Paddle.skins.length - 1;
 		}
-		return Paddle.materials[matIndex];
+		return Paddle.skins[skinIndex];
 
 	}
 
+	setSkin(skin) {
+		this.skin = skin;
+		this.mesh.material = skin.material;
+		// this.line.material.color.set(skin.line);
+		this.line.material = skin.line;
+	}
 
-	changeMaterial(direction) {
+	changeSkin(direction) {
 		if (direction > 0)
-			this.mesh.material = this.getNextMaterial();
+			this.skin = this.getNextSkin();
 		else
-			this.mesh.material = this.getPreviousMaterial();
+			this.skin = this.getPreviousSkin();
+		this.setSkin(this.skin);
 	}
 
 	move(dt, speed) {

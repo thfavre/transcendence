@@ -8,14 +8,12 @@ export default class Ball {
 	constructor(scene, physicsWorld, startPositions) {
 		var radius = 4;
 		const geometry = new THREE.SphereGeometry(radius, 20, 14);
-		// no material
 		const material = new THREE.MeshStandardMaterial({ color: 0x000000 });
 		this.mesh = new THREE.Mesh(geometry, material);
 		this.mesh.castShadow = true;
 		scene.add(this.mesh);
-		// scene.add(constants.modelBall);
 		const loader = new GLTFLoader();
-		loader.load(constants.ballsModel, (gltf) => { // ! TODO do this in static
+		loader.load(constants.ballsModel, (gltf) => {
 			const model = gltf.scene;
 			model.scale.set(radius, radius, radius);
 			this.mesh.material.colorWrite = false;
@@ -28,9 +26,7 @@ export default class Ball {
 
 		this.moveSpeed = 40; // initial speed
 		this.acceleration = 4; // acceleration per second
-		this.maxMoveSpeed = 180; // max speed (prevent the ball to move through the walls)
-
-		this.movingAngle = 0; // will be updated in the move function // TODO! change method of doing this
+		this.maxMoveSpeed = 150; // max speed (prevent the ball to move through the walls)
 
 		// ---- Physics ----
 		if (!startPositions || startPositions.length == 0)
@@ -47,13 +43,6 @@ export default class Ball {
 		});
 		physicsWorld.addBody(this.body);
 		this.updateMeshPosAndRot();
-
-
-		// this.direction = new THREE.Vector3(1, 1);
-		// ---- Helpers ----
-		// var axe = new THREE.AxesHelper(10);
-		// axe.renderOrder = 2;
-		// this.mesh.add(axe);
 	}
 
 	drawMovingVector() {
@@ -95,7 +84,6 @@ export default class Ball {
 		var yRot =  this.body.velocity.x/500;
 		this.mesh.rotation.x += xRot;
 		this.mesh.rotation.y += yRot;
-		// this.body.angularVelocity.set(xRot, yRot, 0);
 	}
 
 	updateMeshPosAndRot() {
@@ -113,7 +101,6 @@ export default class Ball {
 		this.updateMeshPosAndRot();
 		this.move(dt);
 		this.increaseMoveSpeed(dt);
-
 	}
 
 }

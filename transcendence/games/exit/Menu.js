@@ -1,11 +1,9 @@
 import * as THREE from 'three';
+
 import * as constants from './constants.js';
 import createText from './createText.js';
-
-import {presets} from './Player.js';
 import translation from './languages.js';
-
-
+import {presets} from './Player.js';
 
 
 export class Menu {
@@ -34,7 +32,6 @@ export class Menu {
 		start.position.y = minYPos-4;
 	}
 
-
 	createPlayersKeys() {
 		var ySpace = 3;
 		var text = createText({font: this.font, message: translation['keys'][this.language], size: 2.2, depth: 0.2, frontColor: frontColor, sideColor: '#888888'});
@@ -61,7 +58,6 @@ export class Menu {
 			else
 				mesh.position.x = xPos;
 		}
-
 	}
 
 	delete() {
@@ -97,7 +93,7 @@ export class Menu {
 
 				if (keysJustPressed.includes(13)) {
 					return false;
-			}
+				}
 				// this.delete();
 			}
 		}

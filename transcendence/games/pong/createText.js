@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 
-export default function createText({font, message, size=4, height=0.5, fontColor="#3CD6EB", sideColor="#ABEF85",
+export default function createText({font, message, size=4, height=0.5, fontColor="#ffffff", sideColor="#000000",
 			curveSegments=12, bevelEnabled=true, bevelThickness=1, bevelSize=0.5, bevelOffset=0, bevelSegments=1, shadow=false}) {
 	const props = {
 		font,

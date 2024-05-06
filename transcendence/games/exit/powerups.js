@@ -32,18 +32,19 @@ class Powerup extends Cube {
 	activateByPlayer(player) {
 		throw new Error('Not implemented');
 	}
+
 	delete() {
 		this.scene.remove(this.mesh);
+		this.mesh.geometry.dispose();
+		this.mesh.material.dispose();
 	}
 }
 
 export class SlowPowerup extends Powerup {
 	constructor({scene, x, y, players, particlesSystem}) {
 		super({scene: scene, x: x, y: y, color: 0x55aaff});
-		// cast shadow
 		this.players = players;
 		this.particlesSystem = particlesSystem;
-		// particlesSystem.addParticle(x, y, 0, particles.SnowParticle);
 	}
 
 	activateByPlayer(player) {
@@ -67,7 +68,6 @@ export class LightsDownPowerup extends Powerup {
 		super({scene: scene, x: x, y: y, color: 0x000000});
 		this.players = players;
 		this.particlesSystem = particlesSystem;
-		// particlesSystem.addParticle(x, y, 0, particles.SnowParticle);
 	}
 
 	static desactivateSceneLights(scene, minDirectionalLightIntensity, minAmbientLightIntensity) {
@@ -95,8 +95,7 @@ export class LightsDownPowerup extends Powerup {
 		for (let p of this.players) {
 			if (p == player)
 				continue;
-			// p.spotLight.intensity = 2;
-			p.spotLightOffDuration = 10;
+			p.spotLightOffDuration = 8;
 
 		}
 		LightsDownPowerup.desactivateSceneLights(this.scene, 0, 0.003);
@@ -115,7 +114,6 @@ export class DazedPowerup extends Powerup {
 		this.players = players;
 		this.particlesSystem = particlesSystem;
 	}
-
 
 	activateByPlayer(player) {
 		this.hasBeenActivated = true;

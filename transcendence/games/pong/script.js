@@ -1,23 +1,16 @@
 import * as THREE from 'three';
-import { TTFLoader } from 'three/examples/jsm/loaders/TTFLoader.js';
+import * as CANNON from 'cannon-es';
+import CannonDebugger from 'cannon-es-debugger';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { RenderPass} from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import * as CANNON from 'cannon-es';
-import CannonDebugger from 'cannon-es-debugger';
-
-// import {Ball} from './Ball.js';
-import Versus from './Versus.js';
-import Menu from './Menu.js';
 import * as constants from './constants.js';
-import { VelocityShader } from 'three/examples/jsm/Addons.js';
+import Versus from './Versus.js';
 import Tournament from './Tournament.js';
-
 
 
 const fontLoader = new FontLoader();
@@ -62,23 +55,18 @@ function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, 
 
 	// Scene
 	const scene = new THREE.Scene();
-	scene.background = new THREE.Color('#000000');
+	scene.background = new THREE.Color('#000009'); // ! TODO try to add a bit of blue
 	if (constants.DEBUG) {
 		const axesHelper = new THREE.AxesHelper(10);
 		scene.add(axesHelper);
 	}
-	// scene background
-
 
 	// Camera
-	const camera = new THREE.PerspectiveCamera( 90, canvas.clientWidth / canvas.clientHeight, 0.1, 10000);
+	const camera = new THREE.PerspectiveCamera( 90, canvas.clientWidth / canvas.clientHeight, 0.1, 3000);
 	scene.add( camera );
-
 
 	// Renderer
 	const renderer = new THREE.WebGLRenderer({canvas: canvas, antialias: true});
-	// renderer.setSize( sizes.width, sizes.height);
-	// document.body.appendChild( renderer.domElement );
 	renderer.shadowMap.enabled = true;
 	renderer.shadowMap.type = THREE.VSMShadowMap;
 	renderer.toneMapping = THREE.CineonToneMapping; // ReinhardToneMapping
@@ -95,9 +83,6 @@ function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, 
 	// ouputPass
 	const outputPass = new OutputPass(scene, camera);
 	composer.addPass(outputPass);
-
-
-
 
 	// resize
 	window.addEventListener("resize", onCanvasResize, false);
@@ -123,27 +108,14 @@ function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, 
   	onCanvasResize(); // call it once to set canvas size
 
 
-
-
 	// ----- Physics world -----
 	const physicsWorld = new CANNON.World({
 		gravity: new CANNON.Vec3(0, 0, 0),
 		frictionGravity: 0,
 		allowSleep: true,
-
 	});
-	// // ground
-	// const groundBody = new CANNON.Body({
-	// 	type: CANNON.Body.STATIC,
-	// 	// infinite geometric plane
-	// 	shape: new CANNON.Plane(),
-	// });
-	// physicsWorld.addBody(groundBody);
-
 
 	const cannonDebugger = new CannonDebugger(scene, physicsWorld);
-
-	// paddle pos
 
 	// Controls
 	const controls = new OrbitControls(camera, renderer.domElement);
@@ -165,7 +137,6 @@ function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, 
 		keysdown.splice(keysdown.indexOf(keyCode), 1);
 	};
 
-
 	// ------- Creation
 	if (gameMode == 'versus')
 		var pongGame = new Versus(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language);
@@ -173,7 +144,6 @@ function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, 
 		var pongGame = new Tournament(scene, physicsWorld, camera, font, humanPlayersName, language);
 	else
 		throw new Error('Unknown game mode: ' + gameMode, 'Available modes are: versus, tournament');
-	// 	menu = new Menu(scene, physicsWorld, camera, pongGame, font);
 
 	// Main Loop
 	const clock = new THREE.Clock();
@@ -186,17 +156,16 @@ function main(humanPlayersName, AIPlayerNb, gameMode, language, selector, font, 
 
 		if (!pongGame.update(dt, keysdown, keysJustPressed)){
 			callback(pongGame);
+			//dispose ?
+			// renderer.renderLists.dispose();
+			// renderer.dispose();
 			return;
 		}
-
-
-
 		renderer.render( scene, camera );
 		composer.render();
 		keysJustPressed = [];
 		window.requestAnimationFrame( gameLoop );
 	}
-
 
 	gameLoop();
 }
