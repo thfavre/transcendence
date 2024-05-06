@@ -68,7 +68,7 @@ function launchExitVersus()
 				let Result = {
 					username: localStorage.getItem('userAlias'),
 					game_id: 'EV',
-					position: [isFirst(tournament.scores, FirstTo), FirstTo],
+					position: [isFirst(tournament.scores, FirstTo), selectedPlayers],
 					bo_type: FirstTo
 				}
 				sendGameData(Result);
