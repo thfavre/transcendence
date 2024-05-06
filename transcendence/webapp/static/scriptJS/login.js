@@ -6,7 +6,6 @@ function getCookie(name) {
 	return cookieValue ? cookieValue.pop() : '';
 }
 // Redirection to the main page to register a username
-
 function	registerUsernameModal()
 {
 
@@ -21,38 +20,30 @@ function	registerUsernameModal()
 
 	const usernameForm = document.getElementById('usernameForm');
 
-	// document.getElementById('usernameForm').addEventListener('submit', function (event) {
 	function handleFormSubmit(event){
 		event.preventDefault();
-		const username = document.getElementById('userAlias').value; // TODO - CHECK VALUE
-		console.log("Username: ", username);
-		console.log("UsernameFormSubmitted: ", usernameFormSubmitted);
+		const username = document.getElementById('userAlias').value;
 
-		if (!username) {
-			alert("Please enter a username.");
-			return;
-		} else if (!/^[a-zA-Z0-9]+$/.test(username)) {
-			alert("Username can only contain letters and numbers.");	//TODO Need to change the way error is returned to make it prettier
-			return;
-		} else if (username.length < 2 || username.length > 20) {
-			alert("Username must be between 2 and 20 characters.");	//TODO Need to change the way error is returned to make it prettier
+		const errorMsg = validateUsername(username);
+		if (errorMsg) {
+			alert(errorMsg);
 			return;
 		}
 
-		// Send username to backend
-		const csrfToken = getCookie('csrftoken'); // Function to retrieve CSRF token from cookie
+		const csrfToken = getCookie('csrftoken');
 
 		fetch('/registerUsername', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				'X-CSRFToken': csrfToken // Include CSRF token in headers
+				'X-CSRFToken': csrfToken
 			},
 			body: JSON.stringify({ username: username })
 		})
 		.then(response => {
 			if (response.ok) {
 				localStorage.setItem('userAlias', username);
+				console.log('Username registered:', username);
 				getDatabase();
 				usernameModal.hide();
 				usernameForm.removeEventListener('submit',handleFormSubmit);
@@ -66,14 +57,23 @@ function	registerUsernameModal()
 	}
 
 	usernameForm.addEventListener('submit', handleFormSubmit);
-	// });
+
+	function validateUsername(username) {
+		if (!username) {
+			return "Please enter a username.";
+		} else if (!/^[a-zA-Z0-9]+$/.test(username)) {
+			return "Username can only contain letters and numbers.";
+		} else if (username.length < 2 || username.length > 20) {
+			return "Username must be between 2 and 20 characters.";
+		}
+		return null;
+	}
 }
 
 // Disconnect the user and redirect to the main page
-
 function	disconnectUser()
 {
-    if (!forceStopGame)
+	if (!forceStopGame)
 	{
 		forceStopGame = true;
 		console.log("The game has been stopped");

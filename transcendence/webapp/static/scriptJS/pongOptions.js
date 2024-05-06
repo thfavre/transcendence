@@ -1,5 +1,4 @@
 // Selecting the number of players for Pong versus
-
 function	updatePongPlayersVersus()
 {
 	let	playerSelect = document.getElementById("pongVersusPlayer");
@@ -36,7 +35,6 @@ function	updatePongPlayersVersus()
 document.addEventListener('DOMContentLoaded', updatePongPlayersVersus);
 
 // Start Pong Versus after checking that the conditions are OK
-
 function	launchPongVersus()
 {
 	let	playerSelect = document.getElementById("pongVersusPlayer");
@@ -91,7 +89,6 @@ function	launchPongVersus()
 }
 
 // Start Pong Tournament after checking that the conditions are OK
-
 function	launchPongTournament()
 {
 	let	playerSelect = document.getElementById("pongTournamentPlayer");
@@ -102,13 +99,10 @@ function	launchPongTournament()
 		updateModalMessage('pong_tournament_modal');
 		return;
 	}
-	selectPlayersNames(selectedPlayers); // ! DO NOT WORK!!!!
-	// STOP fonction
-
+	selectPlayersNames(selectedPlayers);
 }
 
 // Select the players names for the Pong Tournament
-
 async function	selectPlayersNames(selectedPlayers)
 {
 	let	form = document.getElementById("playerNamesForm");
@@ -156,19 +150,18 @@ function	submitPlayerNames()
 	const username = localStorage.getItem('userAlias');
 	playerNames.push(username);
 
-	function hasWon(username, winnerName) {
-		if (username === winnerName)
-			return 1;
-		return 0;
-	}
-
 	for (let i = 0; i < playersCount; i++) {
 		if (players[i].nodeName === 'INPUT') {
+			const errorMsg = isValidUsername(players[i].value);
+			if (errorMsg) {
+				alert(errorMsg);
+				return;
+			}
 			playerNames.push(players[i].value);
 		}
 	}
 	console.log('Player Names:', playerNames);
-	if (window.pongGame) {  // Check if function exist
+	if (window.pongGame) {
 		language = localStorage.getItem('language') || 'en';
 		console.log("Starting Tournament Pong game with ", selectedPlayers, " players in ", language, " language.");
 		window.pongGame(playerNames, 0, 'tournament', language, '#webglPongTournament', false, (tournament) => {
@@ -192,4 +185,23 @@ function	submitPlayerNames()
 
 	let playerNamesModal = bootstrap.Modal.getInstance(document.getElementById('tournamentModal'));
 	playerNamesModal.hide();
+
+	function hasWon(username, winnerName) {
+		if (username === winnerName)
+			return 1;
+		return 0;
+	}
+
+	function isValidUsername(username) {
+		if (!username) {
+			return "Please enter a username.";
+		} else if (!/^[a-zA-Z0-9]+$/.test(username)) {
+			return "Username can only contain letters and numbers.";
+		} else if (username.length < 2 || username.length > 20) {
+			return "Username must be between 2 and 20 characters.";
+		} else if (playerNames.includes(username)) {
+			return "Username already chosen by another player.";
+		}
+		return null;
+	}
 }

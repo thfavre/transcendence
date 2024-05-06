@@ -68,9 +68,6 @@ def save_game_result(request):
                 bo_type=bo_type
             )
 
-            print("Saved game result:", game_result)  # Print saved game result for debugging
-
-
             # Return a success response
             return JsonResponse({'success': True})
         except Exception as e:
@@ -86,12 +83,10 @@ def get_game_history(request):
     if request.method == 'GET':
         username = request.GET.get('username')
         game_id = request.GET.get('game_id')
+        print('this is the username in the database', username)
 
         try:
-            # Retrieve the last 10 game results of the specified type for the user
             game_history = GameResult.objects.filter(user__username=username, game_id=game_id).order_by('-date')[:10]
-
-            # Prepare the response data
             history_data = [{'user': result.user.username, 'game_id': result.game_id, 'position': result.position, 'date': result.date, 'bo_type': result.bo_type} for result in game_history]
 
             return JsonResponse(history_data, safe=False)
@@ -99,8 +94,6 @@ def get_game_history(request):
             return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
-
-
 
 
 def get_last_game(request):
