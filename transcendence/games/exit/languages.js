@@ -10,13 +10,13 @@ const translation = {
 	'enterToStart' : {
 		'en': 'Press Enter to start',
 		'fr': 'Appuyez sur Entrer pour commencer',
-		'de': 'Drücken Sie die Eingabetaste',
+		'de': 'Drucken Sie die Eingabetaste',
 	},
 	// ------- Game -------
 	'pressEnter' : {
 		'en': 'Press Enter',
 		'fr': 'Appuyez sur Entrer',
-		'de': 'Drücken Sie die Eingabetaste',
+		'de': 'Drucken Sie die Eingabetaste',
 	},
 	'gameOver' : {
 		'en': 'Press Enter to finish',

@@ -38305,12 +38305,12 @@ const translation$1 = {
   "askKeyUp": {
     "en": ", press the key to move up",
     "fr": ", appuyez sur la touche pour monter",
-    "de": ", drücken Sie um oben zu bewegen"
+    "de": ", drucken Sie um oben zu bewegen"
   },
   "askKeyDown": {
     "en": ", press the key to move down",
     "fr": ", appuyez sur la touche pour descendre",
-    "de": ", drücken Sie um unten zu bewegen"
+    "de": ", drucken Sie um unten zu bewegen"
   },
   "askPaddleSkin": {
     "en": ", choose your paddle",
@@ -38345,7 +38345,7 @@ const translation$1 = {
   "pressEnterToContinue": {
     "en": "Press ENTER to continue",
     "fr": "Appuyez sur ENTRER pour continuer",
-    "de": "Drücken Sie die Eingabetaste"
+    "de": "Drucken Sie die Eingabetaste"
   },
   // ------- Tournament -------
   "playerOut": {
@@ -38358,7 +38358,7 @@ const translation$1 = {
   "winAndContinue": {
     "en": " wins! (Press Enter to finish)",
     "fr": " gagne! (Appuyez sur Entrer pour terminer)",
-    "de": " gewinnt! (Drücken Sie die Eingabetaste)"
+    "de": " gewinnt! (Drucken Sie die Eingabetaste)"
   },
   // easter egg lost
   "lostAgainstNobody": {
@@ -40076,13 +40076,13 @@ const translation = {
   "enterToStart": {
     "en": "Press Enter to start",
     "fr": "Appuyez sur Entrer pour commencer",
-    "de": "Drücken Sie die Eingabetaste"
+    "de": "Drucken Sie die Eingabetaste"
   },
   // ------- Game -------
   "pressEnter": {
     "en": "Press Enter",
     "fr": "Appuyez sur Entrer",
-    "de": "Drücken Sie die Eingabetaste"
+    "de": "Drucken Sie die Eingabetaste"
   },
   "gameOver": {
     "en": "Press Enter to finish",

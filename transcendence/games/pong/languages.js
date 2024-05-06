@@ -6,12 +6,12 @@ const translation = {
 	'askKeyUp' : {
 		'en': ', press the key to move up',
 		'fr': ', appuyez sur la touche pour monter',
-		'de': ', drücken Sie um oben zu bewegen',
+		'de': ', drucken Sie um oben zu bewegen',
 	},
 	'askKeyDown' : {
 		'en': ', press the key to move down',
 		'fr': ', appuyez sur la touche pour descendre',
-		'de': ', drücken Sie um unten zu bewegen',
+		'de': ', drucken Sie um unten zu bewegen',
 	},
 	'askPaddleSkin' : {
 		'en': ', choose your paddle',
@@ -46,7 +46,7 @@ const translation = {
 	'pressEnterToContinue' : {
 		'en': 'Press ENTER to continue',
 		'fr': 'Appuyez sur ENTRER pour continuer',
-		'de': 'Drücken Sie die Eingabetaste',
+		'de': 'Drucken Sie die Eingabetaste',
 	},
 	// ------- Tournament -------
 	'playerOut' : {
