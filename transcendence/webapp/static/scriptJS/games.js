@@ -34705,10 +34705,10 @@ const _Paddle = class _Paddle {
     this.physicsWorld = physicsWorld;
     this.axeAngle = axeAngle;
     var goalSize = startPos.distanceTo(endPos) - fieldEdgeDiameter;
-    var width = 3;
+    var width = 4;
     this.percentLengthSize = 0.3;
     var height = goalSize * this.percentLengthSize;
-    var depth = 3;
+    var depth = 4;
     this.maxMovingDistance = goalSize / 2 - height / 2;
     var goalDeplacementTime = 1;
     this.moveSpeed = this.maxMovingDistance * 2 / goalDeplacementTime;
@@ -34809,7 +34809,7 @@ const _Paddle = class _Paddle {
 // Phong : shiny material (specular color, shininess)
 // Standard : combination of Lambert and Phong (metalness, roughness)
 __publicField(_Paddle, "wallSkin", { "line": new LineMaterial({ color: "#3CD6EB", linewidth: 2e-3 }), "material": new MeshStandardMaterial({ color: "#3CD6EB" }) });
-__publicField(_Paddle, "aiSkin", { "line": new LineMaterial({ color: "#ff0000", linewidth: 0.01 }), "material": new MeshStandardMaterial({ color: "#2c3e50" }) });
+__publicField(_Paddle, "aiSkin", { "line": new LineMaterial({ color: "#ff0000", linewidth: 0.003 }), "material": new MeshStandardMaterial({ color: "#2c3e50" }) });
 __publicField(_Paddle, "skins", [
   // red
   {
@@ -38108,7 +38108,7 @@ let Game$1 = class Game {
   }
   createEdge(position) {
     const cylinderRadius = this.fieldEdgeDiameter / 2;
-    const cylinderHeight = 3.2;
+    const cylinderHeight = 5.4;
     const edgeShape = new Cylinder(cylinderRadius, cylinderRadius, cylinderHeight, 32);
     const edgeBody = new Body({
       mass: 0,

@@ -14,7 +14,7 @@ export default class Paddle {
 
 	static wallSkin = {'line': new LineMaterial({color: '#3CD6EB', linewidth: 0.002}), 'material': new THREE.MeshStandardMaterial({color: "#3CD6EB"})};
 
-	static aiSkin = {'line': new LineMaterial({color: '#ff0000', linewidth: 0.010}), 'material': new THREE.MeshStandardMaterial({color: "#2c3e50"})};
+	static aiSkin = {'line': new LineMaterial({color: '#ff0000', linewidth: 0.007}), 'material': new THREE.MeshStandardMaterial({color: "#2c3e50"})};
 
 	static skins = [
 		// red
@@ -59,7 +59,7 @@ export default class Paddle {
 
 		// purple
 		{
-			'line': new LineMaterial({color: '#a498ff', linewidth: 0.009}),
+			'line': new LineMaterial({color: '#FFA4B8', linewidth: 0.009}),
 			'material': new THREE.MeshStandardMaterial(
 				{
 					color: "#857BCE",
@@ -141,10 +141,10 @@ export default class Paddle {
 		var goalSize = startPos.distanceTo(endPos) - fieldEdgeDiameter;
 
 		// ---- Sizes ----
-		var width = 3;
+		var width = 4;
 		this.percentLengthSize = 0.3; // 0.5 = 50% of the goal size
 		var height = goalSize * this.percentLengthSize ; // length of the paddle...
-		var depth = 3;
+		var depth = 4;
 
 		// ---- Moving ----
 		this.maxMovingDistance = goalSize/2 - height/2;
