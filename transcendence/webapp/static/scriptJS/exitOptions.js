@@ -38,7 +38,6 @@ function	launchExitSolo()
 }
 
 // Start Find the Exit (Versus) after checking that the conditions are OK
-
 function launchExitVersus()
 {
 	let	playerSelect = document.getElementById("exitVersusPlayers");

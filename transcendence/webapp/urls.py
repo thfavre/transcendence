@@ -30,8 +30,4 @@ urlpatterns = [
     path('print_all_records/', print_all_records, name='print_all_records'),
     path('get_game_history/', get_game_history, name='get_game_history'),
     re_path(r'^(?!/static/).*$', index, name='app'),
-]
-
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

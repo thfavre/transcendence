@@ -16,6 +16,7 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
+      - staticfiles:/app/staticfiles # Mount the staticfiles volume
     depends_on:
       - db
     environment:
@@ -28,6 +29,8 @@ services:
       - "443:443"
     depends_on:
       - web
+    volumes:
+      - staticfiles:/app/staticfiles  # Mount the same staticfiles volume
     restart: on-failure  # Ensures NGINX retries if it fails to start the first time
 
   migrations:
@@ -39,3 +42,4 @@ services:
 
 volumes:
   postgres_data:
+  staticfiles: # Define the staticfiles volume
