@@ -42,7 +42,7 @@ class PlayerCreator {
 	}
 
 	ifKeyValid(keyCode) {
-		return keyCode >= 65 && keyCode <= 90 || keyCode >= 37 && keyCode <= 40;
+		return keyCode >= 65 && keyCode <= 90 || keyCode == 38 || keyCode == 40;
 	}
 
 	askUpKey(keysJustPressed) {
@@ -71,8 +71,17 @@ class PlayerCreator {
 	}
 
 	askPaddleMaterial(keysJustPressed) {
-		const keyDownStr = this.keyDown == 40 ?  translation['directionalKeyDown'][this.language] : String.fromCharCode(this.keyDown);
-		const keyUpStr = this.keyUp == 38 ?  translation['directionalKeyUp'][this.language] : String.fromCharCode(this.keyUp);
+		// set the key string text
+		var keyDownStr = String.fromCharCode(this.keyDown);
+		if (this.keyDown == 40)
+			keyDownStr = translation['directionalKeyDown'][this.language];
+		else if (this.keyDown == 38)
+			keyDownStr = translation['directionalKeyUp'][this.language];
+		var keyUpStr = String.fromCharCode(this.keyUp);
+		if (this.keyUp == 40)
+			keyUpStr = translation['directionalKeyDown'][this.language];
+		else if (this.keyUp == 38)
+			keyUpStr = translation['directionalKeyUp'][this.language];
 
 		this.setText({
 			text:this.playerName + translation['askPaddleSkin'][this.language] +

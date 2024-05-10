@@ -10,10 +10,11 @@ export var forceStopGame = null;
 export default class Versus extends Game {
 	constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language) {
 		forceStopGame = false;
-		super(scene, physicsWorld, camera, humanPlayersName.length, AIPlayerNb);
+		super(scene, physicsWorld, camera, font, humanPlayersName.length, AIPlayerNb);
 		this.font = font;
 		this.language = language;
 		this.menu = new Menu(scene, camera, font, this, humanPlayersName, AIPlayerNb, language);
+		this.isOver = false;
 	}
 
 	closeDeadPlayersGoal(dt) {
@@ -79,6 +80,7 @@ export default class Versus extends Game {
 
 		this.closeDeadPlayersGoal(dt);
 		if (this.isOnlyOnePlayerAlive() || this.isOnlyAIAlive()) {
+			this.isOver = true;
 			this.showWinnerText();
 			if (keysdown.includes(13)) {
 				return false;

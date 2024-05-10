@@ -4,22 +4,24 @@ import AIPlayer from './AIPlayer.js';
 import Ball from './Ball.js';
 import * as constants from './constants.js';
 import HumanPlayer from './HumanPlayer.js';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import createLine from './createLine.js';
 import Background from './Background.js';
 import Paddle from './Paddle.js';
+import createText from './createText.js';
 
 export default class Game {
-	constructor(scene, physicsWorld, camera, humanPlayerNb, AIPlayerNb) {
+	constructor(scene, physicsWorld, camera, font, humanPlayerNb, AIPlayerNb, firstRoundStartTime=1.5) {
 		this.scene = scene;
 		this.physicsWorld = physicsWorld;
 		this.camera = camera;
+		this.font = font;
 
 		this.playersNb = humanPlayerNb + AIPlayerNb;
 
 		this.fieldEdgeDiameter = 10;
 
-		this.roundStartTime = 1.5; // [s]
+		this.roundStartTime = firstRoundStartTime; // [s]
+		this.otherRoundStartTime = 1.5;
 		this.roundStartTimeStamp = Date.now();
 
 		this.fieldVertices =  this.createField(this.playersNb==2? 4 : this.playersNb);
@@ -66,10 +68,6 @@ export default class Game {
 		this.addPlayer(wall2);
 	}
 
-	// createPlayers() {
-	// 	throw new Error("createPlayers() must be implemented by the subclass");
-	// }
-
 	createDirectionalLightTargetedOnBall(x, y, z) {
 		// spotlights
 		var spotLight = new THREE.SpotLight( '#ffdeb0', 10, 90, Math.PI/6, 0.8, 0.2);
@@ -94,7 +92,6 @@ export default class Game {
 		return spotLight;
 	}
 
-
 	createLights() {
 		this.hemisphereLight = new THREE.HemisphereLight( '#aaaaad', '#111111', 2);
 		this.hemisphereLight.position.set(0, 0, 200);
@@ -108,9 +105,6 @@ export default class Game {
 		// var ambientLight = new THREE.AmbientLight( 0x101010 ); // soft white light
 		// this.scene.add( ambientLight );
 	}
-
-
-
 
 	createField(segmentsNb) {
 		this.fieldMeshes = [];
@@ -246,14 +240,39 @@ export default class Game {
 	}
 
 	newRoundTimer() {
-
+		this.showRoundTimerText();
 		if (Date.now() - this.roundStartTimeStamp < this.roundStartTime*1000) {
 			this.ball.body.position.set(0, 0, 3);
 			return false;
 		}
+		this.roundStartTime = this.otherRoundStartTime;
 		this.ball.removeMovingVector();
 		return true;
 	}
+
+	showRoundTimerText() {
+		const time = Math.round((this.roundStartTime- (Date.now() - this.roundStartTimeStamp)/1000)*10)/10
+
+		if (this.timeText == time)
+			return;
+		// delete previous text
+		if (this.timeTextMesh) {
+			this.timeTextMesh.traverse( function (child) {
+				if (child.geometry)
+					child.geometry.dispose();
+			} );
+			this.scene.remove(this.timeTextMesh);
+		}
+		if (time <= 0)
+			return;
+		// create new text
+		this.timeText = time;
+		this.timeTextMesh = createText({font: this.font, message: this.timeText.toFixed(1), size: 8, sideColor: "#000000", fontColor: "#ffffff", shadow: true});
+		this.timeTextMesh.position.z = 8;
+		this.timeTextMesh.position.y = 15;
+		this.scene.add(this.timeTextMesh);
+	}
+
 
 	createNewRound() {
 		if (this.ball)
@@ -299,17 +318,11 @@ export default class Game {
 		if (this.newRoundTimer())
 			this.ball.update(dt);
 
-		// this.camera.rotation.z += 0.006;
-
 		// update the AI vison
 		this.updateAIVision(constants.AI_VISION_DELAY);
 
 		this.players.forEach(player => {
 			player.update(dt, keysdown);
-		// 	if (player.isBallInGoal.a) {
-		// 		player.isBallInGoal.a = false;
-		// 		this.createNewRound();
-			// }
 		});
 		// check if the ball is too far
 		if (this.ball.isTooFar()) {

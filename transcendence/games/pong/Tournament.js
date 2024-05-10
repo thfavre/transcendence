@@ -13,13 +13,11 @@ export default class Tournament {
 		this.physicsWorld = physicsWorld;
 		this.camera = camera;
 		this.realPlayersNb = humanPlayersName.length;
-		this.game = new Game(scene, physicsWorld, camera, humanPlayersName.length, 0);
+		this.game = new Game(scene, physicsWorld, camera, font, humanPlayersName.length, 0);
 		forceStopGame = false;
 		this.font = font;
 		this.language = language;
 		this.menu = new Menu(scene, camera, font, this.game, humanPlayersName, 0, language);
-
-		this.betweenRoundTime = 5; // time between rounds [s]
 		this.winner = null;
 	}
 
@@ -52,11 +50,11 @@ export default class Tournament {
 	}
 
 	createNewGame(excludePlayer) {
-		this.showText({text: excludePlayer.name + translation['playerOut'][this.language], y:constants.FIELD_DIAMETER/2+6});
+		this.showText({text: excludePlayer.name + translation['playerOut'][this.language], y:constants.FIELD_DIAMETER/2+4});
 		var players = this.game.players.filter((player) => player != excludePlayer);
 		this.realPlayersNb = players.length;
 		this.game.delete()
-		this.game = new Game(this.scene, this.physicsWorld, this.camera, players.length, 0);
+		this.game = new Game(this.scene, this.physicsWorld, this.camera, this.font, players.length, 0, 5);
 		for (var i = 0; i < players.length; i++) {
 			var playerNb = i;
 			if (players.length == 2 && i == 1)
