@@ -102,7 +102,8 @@ window.addEventListener("popstate", function(event)
 			activeMenu.classList.remove("d-none");
 	}
 	else
-		menuButtons.classList.remove("d-none");
+	menuButtons.classList.remove("d-none");
+	showHistory();
 	changeLanguageDropdown()
 });
 
