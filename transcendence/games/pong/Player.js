@@ -38,7 +38,7 @@ export default class Player {
 			const model = gltf.scene;
 			// get the paddle size
 			const paddleSize = this.paddle.mesh.geometry.parameters.height;
-			model.scale.set(3, 3, 3);
+			model.scale.set(3.8, 3.8, 3.8);
 			model.rotation.set(0, 0, -Math.PI/2);
 			// make the model more bright
 			model.traverse((child) => {

@@ -37520,7 +37520,7 @@ let Player$1 = class Player {
     loader.load("/static/assets/pong/models/Heart.glb", (gltf) => {
       const model = gltf.scene;
       const paddleSize = this.paddle.mesh.geometry.parameters.height;
-      model.scale.set(3, 3, 3);
+      model.scale.set(3.8, 3.8, 3.8);
       model.rotation.set(0, 0, -Math.PI / 2);
       model.traverse((child) => {
         if (child.isMesh) {
