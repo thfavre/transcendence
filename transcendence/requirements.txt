@@ -6,3 +6,4 @@ typing_extensions==4.11.0
 gunicorn
 psycopg2-binary
 django-environ
+python-dotenv==0.19.1
