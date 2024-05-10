@@ -34809,7 +34809,7 @@ const _Paddle = class _Paddle {
 // Phong : shiny material (specular color, shininess)
 // Standard : combination of Lambert and Phong (metalness, roughness)
 __publicField(_Paddle, "wallSkin", { "line": new LineMaterial({ color: "#3CD6EB", linewidth: 2e-3 }), "material": new MeshStandardMaterial({ color: "#3CD6EB" }) });
-__publicField(_Paddle, "aiSkin", { "line": new LineMaterial({ color: "#ff0000", linewidth: 0.003 }), "material": new MeshStandardMaterial({ color: "#2c3e50" }) });
+__publicField(_Paddle, "aiSkin", { "line": new LineMaterial({ color: "#ff0000", linewidth: 7e-3 }), "material": new MeshStandardMaterial({ color: "#2c3e50" }) });
 __publicField(_Paddle, "skins", [
   // red
   {
@@ -34874,7 +34874,7 @@ __publicField(_Paddle, "skins", [
   // ---- Specials ----
   // dazzle
   {
-    "line": new LineMaterial({ color: "#00f0f0", linewidth: 0.012 }),
+    "line": new LineMaterial({ color: "#00f0f0", linewidth: 0.028 }),
     "material": new MeshBasicMaterial(
       {
         color: "#ffffff"
@@ -37505,7 +37505,7 @@ let Player$1 = class Player {
     this.paddle = new Paddle(scene, physicsWorld, startPos, endPos, this.axeAngle, fieldEdgeDiameter);
     this.isBallInGoal = { a: false };
     this.createGoalHitBox(scene, physicsWorld, startPos, endPos, fieldEdgeDiameter, this.isBallInGoal);
-    this.health = 1;
+    this.health = 3;
     this.createHealthMeshes();
   }
   delete() {
@@ -37991,14 +37991,84 @@ class Background {
     this.stars.forEach((star2) => star2.update());
   }
 }
+class TextGeometry extends ExtrudeGeometry {
+  constructor(text, parameters = {}) {
+    const font = parameters.font;
+    if (font === void 0) {
+      super();
+    } else {
+      const shapes = font.generateShapes(text, parameters.size);
+      if (parameters.depth === void 0 && parameters.height !== void 0) {
+        console.warn("THREE.TextGeometry: .height is now depreciated. Please use .depth instead");
+      }
+      parameters.depth = parameters.depth !== void 0 ? parameters.depth : parameters.height !== void 0 ? parameters.height : 50;
+      if (parameters.bevelThickness === void 0)
+        parameters.bevelThickness = 10;
+      if (parameters.bevelSize === void 0)
+        parameters.bevelSize = 8;
+      if (parameters.bevelEnabled === void 0)
+        parameters.bevelEnabled = false;
+      super(shapes, parameters);
+    }
+    this.type = "TextGeometry";
+  }
+}
+function createText$1({
+  font,
+  message,
+  size = 4,
+  height = 0.5,
+  fontColor = "#ffffff",
+  sideColor = "#000000",
+  curveSegments = 12,
+  bevelEnabled = true,
+  bevelThickness = 1,
+  bevelSize = 0.5,
+  bevelOffset = 0,
+  bevelSegments = 1,
+  shadow = false
+}) {
+  const props = {
+    font,
+    size,
+    depth: height,
+    curveSegments,
+    bevelEnabled,
+    bevelThickness,
+    bevelSize,
+    bevelOffset,
+    bevelSegments
+  };
+  const textGroup = new Object3D();
+  const textGeo = new TextGeometry(message, props);
+  textGeo.computeBoundingBox();
+  let mat = [
+    new MeshBasicMaterial({ color: fontColor }),
+    // front
+    new MeshBasicMaterial({ color: sideColor })
+    // side
+  ];
+  let mesh = new Mesh(textGeo, mat);
+  if (shadow) {
+    mesh.castShadow = true;
+  }
+  const centerOffsetX = -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
+  const centerOffsetY = -0.5 * (textGeo.boundingBox.max.y - textGeo.boundingBox.min.y);
+  mesh.position.x = centerOffsetX;
+  mesh.position.y = centerOffsetY;
+  textGroup.add(mesh);
+  return textGroup;
+}
 let Game$1 = class Game {
-  constructor(scene, physicsWorld, camera, humanPlayerNb, AIPlayerNb) {
+  constructor(scene, physicsWorld, camera, font, humanPlayerNb, AIPlayerNb, firstRoundStartTime = 1.5) {
     this.scene = scene;
     this.physicsWorld = physicsWorld;
     this.camera = camera;
+    this.font = font;
     this.playersNb = humanPlayerNb + AIPlayerNb;
     this.fieldEdgeDiameter = 10;
-    this.roundStartTime = 1.5;
+    this.roundStartTime = firstRoundStartTime;
+    this.otherRoundStartTime = 1.5;
     this.roundStartTimeStamp = Date.now();
     this.fieldVertices = this.createField(this.playersNb == 2 ? 4 : this.playersNb);
     this.players = [];
@@ -38037,9 +38107,6 @@ let Game$1 = class Game {
     wall2.closeGoal(0, true);
     this.addPlayer(wall2);
   }
-  // createPlayers() {
-  // 	throw new Error("createPlayers() must be implemented by the subclass");
-  // }
   createDirectionalLightTargetedOnBall(x, y, z) {
     var spotLight = new SpotLight("#ffdeb0", 10, 90, Math.PI / 6, 0.8, 0.2);
     spotLight.position.set(x, y, z);
@@ -38108,7 +38175,7 @@ let Game$1 = class Game {
   }
   createEdge(position) {
     const cylinderRadius = this.fieldEdgeDiameter / 2;
-    const cylinderHeight = 5.4;
+    const cylinderHeight = 4.5;
     const edgeShape = new Cylinder(cylinderRadius, cylinderRadius, cylinderHeight, 32);
     const edgeBody = new Body({
       mass: 0,
@@ -38178,12 +38245,33 @@ let Game$1 = class Game {
     this.camera.rotation.y = ballAngle + Math.PI / 2 + Math.PI;
   }
   newRoundTimer() {
+    this.showRoundTimerText();
     if (Date.now() - this.roundStartTimeStamp < this.roundStartTime * 1e3) {
       this.ball.body.position.set(0, 0, 3);
       return false;
     }
+    this.roundStartTime = this.otherRoundStartTime;
     this.ball.removeMovingVector();
     return true;
+  }
+  showRoundTimerText() {
+    const time = Math.round((this.roundStartTime - (Date.now() - this.roundStartTimeStamp) / 1e3) * 10) / 10;
+    if (this.timeText == time)
+      return;
+    if (this.timeTextMesh) {
+      this.timeTextMesh.traverse(function(child) {
+        if (child.geometry)
+          child.geometry.dispose();
+      });
+      this.scene.remove(this.timeTextMesh);
+    }
+    if (time <= 0)
+      return;
+    this.timeText = time;
+    this.timeTextMesh = createText$1({ font: this.font, message: this.timeText.toFixed(1), size: 8, sideColor: "#000000", fontColor: "#ffffff", shadow: true });
+    this.timeTextMesh.position.z = 8;
+    this.timeTextMesh.position.y = 15;
+    this.scene.add(this.timeTextMesh);
   }
   createNewRound() {
     if (this.ball)
@@ -38231,74 +38319,6 @@ let Game$1 = class Game {
     }
   }
 };
-class TextGeometry extends ExtrudeGeometry {
-  constructor(text, parameters = {}) {
-    const font = parameters.font;
-    if (font === void 0) {
-      super();
-    } else {
-      const shapes = font.generateShapes(text, parameters.size);
-      if (parameters.depth === void 0 && parameters.height !== void 0) {
-        console.warn("THREE.TextGeometry: .height is now depreciated. Please use .depth instead");
-      }
-      parameters.depth = parameters.depth !== void 0 ? parameters.depth : parameters.height !== void 0 ? parameters.height : 50;
-      if (parameters.bevelThickness === void 0)
-        parameters.bevelThickness = 10;
-      if (parameters.bevelSize === void 0)
-        parameters.bevelSize = 8;
-      if (parameters.bevelEnabled === void 0)
-        parameters.bevelEnabled = false;
-      super(shapes, parameters);
-    }
-    this.type = "TextGeometry";
-  }
-}
-function createText$1({
-  font,
-  message,
-  size = 4,
-  height = 0.5,
-  fontColor = "#ffffff",
-  sideColor = "#000000",
-  curveSegments = 12,
-  bevelEnabled = true,
-  bevelThickness = 1,
-  bevelSize = 0.5,
-  bevelOffset = 0,
-  bevelSegments = 1,
-  shadow = false
-}) {
-  const props = {
-    font,
-    size,
-    depth: height,
-    curveSegments,
-    bevelEnabled,
-    bevelThickness,
-    bevelSize,
-    bevelOffset,
-    bevelSegments
-  };
-  const textGroup = new Object3D();
-  const textGeo = new TextGeometry(message, props);
-  textGeo.computeBoundingBox();
-  let mat = [
-    new MeshBasicMaterial({ color: fontColor }),
-    // front
-    new MeshBasicMaterial({ color: sideColor })
-    // side
-  ];
-  let mesh = new Mesh(textGeo, mat);
-  if (shadow) {
-    mesh.castShadow = true;
-  }
-  const centerOffsetX = -0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x);
-  const centerOffsetY = -0.5 * (textGeo.boundingBox.max.y - textGeo.boundingBox.min.y);
-  mesh.position.x = centerOffsetX;
-  mesh.position.y = centerOffsetY;
-  textGroup.add(mesh);
-  return textGroup;
-}
 const translation$1 = {
   // ------- Menu -------
   // ask keys / paddle
@@ -38358,7 +38378,7 @@ const translation$1 = {
   "winAndContinue": {
     "en": " wins! (Press Enter to finish)",
     "fr": " gagne! (Appuyez sur Entrer pour terminer)",
-    "de": " gewinnt! (Drucken Sie die Eingabetaste)"
+    "de": " gewinnt! (Drücken Sie die Eingabetaste)"
   },
   // easter egg lost
   "lostAgainstNobody": {
@@ -38399,7 +38419,7 @@ class PlayerCreator {
     this.currentText = text;
   }
   ifKeyValid(keyCode) {
-    return keyCode >= 65 && keyCode <= 90 || keyCode >= 37 && keyCode <= 40;
+    return keyCode >= 65 && keyCode <= 90 || keyCode == 38 || keyCode== 40;
   }
   askUpKey(keysJustPressed) {
     this.setText({
@@ -38426,8 +38446,18 @@ class PlayerCreator {
     }
   }
   askPaddleMaterial(keysJustPressed) {
-    const keyDownStr = this.keyDown == 40 ? translation$1["directionalKeyDown"][this.language] : String.fromCharCode(this.keyDown);
-    const keyUpStr = this.keyUp == 38 ? translation$1["directionalKeyUp"][this.language] : String.fromCharCode(this.keyUp);
+    // set the key string text
+		var keyDownStr = String.fromCharCode(this.keyDown);
+		if (this.keyDown == 40)
+			keyDownStr = translation$1['directionalKeyDown'][this.language];
+		else if (this.keyDown == 38)
+			keyDownStr = translation$1['directionalKeyUp'][this.language];
+		var keyUpStr = String.fromCharCode(this.keyUp);
+		if (this.keyUp == 40)
+			keyUpStr = translation$1['directionalKeyDown'][this.language];
+		else if (this.keyUp == 38)
+			keyUpStr = translation$1['directionalKeyUp'][this.language];
+
     this.setText({
       text: this.playerName + translation$1["askPaddleSkin"][this.language] + " (" + keyUpStr + "/" + keyDownStr + ")",
       x: 0,
@@ -38532,10 +38562,11 @@ var forceStopGame$3 = null;
 class Versus extends Game$1 {
   constructor(scene, physicsWorld, camera, font, humanPlayersName, AIPlayerNb, language) {
     forceStopGame$3 = false;
-    super(scene, physicsWorld, camera, humanPlayersName.length, AIPlayerNb);
+    super(scene, physicsWorld, camera, font, humanPlayersName.length, AIPlayerNb);
     this.font = font;
     this.language = language;
     this.menu = new Menu$1(scene, camera, font, this, humanPlayersName, AIPlayerNb, language);
+    this.isOver = false;
   }
   closeDeadPlayersGoal(dt) {
     this.players.forEach((player) => {
@@ -38568,9 +38599,9 @@ class Versus extends Game$1 {
           if (player instanceof AIPlayer) {
             var text = translation$1["lostAgainstAI"][this.language];
           } else {
-              if (!this.winnerName)
-                this.winnerName = player.name;
-              var text = player.name + " " + translation$1["won"][this.language];
+            if (!this.winnerName)
+              this.winnerName = player.name;
+            var text = player.name + " " + translation$1["won"][this.language];
           }
           var winnerText = createText$1({ font: this.font, message: text, size: 8, shadow: true });
           winnerText.position.z = 8;
@@ -38594,6 +38625,7 @@ class Versus extends Game$1 {
     }
     this.closeDeadPlayersGoal(dt);
     if (this.isOnlyOnePlayerAlive() || this.isOnlyAIAlive()) {
+      this.isOver = true;
       this.showWinnerText();
       if (keysdown.includes(13)) {
         return false;
@@ -38612,12 +38644,11 @@ let Tournament$1 = class Tournament {
     this.physicsWorld = physicsWorld;
     this.camera = camera;
     this.realPlayersNb = humanPlayersName.length;
-    this.game = new Game$1(scene, physicsWorld, camera, humanPlayersName.length, 0);
+    this.game = new Game$1(scene, physicsWorld, camera, font, humanPlayersName.length, 0);
     forceStopGame$2 = false;
     this.font = font;
     this.language = language;
     this.menu = new Menu$1(scene, camera, font, this.game, humanPlayersName, 0, language);
-    this.betweenRoundTime = 5;
     this.winner = null;
   }
   showText({ text, size = 8, y = 0 }) {
@@ -38644,11 +38675,11 @@ let Tournament$1 = class Tournament {
     newPlayer.paddle.mesh.material = player.paddle.mesh.material;
   }
   createNewGame(excludePlayer) {
-    this.showText({ text: excludePlayer.name + translation$1["playerOut"][this.language], y: FIELD_DIAMETER / 2 + 6 });
+    this.showText({ text: excludePlayer.name + translation$1["playerOut"][this.language], y: FIELD_DIAMETER / 2 + 4 });
     var players = this.game.players.filter((player2) => player2 != excludePlayer);
     this.realPlayersNb = players.length;
     this.game.delete();
-    this.game = new Game$1(this.scene, this.physicsWorld, this.camera, players.length, 0);
+    this.game = new Game$1(this.scene, this.physicsWorld, this.camera, this.font, players.length, 0, 5);
     for (var i = 0; i < players.length; i++) {
       var playerNb = i;
       if (players.length == 2 && i == 1)

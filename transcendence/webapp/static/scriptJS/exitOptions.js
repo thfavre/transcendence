@@ -1,4 +1,4 @@
-let	isSwitchOn = false;
+let	isSwitchOn = true;
 
 // Start Find the Exit (solo) after checking that the conditions are OK
 function	launchExitSolo()
@@ -19,14 +19,13 @@ function	launchExitSolo()
 	if (window.exitGame) {  // Check if function exists (avoid errors)
 		const language = localStorage.getItem('language') || 'en';
 		console.log("Starting SOLO game with " + NumberLevels + " levels in " + language + " language.");
-		window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (tournement) => {
-		if (tournement.isOver)
-		{
-			console.log('Solo game is over, time :', tournement.time);
+		window.exitGame(1, NumberLevels, false, 'solo', language, '#webglExitSolo', false, (game) => {
+		if (game.isOver) {
+			console.log('Solo game is over, time :', game.time);
 			let Result = {
 				username: localStorage.getItem('userAlias'),
 				game_id: 'ES',
-				position: [tournement.time, NumberLevels]
+				position: [game.time, NumberLevels]
 			}
 			sendGameData(Result);
 			backToMain();
@@ -65,14 +64,16 @@ function launchExitVersus()
 		const powerUps = isSwitchOn;
 		console.log("Starting Versus game with ", selectedPlayers, " players and ", FirstTo, " levels with powerups " + powerUps + " in ", language, " language.");
  		window.exitGame(selectedPlayers, FirstTo, powerUps, 'tournament', language, '#webglExitVersus', false, (tournament) => {
-				let Result = {
+			if (tournament.isOver) {
+			let Result = {
 					username: localStorage.getItem('userAlias'),
 					game_id: 'EV',
 					position: [isFirst(tournament.scores, FirstTo), selectedPlayers],
 					bo_type: FirstTo
 				}
 				sendGameData(Result);
-				backToMain();
+			}
+			backToMain();
 			});
 		findExitMenu.classList.add('d-none');
 		findExitVersusIG.classList.remove('d-none');
@@ -92,6 +93,6 @@ document.addEventListener('DOMContentLoaded', function()
 	switchInput.addEventListener('change', function()
 	{
 		isSwitchOn = this.checked;
-		console.log(isSwitchOn);
+		console.log('Switch is now', isSwitchOn);
 	});
 });

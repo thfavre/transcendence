@@ -60,7 +60,7 @@ function	launchPongVersus()
 		updateModalMessage('pong_versus_modal');
 		return;
 	}
-	if (window.pongGame) {  // Check if function exists (avoid errors)
+	if (window.pongGame) {  // Check if function exists
 		language = localStorage.getItem('language') || 'en';
 		console.log("Starting Versus Pong game with ", selectedPlayers, " players and ", selectedAI, " AI" + " in ", language, " language.");
 		const username = localStorage.getItem('userAlias');
@@ -70,15 +70,17 @@ function	launchPongVersus()
 			let playerName = "Guest " + i;
 			humanNames.push(playerName);
 		}
-		window.pongGame(humanNames, selectedAI, 'versus', language, '#webglPongVesus', false, (tournament) => {
+		window.pongGame(humanNames, selectedAI, 'versus', language, '#webglPongVesus', false, (game) => {
+			if (game.isOver) {
 				let Result = {
 					username: username,
 					game_id: 'PV',
-					position: [hasWon(username, tournament.winnerName), selectedPlayers + selectedAI]
+					position: [hasWon(username, game.winnerName), selectedPlayers + selectedAI]
 				}
 				sendGameData(Result);
-				backToMain();
-			});
+			}
+			backToMain();
+		});
 	} else {
 		console.error('pongGame function not available.');
 	}
@@ -116,7 +118,7 @@ async function	selectPlayersNames(selectedPlayers)
 		inputGroup.classList.add("input-group", "mb-3");
 
 		let inputLabel = document.createElement("label");
-		inputLabel.textContent = player + ` ${i + 1} : `;
+		inputLabel.textContent = player + ` ${i} : `;
 		inputLabel.setAttribute("for", `playerName${i}`);
 		inputLabel.classList.add("form-label", "custom-input");
 
@@ -165,15 +167,16 @@ function	submitPlayerNames()
 		language = localStorage.getItem('language') || 'en';
 		console.log("Starting Tournament Pong game with ", selectedPlayers, " players in ", language, " language.");
 		window.pongGame(playerNames, 0, 'tournament', language, '#webglPongTournament', false, (tournament) => {
-				console.log('SAVE THE SCORES here');
+			if (tournament.winner) { // Check if the game is over
 				let Result = {
 					username: localStorage.getItem('userAlias'),
 					game_id: 'PT',
 					position: [hasWon(username, tournament.winner.name), selectedPlayers]
 				}
 				sendGameData(Result);
-				backToMain();
-			});
+			}
+		backToMain();
+		});
 
 	} else {
 		console.error('pongGame function not available.');
