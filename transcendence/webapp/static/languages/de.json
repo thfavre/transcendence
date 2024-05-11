@@ -64,6 +64,6 @@
 	"rank": "Results",
 	"participants": "Teilnehmer",
 	"date": "Datum",
-	"no_game": "Keine Spiele gespielt"
-
+	"no_game": "Keine Spiele gespielt",
+	"total_levels": "Gesamtstufen"
 }

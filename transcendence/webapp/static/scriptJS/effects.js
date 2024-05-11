@@ -55,7 +55,7 @@ function	hideVideo()
 	}, 200);
 }
 
-setTimeout(hideVideo, 1000);
+setTimeout(hideVideo, 4000);
 
 // Navigation through the menus and the buttons
 
