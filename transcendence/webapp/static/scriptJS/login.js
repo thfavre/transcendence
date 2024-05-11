@@ -47,7 +47,6 @@ function	registerUsernameModal()
 			if (response.ok) {
 				localStorage.setItem('userAlias', username);
 				console.log('Username registered:', username);
-				getDatabase();
 				usernameModal.hide();
 				usernameForm.removeEventListener('submit',handleFormSubmit);
 			} else {
