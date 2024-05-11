@@ -46,7 +46,7 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd path-to-transcendence
+  cd path-to-transcendence/transcendence
 ```
 
 Start the server
