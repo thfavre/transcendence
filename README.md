@@ -1,12 +1,9 @@
 
 # Transcendence
-
-Our project is a website with a 3D Pong game and a puzzle game. The games can be played locally with up to 6 players using the same keyboard.
+This project brings Pong and a Puzzle game in a built-from-scratch website. Users can compete against each other in local multiplayer matches.
 
 
 ## Screenshots
-
-
 <p>
     <img src="https://raw.githubusercontent.com/thfavre/transcendence/assets/pongVersus1.png" alt=pong width="500" />
     <em>Local multiplayer pong </em>
@@ -36,6 +33,8 @@ Our project is a website with a 3D Pong game and a puzzle game. The games can be
 - Use a database in the backend (PostgreSQL)
 - Support multiple languages (english, french, german)
 - Extend web browser compatibility
+
+
 ## Run Locally
 
 Clone the project
