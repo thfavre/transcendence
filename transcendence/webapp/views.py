@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from django.utils.html import escape
 from datetime import datetime
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from .models import GameResult
 import json
 
@@ -14,6 +15,10 @@ def index(request):
 
 
 def register_username(request):
+    is_internal = 'HTTP_REFERER' in request.META
+    if not request.path.endswith('/') and not is_internal:
+        return redirect(request.path + '/')
+
     if request.method == 'POST':
         data = json.loads(request.body)
         # username = self.cleaned_data['username']   #Might use this as it is more secure and has more validation
@@ -45,6 +50,10 @@ def register_username(request):
 
 # saves the games info in a model GameResult, and associates it to the 'username'
 def save_game_result(request):
+    is_internal = 'HTTP_REFERER' in request.META
+    if not request.path.endswith('/') and not is_internal:
+        return redirect(request.path + '/')
+
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -60,7 +69,7 @@ def save_game_result(request):
 
 
             # Create and save a new GameResult instance
-            game_result = GameResult.objects.create(
+            GameResult.objects.create(
                 user=user,
                 game_id=game_id,
                 position=position,

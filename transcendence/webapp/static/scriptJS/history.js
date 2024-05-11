@@ -85,7 +85,7 @@ function sendGameData(gameHistory)
 	const jsonData = JSON.stringify({username: username, gameHistory: gameHistory});
 
 	// Send JSON data to the backend using fetch API
-	fetch('/save_game_result/', {
+	fetch('/save_game_result', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

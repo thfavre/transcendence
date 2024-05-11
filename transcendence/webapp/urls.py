@@ -22,7 +22,7 @@ from .views import *
 urlpatterns = [
     path('', index, name='index'),
     path('registerUsername', views.register_username, name='registerUsername'),
-    path('save_game_result/', views.save_game_result, name='save_game_result'),
+    path('save_game_result', views.save_game_result, name='save_game_result'),
     path('get_last_game', views.get_last_game, name='get_last_game'),
     path('print_all_records/', print_all_records, name='print_all_records'),
     path('get_game_history/', get_game_history, name='get_game_history'),
