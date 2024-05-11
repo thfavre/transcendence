@@ -1,1 +1,64 @@
-![Alt Text](https://www.icegif.com/wp-content/uploads/2023/09/icegif-164.gif)
+
+# Transcendence
+
+Our project is a website with a 3D Pong game and a puzzle game. The games can be played locally with up to 6 players using the same keyboard.
+
+
+## Screenshots
+
+
+<p>
+    <img src="https://raw.githubusercontent.com/thfavre/transcendence/assets/pongVersus1.png" alt=pong width="500" />
+    <em>Local multiplayer pong </em>
+</p>
+
+<p>
+    <img src="https://raw.githubusercontent.com/thfavre/transcendence/assets/exit2.png" alt=puzzle width="500" />
+    <em>Puzzle game</em>
+</p>
+
+<p>
+    <img src="https://raw.githubusercontent.com/thfavre/transcendence/assets/history.png" alt=puzzle width="500" />
+    <em>Game history</em>
+</p>
+
+
+## Modules
+### Major
+- Use a backend framework (Django)
+- Add a second game
+- Local Multiplayer (2-6 players)
+- Implement an AI-controlled opponent
+- Use advanced 3D techniques (THREE.js)
+
+### Minor
+- Use a frontend framework (Bootstrap)
+- Use a database in the backend (PostgreSQL)
+- Support multiple languages (english, french, german)
+- Extend web browser compatibility
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/thfavre/transcendence.git
+```
+
+Go to the project directory
+
+```bash
+  cd path-to-transcendence
+```
+
+Start the server
+
+```bash
+  docker-compose up --build
+```
+
+Enjoy on the website
+
+```bash
+  https://localhost/
+```
+
