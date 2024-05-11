@@ -5,6 +5,7 @@ from django.db import IntegrityError
 from django.utils.html import escape
 from datetime import datetime
 from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
 from .models import GameResult
 import json
 
@@ -14,6 +15,10 @@ def index(request):
 
 
 def register_username(request):
+    is_internal = 'HTTP_REFERER' in request.META
+    if not request.path.endswith('/') and not is_internal:
+        return redirect(request.path + '/')
+
     if request.method == 'POST':
         data = json.loads(request.body)
         # username = self.cleaned_data['username']   #Might use this as it is more secure and has more validation
@@ -45,6 +50,10 @@ def register_username(request):
 
 # saves the games info in a model GameResult, and associates it to the 'username'
 def save_game_result(request):
+    is_internal = 'HTTP_REFERER' in request.META
+    if not request.path.endswith('/') and not is_internal:
+        return redirect(request.path + '/')
+
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -60,7 +69,7 @@ def save_game_result(request):
 
 
             # Create and save a new GameResult instance
-            game_result = GameResult.objects.create(
+            GameResult.objects.create(
                 user=user,
                 game_id=game_id,
                 position=position,
@@ -80,6 +89,10 @@ def save_game_result(request):
 
 # Returns the last 10 games associated to 'username', from game 'game_id'
 def get_game_history(request):
+    is_internal = 'HTTP_REFERER' in request.META
+    if not request.path.endswith('/') and not is_internal:
+        return redirect(request.path + '/')
+
     if request.method == 'GET':
         username = request.GET.get('username')
         game_id = request.GET.get('game_id')
@@ -96,29 +109,11 @@ def get_game_history(request):
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 
-def get_last_game(request):
-    if request.method == 'GET':
-        username = request.GET.get('username')
-        user = get_object_or_404(User, username=username)  # Optimized user lookup
-        last_game = GameResult.objects.filter(user=user).order_by('-date').first()
-
-        if last_game:
-            data = {
-                'user': last_game.user.username,
-                'game_id': last_game.game_id,
-                'position': last_game.position,
-                'date': last_game.date.strftime('%Y-%m-%d %H:%M:%S'),
-                'bo_type': last_game.bo_type
-            }
-            return JsonResponse(data)
-        else:
-            return JsonResponse({'error': 'No game found for this user.'}, status=404)
-
-    else:
-        return JsonResponse({'error': 'Invalid request method.'}, status=405)
-
-
 def print_all_records(request):
+    is_internal = 'HTTP_REFERER' in request.META
+    if not request.path.endswith('/') and not is_internal:
+        return redirect(request.path + '/')
+
     if request.method == 'GET':
         try:
             # Retrieve all users
