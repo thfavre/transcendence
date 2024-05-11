@@ -150,11 +150,12 @@ function	submitPlayerNames()
 	let	playerSelect = document.getElementById("pongTournamentPlayer");
 	let	selectedPlayers = parseInt(playerSelect.value);
 	const username = localStorage.getItem('userAlias');
+	const lang = localStorage.getItem('language') || 'en';
 	playerNames.push(username);
 
 	for (let i = 0; i < playersCount; i++) {
 		if (players[i].nodeName === 'INPUT') {
-			const errorMsg = isValidUsername(players[i].value);
+			const errorMsg = isValidUsername(players[i].value, lang);
 			if (errorMsg) {
 				alert(errorMsg);
 				return;
@@ -195,16 +196,44 @@ function	submitPlayerNames()
 		return 0;
 	}
 
-	function isValidUsername(username) {
-		if (!username) {
-			return "Please enter a username.";
-		} else if (!/^[a-zA-Z0-9]+$/.test(username)) {
-			return "Username can only contain letters and numbers.";
-		} else if (username.length < 2 || username.length > 20) {
-			return "Username must be between 2 and 20 characters.";
-		} else if (playerNames.includes(username)) {
-			return "Username already chosen by another player.";
+	function isValidUsername(username, language) {
+		let errorMsg;
+		switch (language) {
+			case 'fr':
+				errorMsg = {
+					empty: "Veuillez saisir un nom d'utilisateur.",
+					invalidCharacters: "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres.",
+					length: "Le nom d'utilisateur doit contenir entre 2 et 20 caractères.",
+					taken: "Le nom d'utilisateur est déjà choisi par un autre joueur."
+				};
+				break;
+			case 'de':
+				errorMsg = {
+					empty: "Bitte geben Sie einen Benutzernamen ein.",
+					invalidCharacters: "Benutzername darf nur Buchstaben und Zahlen enthalten.",
+					length: "Benutzername muss zwischen 2 und 20 Zeichen lang sein.",
+					taken: "Benutzername wurde bereits von einem anderen Spieler gewählt."
+				};
+				break;
+			default:
+				errorMsg = {
+					empty: "Please enter a username.",
+					invalidCharacters: "Username can only contain letters and numbers.",
+					length: "Username must be between 2 and 20 characters.",
+					taken: "Username already chosen by another player."
+				};
 		}
+
+		if (!username) {
+			return errorMsg.empty;
+		} else if (!/^[a-zA-Z0-9]+$/.test(username)) {
+			return errorMsg.invalidCharacters;
+		} else if (username.length < 2 || username.length > 20) {
+			return errorMsg.length;
+		} else if (playerNames.includes(username)) {
+			return errorMsg.taken;
+		}
+
 		return null;
 	}
 }

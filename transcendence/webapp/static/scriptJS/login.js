@@ -22,11 +22,14 @@ function	registerUsernameModal()
 
 	function handleFormSubmit(event){
 		event.preventDefault();
-		const username = document.getElementById('userAlias').value;
 
-		const errorMsg = validateUsername(username);
-		if (errorMsg) {
+		const username = document.getElementById('userAlias').value;
+		const language = localStorage.getItem('language') || 'en';
+
+		const errorMsg = validateUsername(username, language);
+		if (errorMsg !== null) {
 			alert(errorMsg);
+			console.log("errorMsg: ", errorMsg);
 			return;
 		}
 
@@ -56,18 +59,45 @@ function	registerUsernameModal()
 		.catch(error => console.error('Error sending data:', error));
 	}
 
-	usernameForm.addEventListener('submit', handleFormSubmit);
-
-	function validateUsername(username) {
-		if (!username) {
-			return "Please enter a username.";
-		} else if (!/^[a-zA-Z0-9]+$/.test(username)) {
-			return "Username can only contain letters and numbers.";
-		} else if (username.length < 2 || username.length > 20) {
-			return "Username must be between 2 and 20 characters.";
+	function validateUsername(username, language)
+	{
+		let errMsg;
+		switch (language) {
+			case 'fr':
+				errMsg = {
+					empty: "Veuillez saisir un nom d'utilisateur.",
+					invalidCharacters: "Le nom d'utilisateur ne peut contenir que des lettres et des chiffres.",
+					length: "Le nom d'utilisateur doit contenir entre 2 et 20 caractères."
+				};
+				break;
+			case 'de':
+				errMsg = {
+					empty: "Bitte geben Sie einen Benutzernamen ein.",
+					invalidCharacters: "Benutzername darf nur Buchstaben und Zahlen enthalten.",
+					length: "Benutzername muss zwischen 2 und 20 Zeichen lang sein."
+				};
+				break;
+			default:
+				errMsg = {
+					empty: "Please enter a username.",
+					invalidCharacters: "Username can only contain letters and numbers.",
+					length: "Username must be between 2 and 20 characters."
+				};
 		}
+		console.log("username: ", username);
+
+		if (!username.trim()) {
+			return errMsg.empty;
+		} else if (!/^[a-zA-Z0-9]+$/.test(username)) {
+			return errMsg.invalidCharacters;
+		} else if (username.length < 2 || username.length > 20) {
+			return errMsg.length;
+		}
+
 		return null;
 	}
+
+	usernameForm.addEventListener('submit', handleFormSubmit);
 }
 
 // Disconnect the user and redirect to the main page
