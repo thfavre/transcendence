@@ -15,8 +15,8 @@ services:
       - static_volume:/app/transcendence/static
     depends_on:
       - db
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@db:5432/postgres
+    env_file:
+      - .env
 
   nginx:
     build: ./nginx
